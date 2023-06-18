@@ -1,21 +1,18 @@
 import { useDispatch, useSelector } from 'react-redux'
-import { saveDataUser } from '../store/userSlice';
 import { Link } from 'react-router-dom';
+import { testAPI } from '../api/testAPI';
 function Home() {
-    const user = useSelector(state => state.user.value)
+    const test = useSelector(state => state.test)
     const dispatch = useDispatch()
 
-    const newValue = {
-        email: "ngocafhaksd",
-        password: "fasdjfasd"
-    }
+
+
     return (<div>
         <div>
-            email : {user?.email},
-            password : {user?.password}
+            test : {test.data}
         </div>
         <button className='bg-gray-500' onClick={() => {
-            dispatch(saveDataUser(newValue))
+            testAPI(dispatch)
         }}>
             Save data
         </button>
