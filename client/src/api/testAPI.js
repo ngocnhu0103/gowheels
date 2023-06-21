@@ -1,4 +1,4 @@
-import { baseAPI } from './baseAPI'
+import baseAPI from './baseAPI'
 import { saveTestData } from '../store/testSlice';
 export const testAPI = async (dispatch) => {
     try {

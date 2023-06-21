@@ -9,7 +9,7 @@ function Home() {
 
     return (<div>
         <div>
-            test : {test.data}
+            test : {test.data?.message}
         </div>
         <button className='bg-gray-500' onClick={() => {
             testAPI(dispatch)
