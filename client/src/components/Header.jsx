@@ -1,7 +1,26 @@
 import { Link } from 'react-router-dom'
 import srcBg from "../assets/bg.png"
-import { Button } from '@mui/material'
+import { Button, Modal } from '@mui/material'
+import { useState } from 'react';
+import FormRegister from './auth/FormRegister';
+import FormLogin from './auth/FormLogin';
 function Header() {
+    const [openLogin, setOpenLogin] = useState(false);
+    const [openRegister, setOpenRegister] = useState(false);
+
+    const handleOpenLogin = () => {
+        setOpenLogin(true)
+    }
+    const handleCloseLogin = () => {
+        setOpenLogin(false)
+    }
+
+    const handleOpenRegister = () => {
+        setOpenRegister(true)
+    }
+    const handleCloseRegister = () => {
+        setOpenRegister(false)
+    }
     return (
         <header className="h-20 flex items-center justify-between">
             <Link to={'/'}>
@@ -23,11 +42,33 @@ function Header() {
                 </ul>
                 <div className='h-1/2 w-[1px] bg-gray-300'></div>
                 <div className='flex gap-8'>
-                    <Button className='text-primary font-semibold'>Đăng nhập</Button>
-                    <Button variant="outlined">Đăng ký</Button>
+                    <Button className='text-primary font-semibold' onClick={handleOpenLogin}>Đăng nhập</Button>
+                    <Button variant="outlined" onClick={handleOpenRegister}>Đăng ký</Button>
+
+
+                    <Modal
+                        open={openLogin}
+                        onClose={handleCloseLogin}
+                        ariaLabelledby="parent-modal-title"
+                        ariaDescribedby="parent-modal-description"
+                    >
+                        <FormLogin />
+                    </Modal>
+                    <Modal
+                        open={openRegister}
+                        onClose={handleCloseRegister}
+                        ariaLabelledby="parent-modal-title"
+                        ariaDescribedby="parent-modal-description"
+                    >
+
+                        <FormRegister />
+
+                    </Modal>
                 </div>
             </div>
         </header>
+
+
     );
 }
 
