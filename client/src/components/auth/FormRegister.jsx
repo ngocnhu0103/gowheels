@@ -1,36 +1,71 @@
-import { FormControl, FormHelperText, Input, InputLabel, } from "@mui/material";
-
+import { FormControl, Input, InputLabel, } from "@mui/material";
+import { useFormik } from 'formik';
+import * as Yup from 'yup'
 function FormRegister() {
-    const handleRegister = (e) => {
-        e.preventDefault();
-        console.log(e);
-    }
+    // const handleRegister = (e) => {
+    //     e.preventDefault();
+    //     console.log(e);
+    // }
+
+    const formik = useFormik({
+        initialValues: {
+            email: '',
+            fullName: '',
+            password: '',
+            repeatPassword: '',
+        },
+        validationSchema: Yup.object({
+            email: Yup.string().trim().email('email không đúng định dạng').required('Vui lòng nhập email'),
+            fullName: Yup.string().trim().required('Vui lòng nhập tên hiển thị'),
+            password: Yup.string().trim().length(8, "Mật khẩu phải là 8 ký tự").required('Vui lòng nhập mật khẩu'),
+            repeatPassword: Yup.string().trim().required('Vui lòng nhập mật khẩu').oneOf([Yup.ref('password')], 'Mật khẩu không khớp')
+        })
+        , onSubmit: values => {
+            alert(JSON.stringify(values, null, 2));
+        },
+    });
     return (
         <div className="w-1/4 mx-auto mt-24 bg-white p-4 rounded-xl">
             <h1 className="text-3xl font-bold text-center text-primary py-4">Đăng ký</h1>
-            <form className="flex flex-col">
+            <form className="flex flex-col" onSubmit={formik.handleSubmit}>
                 <FormControl margin="dense">
                     <InputLabel htmlFor="email">Email</InputLabel>
-                    <Input className="text-white" type="email" id="email" ariaDescribedby="email-helper" />
-                    <FormHelperText id="email-helper">Vui lòng nhập email.</FormHelperText>
+                    <Input onBlur={formik.handleBlur} onChange={formik.handleChange} value={formik.values.email} className="text-white" name="email" type="text" id="email" />
+                    {formik.touched.email && formik.errors.email ? (
+                        <span className="text-rose-400 text-xs font-semibold">
+                            {formik.errors.email}
+                        </span>
+                    ) : null}
                 </FormControl>
                 <FormControl margin="dense">
                     <InputLabel htmlFor="fullName">Tên hiển thị</InputLabel>
-                    <Input id="fullName" ariaDescribedby="full-name-helper" />
-                    <FormHelperText id="full-name-helper">Vui lòng nhập tên hiển thị.</FormHelperText>
+                    <Input onBlur={formik.handleBlur} onChange={formik.handleChange} value={formik.values.fullName} name="fullName" id="fullName" />
+                    {formik.touched.fullName && formik.errors.fullName ? (
+                        <span className="text-rose-400 text-xs font-semibold">
+                            {formik.errors.fullName}
+                        </span>
+                    ) : null}
                 </FormControl>
                 <FormControl margin="dense">
                     <InputLabel htmlFor="password">Mật khẩu</InputLabel>
-                    <Input id="password" type="password" ariaDescribedby="password-helper" />
-                    <FormHelperText id="password-helper">Vui lòng nhập mật khẩu.</FormHelperText>
+                    <Input onBlur={formik.handleBlur} onChange={formik.handleChange} value={formik.values.password} name="password" id="password" type="password" />
+                    {formik.touched.password && formik.errors.password ? (
+                        <span className="text-rose-400 text-xs font-semibold">
+                            {formik.errors.password}
+                        </span>
+                    ) : null}
                 </FormControl>
                 <FormControl margin="dense">
                     <InputLabel htmlFor="repeatPassword">Nhập lại mật khẩu</InputLabel>
-                    <Input id="repeatPassword" type="password" ariaDescribedby="repeat-password-helper" />
-                    <FormHelperText id="repeat-password-helper">Vui lòng nhập lại mật khẩu.</FormHelperText>
+                    <Input onBlur={formik.handleBlur} onChange={formik.handleChange} value={formik.values.repeatPassword} name="repeatPassword" id="repeatPassword" type="password" />
+                    {formik.touched.repeatPassword && formik.errors.repeatPassword ? (
+                        <span className="text-rose-400 text-xs font-semibold">
+                            {formik.errors.repeatPassword}
+                        </span>
+                    ) : null}
                 </FormControl>
 
-                <button className="mt-4 text-white bg-primary py-2 rounded-md" onClick={handleRegister}>
+                <button className="mt-4 text-white bg-primary py-2 rounded-md">
                     Đăng ký
                 </button>
             </form>
