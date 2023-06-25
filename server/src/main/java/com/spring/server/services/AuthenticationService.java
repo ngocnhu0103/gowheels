@@ -6,6 +6,7 @@ import com.spring.server.repositories.UserRepository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -34,29 +35,40 @@ public class AuthenticationService {
 
     private final JavaMailSender mailSender;
 
-    public ResponseObject register(RegisterRequest req, String siteURL) throws UnsupportedEncodingException, MessagingException {
+    public ResponseEntity<ResponseObject> register(RegisterRequest req, String siteURL) throws UnsupportedEncodingException, MessagingException {
+
+        var userFound = userRepository.findByEmail(req.getEmail());
+
+        if(userFound.isPresent()) {
+            return ResponseEntity.ofNullable(ResponseObject.builder().statusCode(401).message("Email đã được đăng ký").data("").build());
+        }
+
+        if(!req.getPassword().equals(req.getRepeatPassword())){
+            return ResponseEntity.ofNullable(ResponseObject.builder().statusCode(401).message("Mật khẩu không khớp").data("").build());
+        }
+
         UUID uuid = UUID.randomUUID();
-        System.out.println(uuid.toString());
         var user = UserModel.builder()
                 .email(req.getEmail())
                 .password(passwordEncoder.encode(req.getPassword()))
-                .phone(req.getPhone())
-                .address(req.getAddress())
+                .fullName(req.getFullName())
                 .role(Role.USER)
                 .verificationCode(uuid.toString())
                 .enabled(false)
                 .build();
-        userRepository.save(user);
 
-        sendVerificationEmail(user, siteURL);
+        try {
+            userRepository.save(user);
 
-        var jwtToken = jwtService.generateToken(user);
-        return ResponseObject
-                .builder()
-                .token(jwtToken)
-                .build();
+            sendVerificationEmail(user, siteURL);
+
+            var jwtToken = jwtService.generateToken(user);
+            return ResponseEntity.ok(ResponseObject.builder().statusCode(201).message("Đăng ký thành công").data(jwtToken).build());
+        }catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
-    public ResponseObject authenticate(AuthenticationRequest req){
+    public ResponseObject login(AuthenticationRequest req){
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 req.getEmail(),
                 req.getPassword()
@@ -66,7 +78,7 @@ public class AuthenticationService {
         var jwtToken = jwtService.generateToken(user);
         return ResponseObject
                 .builder()
-                .token(jwtToken)
+                .data(jwtToken)
                 .build();
     }
 

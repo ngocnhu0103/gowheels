@@ -31,6 +31,7 @@ public class UserModel implements UserDetails {
     private String email;
     @NotBlank(message = "Vui lòng nhập password")
     private String password;
+    private String fullName;
     private String phone;
     private String address;
     private String avatar;

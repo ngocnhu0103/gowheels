@@ -17,14 +17,18 @@ import java.io.UnsupportedEncodingException;
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 public class AuthController {
+
+//    @RequestBody : form
+//    @RequestParam: /api/v1/user?name=fjasdfhs
+//    @Pathvariable: /api/v1/user/sdlfaskldfhsadf
     private final AuthenticationService authenticationService;
     @PostMapping("/register")
     public ResponseEntity<ResponseObject> register(@RequestBody RegisterRequest req, HttpServletRequest httpServletRequest) throws UnsupportedEncodingException, MessagingException {
-        return ResponseEntity.ok(authenticationService.register(req,getSiteURL(httpServletRequest)));
+        return authenticationService.register(req,getSiteURL(httpServletRequest));
     }
-    @PostMapping("/authenticate")
-    public ResponseEntity<ResponseObject> authenticate(@RequestBody AuthenticationRequest req) {
-        return ResponseEntity.ok(authenticationService.authenticate(req));
+    @PostMapping("/login")
+    public ResponseEntity<ResponseObject> login(@RequestBody AuthenticationRequest req) {
+        return ResponseEntity.ok(authenticationService.login(req));
     }
     @GetMapping("/verify")
     public ResponseEntity<ResponseObject> verifyUser(@RequestParam("code") String code) {
