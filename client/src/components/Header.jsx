@@ -44,25 +44,21 @@ function Header() {
                 <div className='flex gap-8'>
                     <Button className='text-primary font-semibold' onClick={handleOpenLogin}>Đăng nhập</Button>
                     <Button variant="outlined" onClick={handleOpenRegister}>Đăng ký</Button>
-
-
                     <Modal
                         open={openLogin}
                         onClose={handleCloseLogin}
-                        ariaLabelledby="parent-modal-title"
-                        ariaDescribedby="parent-modal-description"
+                        aria-labelledby="parent-modal-title"
+                        aria-describedby="parent-modal-description"
                     >
                         <FormLogin />
                     </Modal>
                     <Modal
                         open={openRegister}
                         onClose={handleCloseRegister}
-                        ariaLabelledby="parent-modal-title"
-                        ariaDescribedby="parent-modal-description"
+                        aria-labelledby="parent-modal-title"
+                        aria-describedby="parent-modal-description"
                     >
-
                         <FormRegister />
-
                     </Modal>
                 </div>
             </div>

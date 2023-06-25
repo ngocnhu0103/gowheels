@@ -1,11 +1,15 @@
 import { FormControl, Input, InputLabel, } from "@mui/material";
 import { useFormik } from 'formik';
-import * as Yup from 'yup'
+import * as Yup from 'yup';
+
+import { useDispatch } from 'react-redux'
+import { registerAPI } from '../../api/authAPI';
 function FormRegister() {
-    // const handleRegister = (e) => {
-    //     e.preventDefault();
-    //     console.log(e);
-    // }
+    const dispatch = useDispatch();
+
+    const handleRegister = async (values) => {
+        await registerAPI(dispatch, values);
+    }
 
     const formik = useFormik({
         initialValues: {
@@ -21,7 +25,7 @@ function FormRegister() {
             repeatPassword: Yup.string().trim().required('Vui lòng nhập mật khẩu').oneOf([Yup.ref('password')], 'Mật khẩu không khớp')
         })
         , onSubmit: values => {
-            alert(JSON.stringify(values, null, 2));
+            handleRegister(values);
         },
     });
     return (

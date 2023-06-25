@@ -11,13 +11,13 @@ function FormLogin() {
             <form className="flex flex-col">
                 <FormControl margin="dense">
                     <InputLabel htmlFor="email">Email</InputLabel>
-                    <Input className="text-white" type="email" id="email" aria-describedby="email-helper" />
+                    <Input className="text-white" type="email" id="email" ariaDescribedby="email-helper" />
                     <FormHelperText id="email-helper">Vui lòng nhập email.</FormHelperText>
                 </FormControl>
 
                 <FormControl margin="dense">
                     <InputLabel htmlFor="password">Mật khẩu</InputLabel>
-                    <Input id="password" type="password" aria-describedby="password-helper" />
+                    <Input id="password" type="password" ariaDescribedby="password-helper" />
                     <FormHelperText id="password-helper">Vui lòng nhập mật khẩu.</FormHelperText>
                 </FormControl>
 
