@@ -4,8 +4,11 @@ import * as Yup from 'yup';
 
 import { useDispatch } from 'react-redux'
 import { registerAPI } from '../../api/authAPI';
+import { useState } from "react";
 function FormRegister() {
     const dispatch = useDispatch();
+
+    const [loading, setLoading] = useState(false)
 
     const handleRegister = async (values) => {
         await registerAPI(dispatch, values);
@@ -25,7 +28,9 @@ function FormRegister() {
             repeatPassword: Yup.string().trim().required('Vui lòng nhập mật khẩu').oneOf([Yup.ref('password')], 'Mật khẩu không khớp')
         })
         , onSubmit: values => {
+            setLoading(true)
             handleRegister(values);
+            setLoading(false)
         },
     });
     return (
@@ -69,8 +74,9 @@ function FormRegister() {
                     ) : null}
                 </FormControl>
 
-                <button className="mt-4 text-white bg-primary py-2 rounded-md">
-                    Đăng ký
+
+                <button disabled={loading} className={`mt-4 text-white bg-primary py-2 rounded-md ${loading && "disabled:bg-primary/20"}`}>
+                    {loading ? "Chờ trong giây lát......" : "Đăng ký"}
                 </button>
             </form>
         </div>

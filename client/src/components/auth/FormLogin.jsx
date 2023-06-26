@@ -1,29 +1,47 @@
-import { FormControl, FormHelperText, Input, InputLabel, } from "@mui/material";
-
+import { FormControl, Input, InputLabel } from "@mui/material";
+import { loginAPI } from "../../api/authAPI";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
 function FormLogin() {
-    const handleLogin = (e) => {
+    const dispatch = useDispatch();
+
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+    const [loading, setLoading] = useState(false)
+
+
+
+    const handleLogin = async (e) => {
+        console.log(123);
         e.preventDefault();
-        console.log(e);
+        setLoading(true)
+        await loginAPI(dispatch, { email, password });
+        setLoading(false)
+
     }
+
     return (
         <div className="w-1/4 mx-auto mt-24 bg-white p-4 rounded-xl">
             <h1 className="text-3xl font-bold text-center text-primary py-4">Đăng nhập</h1>
-            <form className="flex flex-col">
+            <form className="flex flex-col" onSubmit={handleLogin}>
                 <FormControl margin="dense">
                     <InputLabel htmlFor="email">Email</InputLabel>
-                    <Input className="text-white" type="email" id="email" ariaDescribedby="email-helper" />
-                    <FormHelperText id="email-helper">Vui lòng nhập email.</FormHelperText>
+                    <Input value={email} onChange={(e) => {
+                        setEmail(e.target.value)
+                    }} className="text-white" type="email" id="email" required />
                 </FormControl>
 
                 <FormControl margin="dense">
                     <InputLabel htmlFor="password">Mật khẩu</InputLabel>
-                    <Input id="password" type="password" ariaDescribedby="password-helper" />
-                    <FormHelperText id="password-helper">Vui lòng nhập mật khẩu.</FormHelperText>
+                    <Input value={password} onChange={(e) => {
+                        setPassword(e.target.value)
+                    }} id="password" type="password" required />
                 </FormControl>
 
 
-                <button className="mt-4 text-white bg-primary py-2 rounded-md" onClick={handleLogin}>
-                    Đăng nhập
+
+                <button disabled={loading} className={`mt-4 text-white bg-primary py-2 rounded-md ${loading && "disabled:bg-primary/20"}`}>
+                    {loading ? "Chờ trong giây lát......" : "Đăng nhập"}
                 </button>
             </form>
         </div>
