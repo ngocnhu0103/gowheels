@@ -14,6 +14,8 @@ const toastSlice = createSlice({
             state.show = true;
         },
         hideToast: (state) => {
+            state.type = "error";
+            state.message = "";
             state.show = false;
         }
     },

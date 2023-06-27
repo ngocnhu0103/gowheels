@@ -15,7 +15,6 @@ export const registerAPI = async (dispatch, values) => {
 }
 
 export const loginAPI = async (dispatch, values) => {
-    console.log(values);
     try {
         const data = await baseAPI.post("/auth/login", values);
 

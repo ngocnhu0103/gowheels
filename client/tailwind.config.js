@@ -8,6 +8,9 @@ export default {
     extend: {
       colors: {
         'primary': "#3E54AC"
+      },
+      fontFamily: {
+        'banner': ['Libre Baskerville', 'serif']
       }
     },
   },

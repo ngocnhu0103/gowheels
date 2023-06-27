@@ -1,7 +1,17 @@
 import axios from 'axios';
-
+import { store } from '../store/store'
 const baseAPI = axios.create({
     baseURL: "http://localhost:8080/api/v1",
+})
+
+baseAPI.interceptors.request.use((config) => {
+    if (["/auth/login", "/auth/register"].includes(config.url)) {
+        return config;
+    }
+
+    const token = store.getState().auth.token;
+    return config.headers.Authorization = token;
+
 })
 
 // Add a response interceptor
