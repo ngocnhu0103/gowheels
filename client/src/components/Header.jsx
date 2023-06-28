@@ -42,8 +42,8 @@ function Header() {
                 </ul>
                 <div className='h-1/2 w-[1px] bg-gray-300'></div>
                 <div className='flex gap-8'>
-                    <Button className='text-primary font-semibold' onClick={handleOpenLogin}>Đăng nhập</Button>
-                    <Button variant="outlined" onClick={handleOpenRegister}>Đăng ký</Button>
+                    <button className='text-primary font-semibold py-2 px-3' onClick={handleOpenLogin}>Đăng nhập</button>
+                    <button className='text-primary font-semibold border border-primary py-2 px-3 rounded' onClick={handleOpenRegister}>Đăng ký</button>
 
                 </div>
             </div>

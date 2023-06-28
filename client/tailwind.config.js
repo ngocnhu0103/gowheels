@@ -7,10 +7,10 @@ export default {
   theme: {
     extend: {
       colors: {
-        'primary': "#3E54AC"
+        'primary': "#D9534F"
       },
       fontFamily: {
-        'banner': ['Libre Baskerville', 'serif']
+        'banner': ['Coiny', 'cursive']
       }
     },
   },
