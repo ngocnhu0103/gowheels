@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
-import srcBg from "../assets/bg.png"
-import { Button, Modal } from '@mui/material'
+import { Modal } from '@mui/material'
 import { useState } from 'react';
+import srcBg from "../assets/bg.png"
 import FormRegister from './auth/FormRegister';
 import FormLogin from './auth/FormLogin';
 function Header() {
