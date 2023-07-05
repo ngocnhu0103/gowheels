@@ -6,11 +6,13 @@ import com.spring.server.repositories.UserRepository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -40,11 +42,11 @@ public class AuthenticationService {
         var userFound = userRepository.findByEmail(req.getEmail());
 
         if(userFound.isPresent()) {
-            return ResponseEntity.ofNullable(ResponseObject.builder().statusCode(401).message("Email đã được đăng ký").data("").build());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().statusCode(401).message("Email đã được đăng ký").data("").build());
         }
 
         if(!req.getPassword().equals(req.getRepeatPassword())){
-            return ResponseEntity.ofNullable(ResponseObject.builder().statusCode(401).message("Mật khẩu không khớp").data("").build());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().statusCode(401).message("Mật khẩu không khớp").data("").build());
         }
 
         UUID uuid = UUID.randomUUID();
@@ -68,18 +70,37 @@ public class AuthenticationService {
             return ResponseEntity.internalServerError().build();
         }
     }
-    public ResponseObject login(AuthenticationRequest req){
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                req.getEmail(),
-                req.getPassword()
-        ));
-        var user = userRepository.findByEmail(req.getEmail())
-                .orElseThrow();
-        var jwtToken = jwtService.generateToken(user);
-        return ResponseObject
-                .builder()
-                .data(jwtToken)
-                .build();
+    public ResponseEntity<ResponseObject> login(AuthenticationRequest req){
+
+            try{
+                var user = userRepository.findByEmail(req.getEmail());
+
+                if(!user.isPresent()){
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                            ResponseObject.builder().statusCode(404).message("Email chưa được đăng ký").data("").build()
+                    );
+                }
+
+                if(!passwordEncoder.matches(req.getPassword(),user.get().getPassword())){
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                            ResponseObject.builder().statusCode(401).message("Mật khẩu không đúng").data("").build()
+                    );
+                }
+
+                authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                        req.getEmail(),
+                        req.getPassword()
+                ));
+
+
+                var jwtToken = jwtService.generateToken(user.get());
+                return ResponseEntity.ok(ResponseObject.builder().statusCode(201).message("Đăng nhập thành công").data(jwtToken).build());
+            }
+            catch (Exception e) {
+                return ResponseEntity.internalServerError()
+                        .body(ResponseObject.builder().statusCode(500).message("Máy chủ không phản hồi").data("").build());
+            }
+
     }
 
     public void sendVerificationEmail(UserModel user, String siteURL) throws MessagingException, UnsupportedEncodingException {

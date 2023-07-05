@@ -28,7 +28,8 @@ public class AuthController {
     }
     @PostMapping("/login")
     public ResponseEntity<ResponseObject> login(@RequestBody AuthenticationRequest req) {
-        return ResponseEntity.ok(authenticationService.login(req));
+//        return ResponseEntity.ok(authenticationService.login(req));
+        return authenticationService.login(req);
     }
     @GetMapping("/verify")
     public ResponseEntity<ResponseObject> verifyUser(@RequestParam("code") String code) {
