@@ -1,6 +1,8 @@
 package com.spring.server.services;
 
-import ch.qos.logback.core.testUtil.RandomUtil;
+import com.spring.server.data.AuthenticationRequest;
+import com.spring.server.data.RegisterRequest;
+import com.spring.server.data.ResponseObject;
 import com.spring.server.models.*;
 import com.spring.server.repositories.UserRepository;
 import jakarta.mail.MessagingException;
@@ -12,16 +14,11 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
-import java.util.Random;
 import java.util.UUID;
-import java.util.random.RandomGenerator;
 
 @Service
 @RequiredArgsConstructor

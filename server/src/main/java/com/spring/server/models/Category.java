@@ -1,23 +1,26 @@
 package com.spring.server.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Table(name ="categories")
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class Category {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String categoryId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long categoryId;
     @Column(unique=true)
     private String categoryName;
+
+
+
 
 
 }

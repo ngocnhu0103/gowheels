@@ -35,7 +35,8 @@ public class UserModel implements UserDetails {
     private String phone;
     private String address;
     private String avatar;
-
+    @OneToMany(mappedBy = "owner" , cascade = CascadeType.ALL)
+    private List<Bike> bikes ;
     @Enumerated(EnumType.STRING)
     private Role role;
     private String verificationCode;

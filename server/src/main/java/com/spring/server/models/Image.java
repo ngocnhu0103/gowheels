@@ -14,8 +14,8 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Image {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String imgId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long imgId;
     private String url;
     @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     private Bike bike;

@@ -16,11 +16,12 @@ import java.util.List;
 @Builder
 public class Bike {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String bikeId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long bikeId;
     private String bikeName;
     private String description;
     private Double price;
+    private String status;
     private String color;
     @Column(unique = true)
     private String bikeCode;
@@ -28,6 +29,8 @@ public class Bike {
     private Category categoryId;
     @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     private Place placeId;
-    @ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     private List<Tag> tagList;
+    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    private UserModel owner;
 }

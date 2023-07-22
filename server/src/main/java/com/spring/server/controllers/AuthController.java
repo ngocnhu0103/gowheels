@@ -1,9 +1,8 @@
 package com.spring.server.controllers;
 
-import com.spring.server.models.AuthenticationRequest;
-import com.spring.server.models.RegisterRequest;
-import com.spring.server.models.ResponseObject;
-import com.spring.server.models.UserModel;
+import com.spring.server.data.AuthenticationRequest;
+import com.spring.server.data.RegisterRequest;
+import com.spring.server.data.ResponseObject;
 import com.spring.server.services.AuthenticationService;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
