@@ -29,7 +29,11 @@ public class Bike {
     private Category categoryId;
     @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     private Place placeId;
-    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "bike_tag",
+            joinColumns = @JoinColumn(name = "bikeId"),
+            inverseJoinColumns = @JoinColumn(name = "tagId"))
     private List<Tag> tagList;
     @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     private UserModel owner;

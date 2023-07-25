@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Table(name="tags")
@@ -23,4 +24,6 @@ public class Tag {
 
     @Column(unique = true)
     private String tagName;
+    @ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY,mappedBy = "tagList")
+    List<Bike> bikes;
 }

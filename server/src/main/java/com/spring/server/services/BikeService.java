@@ -33,13 +33,11 @@ public class BikeService {
                 var place = placeRepository.findById(bikeData.getPlaceId());
                 var category = categoryRepository.findById(bikeData.getCategoryId());
 
-                List<Tag> tags = new ArrayList<>();
-                for(Long t : bikeData.getTagList()){
-                    var tag = tagRepository.findById(t);
-                    tags.add(tag.get());
-                }
+//                List<Tag> tags = new ArrayList<>();
+
 
                 Bike bike = new Bike();
+                bike.setBikeId(1L);
                 bike.setBikeName(bikeData.getBikeName());
                 bike.setBikeCode(bikeData.getBikeCode());
                 bike.setColor(bikeData.getColor());
@@ -48,12 +46,18 @@ public class BikeService {
                 bike.setStatus(bikeData.getStatus());
                 bike.setOwner(owner.get());
                 bike.setCategoryId(category.get());
-                bike.setTagList(tags);
+//                bike.setTagList(tags);
                 bike.setPlaceId(place.get());
-                bikeRepository.save(bike);
+//                bikeRepository.save(bike);
+                for(Long t : bikeData.getTagList()){
+                    var tag = tagRepository.findById(t);
+//                    tags.add(tag.get());
+                    tag.get().getBikes().add(bike);
+                    tagRepository.save(tag.get());
+                }
                 return ResponseEntity.ok(ResponseObject.builder().statusCode(201).message("Tạo xe thành công").data(bike).build());
             }
-            return new ResponseEntity<>(ResponseObject.builder().statusCode(402).message("Tag đã tồn tại").data("").build(), HttpStatus.CONFLICT);
+            return new ResponseEntity<>(ResponseObject.builder().statusCode(402).message("Biển số xe đã tồn tại").data("").build(), HttpStatus.CONFLICT);
         }catch (Exception e){
             System.out.println(e.getMessage());
             return ResponseEntity.internalServerError().build();
