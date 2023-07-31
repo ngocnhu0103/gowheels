@@ -2,6 +2,7 @@ package com.spring.server.models;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -14,16 +15,16 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-
 public class Tag {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long tagId;
-
-
     @Column(unique = true)
     private String tagName;
+    @JsonIgnore
     @ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY,mappedBy = "tagList")
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     List<Bike> bikes;
 }

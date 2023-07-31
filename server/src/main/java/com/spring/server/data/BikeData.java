@@ -1,9 +1,6 @@
 package com.spring.server.data;
 
-import com.spring.server.models.Category;
-import com.spring.server.models.Place;
-import com.spring.server.models.Tag;
-import com.spring.server.models.UserModel;
+import com.spring.server.models.*;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,4 +21,5 @@ public class BikeData {
     private Long categoryId;
     private String placeId;
     private List<Long> tagList;
+    private List<String> images;
 }

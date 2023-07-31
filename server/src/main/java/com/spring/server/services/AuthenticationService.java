@@ -14,6 +14,8 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -69,34 +71,33 @@ public class AuthenticationService {
     }
     public ResponseEntity<ResponseObject> login(AuthenticationRequest req){
 
-            try{
-                var user = userRepository.findByEmail(req.getEmail());
 
-                if(!user.isPresent()){
+                Authentication authentication =  authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                        req.getEmail(),
+                        req.getPassword()
+                ));
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+                UserModel user = (UserModel) authentication.getPrincipal();
+//                var user = userRepository.findByEmail(req.getEmail());
+                System.out.println(user);
+                if(user == null){
                     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                             ResponseObject.builder().statusCode(404).message("Email chưa được đăng ký").data("").build()
                     );
                 }
 
-                if(!passwordEncoder.matches(req.getPassword(),user.get().getPassword())){
+                if(!passwordEncoder.matches(req.getPassword(),user.getPassword())){
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                             ResponseObject.builder().statusCode(401).message("Mật khẩu không đúng").data("").build()
                     );
                 }
 
-                authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                        req.getEmail(),
-                        req.getPassword()
-                ));
 
 
-                var jwtToken = jwtService.generateToken(user.get());
+
+                var jwtToken = jwtService.generateToken(user);
                 return ResponseEntity.ok(ResponseObject.builder().statusCode(201).message("Đăng nhập thành công").data(jwtToken).build());
-            }
-            catch (Exception e) {
-                return ResponseEntity.internalServerError()
-                        .body(ResponseObject.builder().statusCode(500).message("Máy chủ không phản hồi").data("").build());
-            }
+
 
     }
 
