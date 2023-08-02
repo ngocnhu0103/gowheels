@@ -19,8 +19,10 @@ public class BikeController {
         return bikeService.createBike(bikeData,authentication);
     }
     @GetMapping("/all")
-    public ResponseEntity<ResponseObject> getAllBike() {
-        return bikeService.getAllBike();
+    public ResponseEntity<ResponseObject> getAllBike(@RequestParam(required = false) String bikeName,
+                                                     @RequestParam(defaultValue = "0") int page,
+                                                     @RequestParam(defaultValue = "12" ) int size) {
+        return bikeService.getAllBike(bikeName,page,size);
     }
     @GetMapping("/{id}")
     public ResponseEntity<ResponseObject> getBikeById(@PathVariable Long id) {
@@ -34,4 +36,5 @@ public class BikeController {
     public ResponseEntity<ResponseObject> editBikeById(@PathVariable Long id, @RequestBody BikeData newBike) {
         return bikeService.editBikeById(id, newBike);
     }
+
 }

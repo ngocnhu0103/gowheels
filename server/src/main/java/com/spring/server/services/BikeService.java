@@ -8,6 +8,9 @@ import com.spring.server.models.Image;
 import com.spring.server.models.Tag;
 import com.spring.server.repositories.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -26,6 +29,7 @@ public class BikeService {
     private final TagRepository tagRepository;
     private final PlaceRepository placeRepository;
     private final ImageRepository imageRepository;
+    private final BikePaginationRepository bikePaginationRepository;
     public ResponseEntity<ResponseObject> createBike(BikeData bikeData, Authentication authentication){
         System.out.println(authentication.getName());
         try{
@@ -75,9 +79,17 @@ public class BikeService {
             return ResponseEntity.internalServerError().build();
         }
     }
-    public ResponseEntity<ResponseObject> getAllBike(){
+    public ResponseEntity<ResponseObject> getAllBike(String bikeName, int page, int size){
         try{
-            var bikeList = bikeRepository.findAll();
+            List<Bike> bikeList = new ArrayList<>();
+            Page<Bike> pageBikes;
+            Pageable pageable = PageRequest.of(page, size);
+            if(bikeName == null ){
+                pageBikes = bikePaginationRepository.findAll(pageable);
+            } else {
+                pageBikes = bikePaginationRepository.findByBikeNameContaining(bikeName,pageable);
+            }
+            bikeList = pageBikes.getContent();
             System.out.println(bikeList);
             return ResponseEntity.ok(ResponseObject.builder().statusCode(201).message("thành công").data(bikeList).build());
         }catch (Exception e){
@@ -124,6 +136,14 @@ public class BikeService {
                     var tag = tagRepository.findById(t).get();
                     tags.add(tag);
                 }
+                List<Image> images = new ArrayList<>();
+                for(String t : newBike.getImages()){
+                    Image img = new Image();
+                    img.setUrl(t);
+
+                    images.add(img);
+
+                }
                 bike.get().setBikeName(newBike.getBikeName());
                 bike.get().setBikeCode(newBike.getBikeCode());
                 bike.get().setStatus(newBike.getStatus());
@@ -132,7 +152,7 @@ public class BikeService {
                 bike.get().setCategoryId(category.get());
                 bike.get().setDescription(newBike.getDescription());
                 bike.get().setColor(newBike.getColor());
-
+                bike.get().setImages(images);
                 bikeRepository.save(bike.get());
                 return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().statusCode(201).message("Update bike thành công").data(bike.get()).build());
             }
