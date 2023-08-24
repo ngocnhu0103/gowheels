@@ -30,6 +30,11 @@ function Header() {
             <div className='h-full flex items-center gap-8'>
                 <ul className='font-semibold flex gap-8'>
                     <li >
+                        <Link to={'/profile/update'}>
+                            Đăng ký làm chủ xe
+                        </Link>
+                    </li>
+                    <li >
                         <Link to={'/about'}>
                             Giới thiệu
                         </Link>

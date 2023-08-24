@@ -9,4 +9,20 @@
   html {
     font-family: 'Manrope', system-ui, sans-serif;
   }
+  
 }
+.slick-prev, .slick-next , .slick-dots li , .slick-dots li button{
+  width: 40px !important;
+  height: 40px !important;
+}
+.slick-prev:before, .slick-next:before, .slick-dots li button:before{
+  color: #D9534F !important;
+  font-size: 40px !important;
+}
+.slick-dots{
+  bottom: -65px !important;
+}
+
+.slick-list {margin: 0 -10px !important;}
+.slick-slide>div {padding: 0 10px !important;}
+

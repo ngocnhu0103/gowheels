@@ -2,9 +2,12 @@ import { Button } from "@mui/material";
 import { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { Link } from "react-router-dom";
 function Search({ showCalendar, setShowCalendar }) {
     const [startDate, setStartDate] = useState(new Date());
     const [endDate, setEndDate] = useState(new Date());
+
+    const [type, setType] = useState("");
 
 
     const [timeSelected, setTimeSelected] = useState({
@@ -13,20 +16,20 @@ function Search({ showCalendar, setShowCalendar }) {
     });
 
     const onChange = (dates) => {
-        console.log(dates);
         const [start, end] = dates;
         setStartDate(start);
         setEndDate(end);
-
     };
 
 
     const hours = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
     return (
-        <div className="flex border border-primary rounded-xl w-4/5 gap-5 justify-between p-5 mx-auto my-5 ">
+        <div className="flex border border-primary rounded-xl w-4/5 gap-5 justify-between items-center p-5 mx-auto my-5 ">
             <div className="relative after:bg-primary/50 after:w-[1px] after:h-full after:absolute after:left-[200%] after:top-0">
-                <label className="block text-gray-600 text-sm">Chọn loại xe</label>
-                <select name="category" className="outline-none">
+                <label className="block mb-2 text-gray-600 text-sm">Chọn loại xe</label>
+                <select name="category" className="outline-none" value={type} onChange={(e) => {
+                    setType(e.target.value)
+                }}>
                     <option value="" defaultChecked>Tất cả</option>
                     <option value="car">Xe ô tô</option>
                     <option value="motobike">Xe máy</option>
@@ -82,7 +85,10 @@ function Search({ showCalendar, setShowCalendar }) {
                 </div>}
 
             </div>
-            <Button variant="contained" color="primary">Tìm kiếm</Button>
+            <Link
+                to={`/bikes/?startDate=${startDate.getTime()}&endDate=${endDate.getTime()}&type=${type}&hour=${timeSelected.hour}&minutes=${timeSelected.minutes}`}>
+                <Button variant="contained" color="primary">Tìm kiếm</Button>
+            </Link>
         </div>
     );
 }

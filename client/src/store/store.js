@@ -10,6 +10,7 @@ import toastSlice from './toastSlice'
 
 const persistConfig = {
     key: 'root',
+    whitelist: ['auth'],
     storage, // cookies, sesseion
 }
 

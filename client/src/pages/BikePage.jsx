@@ -1,10 +1,16 @@
 import { useSearchParams } from "react-router-dom";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
 function BikePage() {
     let [searchParams, setSearchParams] = useSearchParams();
-
-    console.log(searchParams.get('category'));
     return (
-        <h1>h1</h1>
+        <main className="container w-4/5 mx-auto" >
+            <Header />
+
+
+            <Footer />
+
+        </main>
     );
 }
 

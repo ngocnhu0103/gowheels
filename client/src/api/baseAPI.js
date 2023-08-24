@@ -10,6 +10,9 @@ baseAPI.interceptors.request.use((config) => {
     }
 
     const token = store.getState().auth.token;
+    if (!token) {
+        return config;
+    }
     return config.headers.Authorization = token;
 
 })
@@ -23,6 +26,7 @@ baseAPI.interceptors.response.use(function (response) {
     return response
 }, function (error) {
     // Do something with response error
+    console.log(error);
     throw error.response.data;
 });
 

@@ -3,28 +3,49 @@ import Banner from "../components/home/Banner";
 import Category from "../components/home/Category";
 import Card from "../components/Card";
 import Search from "../components/home/Search";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Guide from "../components/home/Guide";
+import Footer from "../components/Footer";
+import Places from "../components/home/Places";
+import { useDispatch } from "react-redux";
+import { getAllBikeAPI } from "../api/bikeAPI";
 function Home() {
     const [showCalendar, setShowCalendar] = useState(false);
-
+    const [filter, setFilter] = useState({
+        bikeName: "",
+        page: 0,
+        size: 12
+    })
+    const dispatch = useDispatch();
+    var getAllBike = async (dispatch, filter) => {
+        await getAllBikeAPI(dispatch, filter)
+    }
+    useEffect(() => {
+        getAllBike(dispatch, filter)
+    }, [])
     return <main className="container w-4/5 mx-auto" onClick={() => { setShowCalendar(false) }}>
         <Header />
         <Search showCalendar={showCalendar} setShowCalendar={setShowCalendar} />
+
         <Banner />
+        <div className="py-8">
+            <h1 className="text-center text-5xl font-banner text-primary pb-8">Địa điểm nổi bật</h1>
+
+            <Places />
+
+        </div>
+
         <Category />
         <div className="py-8">
             <h1 className="text-center text-5xl font-banner text-primary pb-8">Xe nổi bật</h1>
             <ul className="grid grid-cols-4 gap-5">
                 <Card />
-                <Card />
-                <Card />
-                <Card />
-                <Card />
-                <Card />
-                <Card />
-                <Card />
+
             </ul>
         </div>
+        <Guide />
+        <div className="h-[1px] bg-primary my-8 "></div>
+        <Footer />
 
     </main>
 }
