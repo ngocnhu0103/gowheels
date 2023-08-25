@@ -8,6 +8,12 @@ import About from "../pages/AboutPage";
 import Bike from "../pages/BikePage";
 import UpdateProfile from "../pages/UpdateProfile";
 import NotFound from "../pages/NotFound";
+import BikeFavs from "../pages/BikeFavs";
+import Order from "../pages/Order";
+import Mystranport from "../pages/MyStranport";
+import MyStranport from "../pages/MyStranport";
+import MyOrder from "../pages/MyOrder";
+import DeleteAccount from "../pages/DeleteAccount";
 
 const router = createBrowserRouter([
     {
@@ -18,11 +24,34 @@ const router = createBrowserRouter([
     {
         path: "/profile",
         element: <Profile />,
+        children: [
+            {
+                path: "update",
+                element: <UpdateProfile />,
+            },
+            {
+                path: "favs",
+                element: <BikeFavs />,
+            },
+            {
+                path: "order",
+                element: <Order />,
+            },
+            {
+                path: "mystranport",
+                element: <MyStranport />,
+            },
+            {
+                path: "myorder",
+                element: <MyOrder />,
+            },
+            {
+                path: "deleteaccount",
+                element: <DeleteAccount />,
+            },
+        ]
     },
-    {
-        path: "/profile/update",
-        element: <UpdateProfile />,
-    },
+
     {
         path: "/about",
         element: <About />,
