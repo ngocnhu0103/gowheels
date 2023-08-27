@@ -1,8 +1,10 @@
-import React from 'react'
 
 function MyStranport() {
     return (
-        <div>Mystranport</div>
+        <div>
+            <h1 className='text-center text-3xl font-banner text-primary pb-5'>Xe của tôi</h1>
+
+        </div>
     )
 }
 

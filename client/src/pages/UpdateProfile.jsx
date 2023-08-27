@@ -1,11 +1,36 @@
-import React from 'react'
-import Header from '../components/Header'
-import Footer from '../components/Footer'
-import { Link } from 'react-router-dom'
-import Navigation from '../components/profile/Navigation';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 import CenterFocusWeakIcon from '@mui/icons-material/CenterFocusWeak';
-import { FormControl, Input, InputLabel } from '@mui/material';
 function UpdateProfile() {
+    const formik = useFormik({
+        initialValues: {
+            email: "fsadafasdfsdf",
+            address: "",
+            phone: "",
+            idCode: "",
+            accountNumber: ""
+        },
+        validationSchema: Yup.object({
+            email: Yup.string().trim().email('email không đúng định dạng').required('Vui lòng nhập email'),
+            accountNumber: Yup.string().trim(),
+            address: Yup.string().trim(),
+            phone: Yup.string().trim().length(10, "Mật khẩu phải là 10 ký tự").required('Vui lòng nhập số điện thoại'),
+            idCode: Yup.string().trim().required('Vui lòng nhập mật khẩu')
+        })
+    })
+    const handleUpdate = (e) => {
+        e.preventDefault()
+        console.log("updaate");
+        formik.validateForm()
+
+        formik.handleSubmit(e)
+
+    }
+    const handleRegisterOwner = (e) => {
+        e.preventDefault()
+        console.log("chu xe");
+        console.log(e);
+    }
     return (
         <div>
             <h1 className='text-center text-3xl font-banner text-primary'>Thông tin tài khoản</h1>
@@ -27,12 +52,18 @@ function UpdateProfile() {
                     </div>
                     <div className='flex items-center gap-4 '>
                         <label className='w-2/6' htmlFor="">Email</label>
-                        <input className='flex-1 py-2 px-1 outline-none ' type="text" />
+                        <input disabled value={formik.values.email} className='flex-1 py-2 px-1 outline-none cursor-not-allowed disabled:text-gray-200' type="text" />
                     </div>
                     <div className='flex items-center gap-4 '>
                         <label className='w-2/6' htmlFor="">Địa chỉ</label>
-                        <input className='flex-1 py-2 px-1 outline-none ' type="text" />
+                        <input onBlur={formik.handleBlur} onChange={formik.handleChange} value={formik.values.phone} className='flex-1 py-2 px-1 outline-none ' type="text" />
+
                     </div>
+                    {formik.touched.phone && formik.errors.phone ? (
+                        <span className="text-rose-400 text-xs font-semibold">
+                            {formik.errors.phone}
+                        </span>
+                    ) : null}
                     <div className='flex items-center gap-4 '>
                         <label className='w-2/6' htmlFor="">Số điện thoại</label>
                         <input className='flex-1 py-2 px-1 outline-none ' type="text" />
@@ -49,9 +80,14 @@ function UpdateProfile() {
 
 
 
-                    <button className={`mt-4 text-white bg-primary py-2 rounded-md `}>
-                        Cập nhật thông tin
-                    </button>
+                    <div className='flex justify-between'>
+                        <button className={`mt-4 text-white bg-primary py-2 px-8 rounded-md `} onClick={handleUpdate}>
+                            Cập nhật thông tin
+                        </button>
+                        <button className={`mt-4 text-primary border-primary border  py-2 px-8 rounded-md `} onClick={handleRegisterOwner}>
+                            Đăng ký làm chủ xe
+                        </button>
+                    </div>
                 </form>
 
             </div>
