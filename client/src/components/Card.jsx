@@ -3,7 +3,20 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import PlaceIcon from '@mui/icons-material/Place';
 import xe1 from '../assets/xe1.jpg'
-function Card({ isRow = false }) {
+import EditIcon from '@mui/icons-material/Edit';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import { Modal } from "@mui/material";
+import { useState } from "react";
+function Card({ isRow = false, isManage = false }) {
+    const [openDeleteBike, setOpenDeleteBike] = useState(false);
+
+    const handleOpenDeleteBike = () => {
+        setOpenDeleteBike(true)
+    }
+    const handleCloseDeleteBike = () => {
+        setOpenDeleteBike(false)
+    }
     return (
 
         <li>
@@ -48,6 +61,31 @@ function Card({ isRow = false }) {
                         </span>
                     </div>
                 </div>
+                {
+                    isManage ?
+                        <ul className="ml-auto ">
+                            <li className="mb-3 cursor-pointer">
+                                <EditIcon />
+                            </li>
+
+                            <li className="mb-3 cursor-pointer">
+                                <VisibilityOffIcon />
+                            </li>
+                            <li onClick={handleOpenDeleteBike} className="mb-3 cursor-pointer">
+                                <DeleteOutlineIcon />
+                            </li>
+                            <Modal
+                                open={openDeleteBike}
+                                onClose={handleCloseDeleteBike}
+                                aria-labelledby="parent-modal-title"
+                                aria-describedby="parent-modal-description"
+                            >
+                                <>
+                                    <div>deleteBike</div>
+                                </>
+                            </Modal>
+                        </ul> : null
+                }
             </div>
         </li >
 

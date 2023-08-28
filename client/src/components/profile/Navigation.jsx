@@ -7,6 +7,7 @@ import ListAltIcon from '@mui/icons-material/ListAlt';
 import CommuteIcon from '@mui/icons-material/Commute';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import StarBorderIcon from '@mui/icons-material/StarBorder';
 function Navigation({ activeName }) {
     return (
         <div className='bg-gray-100/90 p-4 rounded-xl'>
@@ -40,6 +41,12 @@ function Navigation({ activeName }) {
                     <Link className='flex items-center gap-4' to={'/profile/myorder'}>
                         <CommuteIcon />
                         <span>Đơn hàng của tôi</span>
+                    </Link>
+                </li>
+                <li className='hover:bg-white p-4 font-medium text-lg'>
+                    <Link className='flex items-center gap-4' to={'/profile/rate'}>
+                        <StarBorderIcon />
+                        <span>Quản lý đánh giá</span>
                     </Link>
                 </li>
                 <li className={`hover:bg-white p-4 border-b font-medium text-lg ${activeName === "logout" ? "text-primary" : ""}`}>

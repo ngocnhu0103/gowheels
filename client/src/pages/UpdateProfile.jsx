@@ -1,36 +1,54 @@
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import CenterFocusWeakIcon from '@mui/icons-material/CenterFocusWeak';
+import { useEffect } from 'react';
 function UpdateProfile() {
-    const formik = useFormik({
-        initialValues: {
-            email: "fsadafasdfsdf",
-            address: "",
-            phone: "",
-            idCode: "",
-            accountNumber: ""
-        },
+    const initialValues = {
+        email: "fsadafasdfsdf",
+        address: "",
+        phone: "",
+        idCode: "",
+        accountNumber: "",
+        gender: "",
+    }
+    const formikUpdate = useFormik({
+        initialValues,
         validationSchema: Yup.object({
-            email: Yup.string().trim().email('email không đúng định dạng').required('Vui lòng nhập email'),
             accountNumber: Yup.string().trim(),
             address: Yup.string().trim(),
-            phone: Yup.string().trim().length(10, "Mật khẩu phải là 10 ký tự").required('Vui lòng nhập số điện thoại'),
-            idCode: Yup.string().trim().required('Vui lòng nhập mật khẩu')
+            phone: Yup.string().trim().matches(/(84|0[3|5|7|8|9])+([0-9]{8})\b/g, "Không đúng định dạng"),
+            idCode: Yup.string().trim(),
+
         })
     })
+    const formikRegister = useFormik({
+        initialValues,
+        validationSchema: Yup.object({
+            accountNumber: Yup.string().trim().required('Vui lòng nhập số tài khoản'),
+            address: Yup.string().trim().required('Vui lòng nhập địa chỉ'),
+            phone: Yup.string().trim().matches(/(84|0[3|5|7|8|9])+([0-9]{8})\b/g, "Không đúng định dạng").required('Vui lòng nhập số điện thoại'),
+            idCode: Yup.string().trim().required('Vui lòng nhập số căn cước công dân')
+        })
+    })
+
     const handleUpdate = (e) => {
         e.preventDefault()
-        console.log("updaate");
-        formik.validateForm()
-
-        formik.handleSubmit(e)
+        console.log("update");
+        formikRegister.handleReset(e);
+        console.log(formikUpdate.values);
+        formikUpdate.handleSubmit(e)
 
     }
     const handleRegisterOwner = (e) => {
         e.preventDefault()
         console.log("chu xe");
-        console.log(e);
+        console.log(formikRegister.values);
+        formikRegister.handleSubmit(e)
+
     }
+    useEffect(() => {
+
+    }, [])
     return (
         <div>
             <h1 className='text-center text-3xl font-banner text-primary'>Thông tin tài khoản</h1>
@@ -47,35 +65,82 @@ function UpdateProfile() {
 
                 <form className="flex flex-col col-span-3 gap-5">
                     <div className='flex items-center gap-4 '>
-                        <label className='w-2/6' htmlFor="">Ngày sinh</label>
-                        <input className='flex-1 py-2 px-1 outline-none ' type="text" />
-                    </div>
-                    <div className='flex items-center gap-4 '>
                         <label className='w-2/6' htmlFor="">Email</label>
-                        <input disabled value={formik.values.email} className='flex-1 py-2 px-1 outline-none cursor-not-allowed disabled:text-gray-200' type="text" />
+                        <input name='email' disabled value={formikRegister.values.email} className='flex-1 py-2 px-1 outline-none cursor-not-allowed disabled:text-gray-200' type="text" />
                     </div>
                     <div className='flex items-center gap-4 '>
-                        <label className='w-2/6' htmlFor="">Địa chỉ</label>
-                        <input onBlur={formik.handleBlur} onChange={formik.handleChange} value={formik.values.phone} className='flex-1 py-2 px-1 outline-none ' type="text" />
+                        <label className='w-2/6' htmlFor="">Giới tính</label>
+                        <input name='gender' disabled value={formikRegister.values.gender} className='flex-1 py-2 px-1 outline-none ' type="text" />
+                    </div>
+                    <div className='flex items-center gap-4 '>
+                        <label className='w-2/6' htmlFor="address">Địa chỉ</label>
+                        <input onBlur={(e) => {
+                            formikUpdate.handleBlur(e)
+                            formikRegister.handleBlur(e)
+
+                        }} onChange={(e) => {
+                            formikUpdate.handleChange(e)
+                            formikRegister.handleChange(e)
+
+                        }} value={formikRegister.values.address} className='flex-1 py-2 px-1 outline-none ' name='address' type="text" />
 
                     </div>
-                    {formik.touched.phone && formik.errors.phone ? (
+                    {formikRegister.touched.address && formikRegister.errors.address ? (
                         <span className="text-rose-400 text-xs font-semibold">
-                            {formik.errors.phone}
+                            {formikRegister.errors.address}
                         </span>
                     ) : null}
                     <div className='flex items-center gap-4 '>
-                        <label className='w-2/6' htmlFor="">Số điện thoại</label>
-                        <input className='flex-1 py-2 px-1 outline-none ' type="text" />
+                        <label className='w-2/6' htmlFor="phone">Số điện thoại</label>
+                        <input onBlur={(e) => {
+                            formikUpdate.handleBlur(e)
+                            formikRegister.handleBlur(e)
+
+                        }} onChange={(e) => {
+                            formikUpdate.handleChange(e)
+                            formikRegister.handleChange(e)
+
+                        }} value={formikRegister.values.phone} name='phone' className='flex-1 py-2 px-1 outline-none ' type="text" />
                     </div>
+                    {formikRegister.touched.phone && formikRegister.errors.phone ? (
+                        <span className="text-rose-400 text-xs font-semibold">
+                            {formikRegister.errors.phone}
+                        </span>
+                    ) : null}
                     <div className='flex items-center gap-4 '>
                         <label className='w-2/6' htmlFor="">Căn cước công dân</label>
-                        <input className='flex-1 py-2 px-1 outline-none ' type="text" />
+                        <input onBlur={(e) => {
+                            formikUpdate.handleBlur(e)
+                            formikRegister.handleBlur(e)
+
+                        }} onChange={(e) => {
+                            formikUpdate.handleChange(e)
+                            formikRegister.handleChange(e)
+
+                        }} value={formikRegister.values.idCode} name='idCode' className='flex-1 py-2 px-1 outline-none ' type="text" />
                     </div>
+                    {formikRegister.touched.idCode && formikRegister.errors.idCode ? (
+                        <span className="text-rose-400 text-xs font-semibold">
+                            {formikRegister.errors.idCode}
+                        </span>
+                    ) : null}
                     <div className='flex items-center gap-4 '>
                         <label className='w-2/6' htmlFor="">Số tài khoản</label>
-                        <input className='flex-1 py-2 px-1 outline-none ' type="text" />
+                        <input onBlur={(e) => {
+                            formikUpdate.handleBlur(e)
+                            formikRegister.handleBlur(e)
+
+                        }} onChange={(e) => {
+                            formikUpdate.handleChange(e)
+                            formikRegister.handleChange(e)
+
+                        }} value={formikRegister.values.accountNumber} name='accountNumber' className='flex-1 py-2 px-1 outline-none ' type="text" />
                     </div>
+                    {formikRegister.touched.accountNumber && formikRegister.errors.accountNumber ? (
+                        <span className="text-rose-400 text-xs font-semibold">
+                            {formikRegister.errors.accountNumber}
+                        </span>
+                    ) : null}
 
 
 

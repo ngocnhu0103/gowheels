@@ -14,6 +14,7 @@ import Mystranport from "../pages/MyStranport";
 import MyStranport from "../pages/MyStranport";
 import MyOrder from "../pages/MyOrder";
 import DeleteAccount from "../pages/DeleteAccount";
+import Rate from "../pages/Rate";
 
 const router = createBrowserRouter([
     {
@@ -49,6 +50,10 @@ const router = createBrowserRouter([
                 path: "deleteaccount",
                 element: <DeleteAccount />,
             },
+            {
+                path: "rate",
+                element: <Rate />
+            }
         ]
     },
 
