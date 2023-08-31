@@ -17,7 +17,7 @@ function Home() {
         size: 12
     })
     const dispatch = useDispatch();
-    var getAllBike = async (dispatch, filter) => {
+    const getAllBike = async (dispatch, filter) => {
         await getAllBikeAPI(dispatch, filter)
     }
     useEffect(() => {
@@ -40,7 +40,6 @@ function Home() {
             <h1 className="text-center text-5xl font-banner text-primary pb-8">Xe nổi bật</h1>
             <ul className="grid grid-cols-4 gap-5">
                 <Card />
-
             </ul>
         </div>
         <Guide />

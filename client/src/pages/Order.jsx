@@ -1,41 +1,20 @@
-import { useState } from "react"
+import { useState } from "react";
+import Tab from "../components/profile/Tab";
+import BookCard from "../components/BookCard";
 
 function Order() {
-    const [tab, setTab] = useState('1')
+    const [tab, setTab] = useState("1");
     return (
         <div>
-            <h1 className='text-center text-3xl font-banner text-primary pb-5'>Quản lý Đơn hàng</h1>
-            <div className="grid grid-cols-5 text-center bg-gray-200">
-                <p onClick={() => {
-                    setTab('1')
-                }} className={`relative cursor-pointer font-semibold hover:text-primary py-2 
-                ${tab === '1' ? 'bg-gray-400/50 text-gray-800' : ' text-gray-500'}
-                `}>Chờ duyệt</p>
-                <p onClick={() => {
-                    setTab('2')
-                }} className={`relative cursor-pointer font-semibold hover:text-primary py-2 
-                ${tab === '2' ? 'bg-gray-400/50 text-gray-800' : ' text-gray-500'}
-                `}>Chờ bàn giao</p>
-                <p onClick={() => {
-                    setTab('3')
-                }} className={`relative cursor-pointer font-semibold hover:text-primary py-2 
-                ${tab === '3' ? 'bg-gray-400/50 text-gray-800' : ' text-gray-500'}
-                `}>Đã bàn giao</p>
-                <p onClick={() => {
-                    setTab('4')
-                }} className={`relative cursor-pointer font-semibold hover:text-primary py-2 
-                ${tab === '4' ? 'bg-gray-400/50 text-gray-800' : ' text-gray-500'}
-                `}>Hoàn thành</p>
-                <p onClick={() => {
-                    setTab('5')
-                }} className={`py-2 cursor-pointer font-semibold hover:text-primary text-gray-500
-                ${tab === '5' ? 'bg-gray-400/50 text-gray-800' : ' text-gray-500'}
-                `}>Đã hủy</p>
-
-            </div>
-
+            <h1 className="text-center text-3xl font-banner text-primary pb-5">
+                Quản lý Đơn hàng
+            </h1>
+            <Tab tab={tab} setTab={setTab} />
+            <ul className="mt-5 flex flex-col gap-5 relative max-h-[70vh] overflow-auto snap-y snap-mandatory">
+                <BookCard />
+            </ul>
         </div>
-    )
+    );
 }
 
-export default Order
+export default Order;
