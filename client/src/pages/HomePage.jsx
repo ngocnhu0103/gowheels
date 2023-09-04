@@ -14,39 +14,44 @@ function Home() {
     const [filter, setFilter] = useState({
         bikeName: "",
         page: 0,
-        size: 12
-    })
+        size: 12,
+    });
     const dispatch = useDispatch();
     const getAllBike = async (dispatch, filter) => {
-        await getAllBikeAPI(dispatch, filter)
-    }
+        await getAllBikeAPI(dispatch, filter);
+    };
     useEffect(() => {
-        getAllBike(dispatch, filter)
-    }, [])
-    return <main className="container w-4/5 mx-auto" onClick={() => { setShowCalendar(false) }}>
-        <Header />
-        <Search showCalendar={showCalendar} setShowCalendar={setShowCalendar} />
+        getAllBike(dispatch, filter);
+    }, []);
+    return (
+        <main
+            className="container w-4/5 mx-auto"
+            onClick={() => {
+                setShowCalendar(false);
+            }}
+        >
+            <Header />
+            <Search showCalendar={showCalendar} setShowCalendar={setShowCalendar} />
 
-        <Banner />
-        <div className="py-8">
-            <h1 className="text-center text-5xl font-banner text-primary pb-8">Địa điểm nổi bật</h1>
+            <Banner />
+            <div className="py-8">
+                <h1 className="text-center text-5xl font-banner text-primary pb-8">Địa điểm nổi bật</h1>
 
-            <Places />
+                <Places />
+            </div>
 
-        </div>
-
-        <Category />
-        <div className="py-8">
-            <h1 className="text-center text-5xl font-banner text-primary pb-8">Xe nổi bật</h1>
-            <ul className="grid grid-cols-4 gap-5">
-                <Card />
-            </ul>
-        </div>
-        <Guide />
-        <div className="h-[1px] bg-primary my-8 "></div>
-        <Footer />
-
-    </main>
+            <Category />
+            <div className="py-8">
+                <h1 className="text-center text-5xl font-banner text-primary pb-8">Xe nổi bật</h1>
+                <ul className="grid grid-cols-4 gap-5">
+                    <Card />
+                </ul>
+            </div>
+            <Guide />
+            <div className="h-[1px] bg-primary my-8 "></div>
+            <Footer />
+        </main>
+    );
 }
 
 export default Home;

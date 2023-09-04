@@ -3,6 +3,7 @@ import { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Link } from "react-router-dom";
+import moment from 'moment'
 function Search({ showCalendar, setShowCalendar }) {
     const [startDate, setStartDate] = useState(new Date());
     const [endDate, setEndDate] = useState(new Date());
@@ -15,7 +16,8 @@ function Search({ showCalendar, setShowCalendar }) {
         minutes: 30
     });
 
-    const onChange = (dates) => {
+    const onChange = (dates, time) => {
+        console.log(dates, time);
         const [start, end] = dates;
         setStartDate(start);
         setEndDate(end);
@@ -63,6 +65,7 @@ function Search({ showCalendar, setShowCalendar }) {
 
                         />
 
+
                     </div>
                     <div>
                         <label className="block my-2 text-gray-600 text-sm">Chọn giờ nhận xe</label>
@@ -86,7 +89,7 @@ function Search({ showCalendar, setShowCalendar }) {
 
             </div>
             <Link
-                to={`/bikes/?startDate=${startDate.getTime()}&endDate=${endDate.getTime()}&type=${type}&hour=${timeSelected.hour}&minutes=${timeSelected.minutes}`}>
+                to={`/bikes/?startDate=${moment(startDate)}&endDate=${moment(endDate)}&type=${type}&hour=${timeSelected.hour}&minutes=${timeSelected.minutes}`}>
                 <Button variant="contained" color="primary">Tìm kiếm</Button>
             </Link>
         </div>

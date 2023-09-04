@@ -22,7 +22,7 @@ function BookCard() {
             <div className="py-5 flex items-center gap-4 border-b border-gray-300">
                 <img src={xe1} alt="product 1" className="w-24 h-24 object-cover rounded-xl" />
                 <div>
-                    <Link to={`/bike/${"idxe"}`}>
+                    <Link to={`/bikes/${"idxe"}`}>
                         <p className="text-xl font-medium hover:text-black/50 cursor-pointer">VINFAST FADIL 2019</p>
                     </Link>
                     <span className="text-sm text-gray-600">
