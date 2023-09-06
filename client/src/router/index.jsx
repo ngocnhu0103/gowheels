@@ -1,9 +1,7 @@
-import {
-    createBrowserRouter,
-} from "react-router-dom";
+import { createBrowserRouter } from "react-router-dom";
 
-import Home from '../pages/HomePage'
-import Profile from '../pages/ProfilePage';
+import Home from "../pages/HomePage";
+import Profile from "../pages/ProfilePage";
 import About from "../pages/AboutPage";
 import Bike from "../pages/BikePage";
 import UpdateProfile from "../pages/UpdateProfile";
@@ -15,12 +13,14 @@ import MyStranport from "../pages/MyStranport";
 import MyOrder from "../pages/MyOrder";
 import DeleteAccount from "../pages/DeleteAccount";
 import Rate from "../pages/Rate";
+import Dashboard from "../pages/dashboard/Dashboard";
+import UserManagement from "../pages/dashboard/UserManagement";
 
 const router = createBrowserRouter([
     {
         path: "/",
         element: <Home />,
-        index: true
+        index: true,
     },
     {
         path: "/profile",
@@ -52,9 +52,9 @@ const router = createBrowserRouter([
             },
             {
                 path: "rate",
-                element: <Rate />
-            }
-        ]
+                element: <Rate />,
+            },
+        ],
     },
 
     {
@@ -66,9 +66,19 @@ const router = createBrowserRouter([
         element: <Bike />,
     },
     {
+        path: "/admin",
+        element: <Dashboard />,
+        children: [
+            {
+                path: "user",
+                element: <UserManagement />,
+            },
+        ],
+    },
+    {
         path: "*",
         element: <NotFound />,
     },
 ]);
 
-export default router
+export default router;
