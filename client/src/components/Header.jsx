@@ -1,55 +1,67 @@
-import { Link } from 'react-router-dom'
-import { Modal } from '@mui/material'
-import { useState } from 'react';
-import srcBg from "../assets/bg.png"
-import FormRegister from './auth/FormRegister';
-import FormLogin from './auth/FormLogin';
+import { Link } from "react-router-dom";
+import { Avatar, Chip, Modal } from "@mui/material";
+import { Fragment, useState } from "react";
+import srcBg from "../assets/bg.png";
+import FormRegister from "./auth/FormRegister";
+import FormLogin from "./auth/FormLogin";
+import { useSelector } from "react-redux";
 function Header() {
+    const user = useSelector((state) => {
+        return state.auth.user;
+    });
     const [openLogin, setOpenLogin] = useState(false);
     const [openRegister, setOpenRegister] = useState(false);
 
     const handleOpenLogin = () => {
-        setOpenLogin(true)
-    }
+        setOpenLogin(true);
+    };
     const handleCloseLogin = () => {
-        setOpenLogin(false)
-    }
+        setOpenLogin(false);
+    };
 
     const handleOpenRegister = () => {
-        setOpenRegister(true)
-    }
+        setOpenRegister(true);
+    };
     const handleCloseRegister = () => {
-        setOpenRegister(false)
-    }
+        setOpenRegister(false);
+    };
     return (
         <header className="h-20 flex items-center justify-between">
-            <Link to={'/'}>
+            <Link to={"/"}>
                 <img src={srcBg} alt="logo" />
             </Link>
 
-            <div className='h-full flex items-center gap-8'>
-                <ul className='font-semibold flex gap-8'>
-                    <li >
-                        <Link to={'/profile/update'}>
-                            Đăng ký làm chủ xe
-                        </Link>
-                    </li>
-                    <li >
-                        <Link to={'/about'}>
-                            Giới thiệu
-                        </Link>
+            <div className="h-full flex items-center gap-8">
+                <ul className="font-semibold flex gap-8">
+                    <li>
+                        <Link to={"/profile/update"}>Đăng ký làm chủ xe</Link>
                     </li>
                     <li>
-                        <Link to={'/price'}>
-                            Bảng giá
-                        </Link>
+                        <Link to={"/about"}>Giới thiệu</Link>
+                    </li>
+                    <li>
+                        <Link to={"/price"}>Bảng giá</Link>
                     </li>
                 </ul>
-                <div className='h-1/2 w-[1px] bg-gray-300'></div>
-                <div className='flex gap-8'>
-                    <button className='text-primary font-semibold py-2 px-3' onClick={handleOpenLogin}>Đăng nhập</button>
-                    <button className='text-primary font-semibold border border-primary py-2 px-3 rounded' onClick={handleOpenRegister}>Đăng ký</button>
-
+                <div className="h-1/2 w-[1px] bg-gray-300"></div>
+                <div className="flex gap-8">
+                    {user ? (
+                        <Link to="/profile/update">
+                            <Chip clickable variant="outlined" label={user.fullName} avatar={<Avatar src={srcBg} />} />
+                        </Link>
+                    ) : (
+                        <>
+                            <button className="text-primary font-semibold py-2 px-3" onClick={handleOpenLogin}>
+                                Đăng nhập
+                            </button>
+                            <button
+                                className="text-primary font-semibold border border-primary py-2 px-3 rounded"
+                                onClick={handleOpenRegister}
+                            >
+                                Đăng ký
+                            </button>
+                        </>
+                    )}
                 </div>
             </div>
             <Modal
@@ -59,7 +71,7 @@ function Header() {
                 aria-describedby="parent-modal-description"
             >
                 <>
-                    <FormLogin />
+                    <FormLogin onClose={handleCloseLogin} />
                 </>
             </Modal>
             <Modal
@@ -69,12 +81,10 @@ function Header() {
                 aria-describedby="parent-modal-description"
             >
                 <>
-                    <FormRegister />
+                    <FormRegister onClose={handleCloseRegister} />
                 </>
             </Modal>
         </header>
-
-
     );
 }
 

@@ -2,23 +2,21 @@ import { FormControl, Input, InputLabel } from "@mui/material";
 import { loginAPI } from "../../api/authAPI";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-function FormLogin() {
+function FormLogin({ onClose }) {
     const dispatch = useDispatch();
 
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [loading, setLoading] = useState(false)
-
-
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const handleLogin = async (e) => {
         console.log(123);
         e.preventDefault();
-        setLoading(true)
+        setLoading(true);
         await loginAPI(dispatch, { email, password });
-        setLoading(false)
-
-    }
+        setLoading(false);
+        onClose();
+    };
 
     return (
         <div className="w-1/4 mx-auto mt-24 bg-white p-4 rounded-xl">
@@ -26,21 +24,35 @@ function FormLogin() {
             <form className="flex flex-col" onSubmit={handleLogin}>
                 <FormControl margin="dense">
                     <InputLabel htmlFor="email">Email</InputLabel>
-                    <Input value={email} onChange={(e) => {
-                        setEmail(e.target.value)
-                    }} className="text-white" type="email" id="email" required />
+                    <Input
+                        value={email}
+                        onChange={(e) => {
+                            setEmail(e.target.value);
+                        }}
+                        className="text-white"
+                        type="email"
+                        id="email"
+                        required
+                    />
                 </FormControl>
 
                 <FormControl margin="dense">
                     <InputLabel htmlFor="password">Mật khẩu</InputLabel>
-                    <Input value={password} onChange={(e) => {
-                        setPassword(e.target.value)
-                    }} id="password" type="password" required />
+                    <Input
+                        value={password}
+                        onChange={(e) => {
+                            setPassword(e.target.value);
+                        }}
+                        id="password"
+                        type="password"
+                        required
+                    />
                 </FormControl>
 
-
-
-                <button disabled={loading} className={`mt-4 text-white bg-primary py-2 rounded-md ${loading && "disabled:bg-primary/20"}`}>
+                <button
+                    disabled={loading}
+                    className={`mt-4 text-white bg-primary py-2 rounded-md ${loading && "disabled:bg-primary/20"}`}
+                >
                     {loading ? "Chờ trong giây lát......" : "Đăng nhập"}
                 </button>
             </form>
