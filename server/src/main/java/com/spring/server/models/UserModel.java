@@ -32,6 +32,8 @@ public class UserModel implements UserDetails {
     private String phone;
     private String address;
     private String avatar;
+    private String accountNumber;
+    private boolean isJobber;
     @OneToMany(mappedBy = "owner")
     private List<Bike> bikes ;
     @Enumerated(EnumType.STRING)

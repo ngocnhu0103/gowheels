@@ -2,6 +2,7 @@ package com.spring.server.services;
 
 import com.spring.server.data.AuthenticationRequest;
 import com.spring.server.data.RegisterRequest;
+import com.spring.server.data.ResponseAuth;
 import com.spring.server.data.ResponseObject;
 import com.spring.server.models.*;
 import com.spring.server.repositories.UserRepository;
@@ -64,7 +65,8 @@ public class AuthenticationService {
             sendVerificationEmail(user, siteURL);
 
             var jwtToken = jwtService.generateToken(user);
-            return ResponseEntity.ok(ResponseObject.builder().statusCode(201).message("Đăng ký thành công").data(jwtToken).build());
+            var data = ResponseAuth.builder().token(jwtToken).user(user).build();
+            return ResponseEntity.ok(ResponseObject.builder().statusCode(201).message("Đăng ký thành công").data(data).build());
         }catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
@@ -96,7 +98,8 @@ public class AuthenticationService {
 
 
                 var jwtToken = jwtService.generateToken(user);
-                return ResponseEntity.ok(ResponseObject.builder().statusCode(201).message("Đăng nhập thành công").data(jwtToken).build());
+                var data = ResponseAuth.builder().token(jwtToken).user(user).build();
+                return ResponseEntity.ok(ResponseObject.builder().statusCode(201).message("Đăng nhập thành công").data(data).build());
 
 
     }

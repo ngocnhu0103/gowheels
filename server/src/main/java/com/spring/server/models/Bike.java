@@ -32,10 +32,10 @@ public class Bike implements Serializable {
     private String bikeCode;
     @JsonIgnoreProperties({"hibernateLazyInitializer"})
     @ManyToOne(fetch = FetchType.LAZY)
-    private Category categoryId;
+    private Category category;
     @JsonIgnoreProperties({"hibernateLazyInitializer"})
     @ManyToOne(fetch = FetchType.LAZY)
-    private Place placeId;
+    private Place place;
     @JsonIgnoreProperties({"hibernateLazyInitializer"})
     @ManyToMany(fetch = FetchType.LAZY)
     @EqualsAndHashCode.Exclude // không sử dụng trường này trong equals và hashcode

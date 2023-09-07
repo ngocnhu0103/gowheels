@@ -62,9 +62,9 @@ public class BikeService {
                 bike.setDescription(bikeData.getDescription());
                 bike.setStatus(bikeData.getStatus());
                 bike.setOwner(owner.get());
-                bike.setCategoryId(category.get());
+                bike.setCategory(category.get());
                 bike.setTagList(tags);
-                bike.setPlaceId(place.get());
+                bike.setPlace(place.get());
                 bike.setImages(images);
                 Bike createdBike = bikeRepository.save(bike);
 
@@ -94,7 +94,7 @@ public class BikeService {
             return ResponseEntity.ok(ResponseObject.builder().statusCode(201).message("thành công").data(bikeList).build());
         }catch (Exception e){
             System.out.println(e.getMessage());
-            return ResponseEntity.internalServerError().build();
+            return ResponseEntity.ok(ResponseObject.builder().statusCode(500).message(e.getMessage()).data("").build());
         }
     }
     public ResponseEntity<ResponseObject> getBikeById(Long Id){
@@ -147,9 +147,9 @@ public class BikeService {
                 bike.get().setBikeName(newBike.getBikeName());
                 bike.get().setBikeCode(newBike.getBikeCode());
                 bike.get().setStatus(newBike.getStatus());
-                bike.get().setPlaceId(place.get());
+                bike.get().setPlace(place.get());
                 bike.get().setTagList(tags);
-                bike.get().setCategoryId(category.get());
+                bike.get().setCategory(category.get());
                 bike.get().setDescription(newBike.getDescription());
                 bike.get().setColor(newBike.getColor());
                 bike.get().setImages(images);
