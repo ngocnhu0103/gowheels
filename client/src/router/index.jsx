@@ -15,6 +15,7 @@ import DeleteAccount from "../pages/DeleteAccount";
 import Rate from "../pages/Rate";
 import Dashboard from "../pages/dashboard/Dashboard";
 import UserManagement from "../pages/dashboard/UserManagement";
+import BikeRegister from "../pages/BikeRegister";
 
 const router = createBrowserRouter([
     {
@@ -64,6 +65,10 @@ const router = createBrowserRouter([
     {
         path: "/bikes",
         element: <Bike />,
+    },
+    {
+        path: "/bikeregister",
+        element: <BikeRegister />,
     },
     {
         path: "/admin",

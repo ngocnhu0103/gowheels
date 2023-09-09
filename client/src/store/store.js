@@ -7,6 +7,7 @@ import userSlice from './userSlice'
 import bikeSlice from './bikeSlice'
 import authSlice from './authSlice'
 import toastSlice from './toastSlice'
+import bikeRegisterSlice from './bikeRegisterSlice';
 
 const persistConfig = {
     key: 'root',
@@ -19,6 +20,7 @@ const rootReducer = combineReducers({
     'bike': bikeSlice,
     'auth': authSlice,
     'toast': toastSlice,
+    'bikeRegister': bikeRegisterSlice
 })
 
 const persistedReducer = persistReducer(

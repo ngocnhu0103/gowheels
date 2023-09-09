@@ -11,7 +11,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import Card from "../components/Card";
 import TravelExploreIcon from "@mui/icons-material/TravelExplore";
 import { Button, Modal } from "@mui/material";
-import Map from "../components/Map";
+// import Map from "../components/Map";
 
 import "swiper/css";
 
@@ -163,9 +163,7 @@ function BikePage() {
                 aria-labelledby="parent-modal-title"
                 aria-describedby="parent-modal-description"
             >
-                <div className="mx-auto w-10/12">
-                    <Map />
-                </div>
+                <div className="mx-auto w-10/12">{/* <Map /> */}</div>
             </Modal>
             <div className="fixed bottom-5 left-1/2 -translate-x-1/2">
                 <Button variant="contained" endIcon={<TravelExploreIcon />} onClick={openMap}>
