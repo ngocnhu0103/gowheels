@@ -1,4 +1,4 @@
-import { TextField } from "@mui/material";
+import { Slider, TextField } from "@mui/material";
 import React from "react";
 
 function InfoRental({ formik }) {
@@ -6,8 +6,9 @@ function InfoRental({ formik }) {
         <form className="">
             <div>
                 <label className="block" htmlFor="price">
-                    Tên xe
+                    Đơn giá
                 </label>
+                <p className="text-sm text-gray-400">Đơn giá áp dụng cho tất cả các ngày</p>
                 <TextField
                     value={formik.values.price}
                     onChange={formik.handleChange}
@@ -25,18 +26,46 @@ function InfoRental({ formik }) {
 
             <div>
                 <label className="block" htmlFor="place">
-                    Biển số xe
+                    Giảm giá
                 </label>
-                <TextField
-                    value={formik.values.place}
-                    onChange={formik.handleChange}
-                    id="place"
-                    size="small"
-                    className="w-1/2"
-                    name="place"
-                    variant="outlined"
-                    margin="normal"
-                />
+                <div className="flex gap-5 mt-5">
+                    <div className="w-1/2">
+                        <p>Giảm giá theo tuần (% trên đơn giá)</p>
+                        <Slider
+                            name="sale7"
+                            aria-label="Temperature"
+                            min={0}
+                            max={100}
+                            size="medium"
+                            marks={false}
+                            color="primary"
+                            onChange={formik.handleChange}
+                        />
+                        <div className="flex justify-between items-center">
+                            <p className="text-sm text-gray-400">Giá giảm đề xuất: 10%</p>
+                            <span className="text-right">{formik.values.sale7}%</span>
+                        </div>
+                    </div>
+
+                    <div className="w-1/2">
+                        <p>Giảm giá theo tháng (% trên đơn giá)</p>
+
+                        <Slider
+                            name="sale30"
+                            aria-label="Temperature"
+                            min={0}
+                            max={100}
+                            size="medium"
+                            marks={false}
+                            color="primary"
+                            onChange={formik.handleChange}
+                        />
+                        <div className="flex justify-between items-center">
+                            <p className="text-sm text-gray-400">Giá giảm đề xuất: 20%</p>
+                            <span className="text-right">{formik.values.sale30}%</span>
+                        </div>
+                    </div>
+                </div>
                 {formik.touched.place && formik.errors.place ? (
                     <p className="text-rose-400 text-xs font-semibold">{formik.errors.place}</p>
                 ) : null}

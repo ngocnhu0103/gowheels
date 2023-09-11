@@ -56,6 +56,8 @@ function BikeRegister() {
         initialValues: {
             price: null,
             place: "",
+            sale7: 0,
+            sale30: 0,
         },
         validationSchema: Yup.object({
             price: Yup.number().required("Giá thuê xe bắt buộc"),
