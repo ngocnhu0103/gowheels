@@ -1,7 +1,21 @@
 import { Slider, TextField } from "@mui/material";
-import React from "react";
-
+import React, { useEffect, useState } from "react";
+import Map from "../Map";
 function InfoRental({ formik }) {
+    const [location, setLocation] = useState({
+        address: "Ho Chi Minh City, Vietnam",
+        lat: 10.762622,
+        lng: 106.660172,
+    });
+    useEffect(() => {
+        if (window.navigator.geolocation) {
+            window.navigator.geolocation.getCurrentPosition((position) => {
+                console.log(position);
+                setLocation({ ...location, lat: position.latitude, lng: position.longitude });
+            });
+        }
+        console.log(location);
+    }, []);
     return (
         <form className="">
             <div>
@@ -38,6 +52,7 @@ function InfoRental({ formik }) {
                             max={100}
                             size="medium"
                             marks={false}
+                            value={formik.values.sale7}
                             color="primary"
                             onChange={formik.handleChange}
                         />
@@ -55,6 +70,7 @@ function InfoRental({ formik }) {
                             aria-label="Temperature"
                             min={0}
                             max={100}
+                            value={formik.values.sale30}
                             size="medium"
                             marks={false}
                             color="primary"
@@ -66,9 +82,15 @@ function InfoRental({ formik }) {
                         </div>
                     </div>
                 </div>
-                {formik.touched.place && formik.errors.place ? (
+                {/* {formik.touched.place && formik.errors.place ? (
                     <p className="text-rose-400 text-xs font-semibold">{formik.errors.place}</p>
-                ) : null}
+                ) : null} */}
+            </div>
+            <div>
+                <p>Địa chỉ xe</p>
+                <div className="w-2/3 h-[50vh]">
+                    <Map location={location} zoomLevel={15} />
+                </div>
             </div>
         </form>
     );

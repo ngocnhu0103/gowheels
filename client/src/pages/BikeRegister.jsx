@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
@@ -54,8 +54,8 @@ function BikeRegister() {
 
     const formikInfoRental = useFormik({
         initialValues: {
-            price: null,
-            place: "",
+            price: "fasd",
+            place: "fsdf",
             sale7: 0,
             sale30: 0,
         },
@@ -97,6 +97,7 @@ function BikeRegister() {
             return null;
         }
     };
+
     return (
         <main className="container w-4/5 mx-auto">
             <Header />
