@@ -17,6 +17,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -73,13 +74,14 @@ public class AuthenticationService {
     }
     public ResponseEntity<ResponseObject> login(AuthenticationRequest req){
 
-
+        System.out.println(req);
                 Authentication authentication =  authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                         req.getEmail(),
                         req.getPassword()
                 ));
+        System.out.println(authentication);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-                UserModel user = (UserModel) authentication.getPrincipal();
+                UserDetails user = (UserDetails) authentication.getPrincipal();
 //                var user = userRepository.findByEmail(req.getEmail());
                 System.out.println(user);
                 if(user == null){

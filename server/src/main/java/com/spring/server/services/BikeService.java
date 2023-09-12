@@ -97,6 +97,25 @@ public class BikeService {
             return ResponseEntity.ok(ResponseObject.builder().statusCode(500).message(e.getMessage()).data("").build());
         }
     }
+
+    public ResponseEntity<ResponseObject> getAllBikeByTags(String bikeName, int page, int size,List<Tag> tags){
+        try{
+            List<Bike> bikeList = new ArrayList<>();
+            Page<Bike> pageBikes;
+            Pageable pageable = PageRequest.of(page, size);
+            if(bikeName == null ){
+                pageBikes = bikePaginationRepository.findAll(pageable);
+            } else {
+                pageBikes = bikePaginationRepository.findByBikeNameContainingAndTagListIn(bikeName,pageable,tags);
+            }
+            bikeList = pageBikes.getContent();
+            System.out.println(bikeList);
+            return ResponseEntity.ok(ResponseObject.builder().statusCode(201).message("thành công").data(bikeList).build());
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+            return ResponseEntity.ok(ResponseObject.builder().statusCode(500).message(e.getMessage()).data("").build());
+        }
+    }
     public ResponseEntity<ResponseObject> getBikeById(Long Id){
         try{
             var bike = bikeRepository.findById(Id);
