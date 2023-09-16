@@ -8,7 +8,6 @@ import UpdateProfile from "../pages/UpdateProfile";
 import NotFound from "../pages/NotFound";
 import BikeFavs from "../pages/BikeFavs";
 import Order from "../pages/Order";
-import Mystranport from "../pages/MyStranport";
 import MyStranport from "../pages/MyStranport";
 import MyOrder from "../pages/MyOrder";
 import DeleteAccount from "../pages/DeleteAccount";
@@ -16,6 +15,7 @@ import Rate from "../pages/Rate";
 import Dashboard from "../pages/dashboard/Dashboard";
 import UserManagement from "../pages/dashboard/UserManagement";
 import BikeRegister from "../pages/BikeRegister";
+import DetailBike from "../pages/DetailBike";
 
 const router = createBrowserRouter([
     {
@@ -65,6 +65,10 @@ const router = createBrowserRouter([
     {
         path: "/bikes",
         element: <Bike />,
+    },
+    {
+        path: "/bike/:id",
+        element: <DetailBike />,
     },
     {
         path: "/bikeregister",

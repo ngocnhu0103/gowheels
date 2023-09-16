@@ -20,7 +20,7 @@ function Card({ isRow = false, isManage = false }) {
     return (
         <li>
             <div className={`p-5 w-full border border-primary/20 rounded-lg shadow ${isRow ? "flex gap-5" : ""}`}>
-                <Link to={`/detail/id`}>
+                <Link to={`/bike/id`}>
                     <img className={`rounded-lg  ${isRow ? "w-60" : ""}`} src={xe1} alt="product image" />
                 </Link>
 
@@ -33,7 +33,7 @@ function Card({ isRow = false, isManage = false }) {
                             <span>Động cơ êm</span>
                         </li>
                     </ul>
-                    <Link to={`/detail/id`}>
+                    <Link to={`/bike/id`}>
                         <h5 className="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">
                             Xe Maybach 7 cho
                         </h5>
