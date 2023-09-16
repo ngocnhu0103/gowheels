@@ -13,7 +13,10 @@ import BikeInfo from "../components/form/BikeInfo";
 import { useDispatch } from "react-redux";
 import { saveInfoBike, saveInfoRental } from "../store/bikeRegisterSlice";
 import InfoRental from "../components/form/InfoRental";
+import UploadBikeImg from "../components/form/UploadBikeImg";
 function BikeRegister() {
+    const [imgs, setImgs] = useState([]);
+
     const [slideNum, setSlideNum] = useState(1);
     const [selectedTags, setSelectedTags] = useState([]);
     const dispatch = useDispatch();
@@ -94,7 +97,7 @@ function BikeRegister() {
         } else if (slideNum === 2) {
             return <InfoRental formik={formikInfoRental} />;
         } else {
-            return null;
+            return <UploadBikeImg imgs={imgs} setImgs={setImgs} />;
         }
     };
 
@@ -115,7 +118,7 @@ function BikeRegister() {
                         <div className="flex justify-center gap-12">
                             <div>
                                 <p
-                                    className={`w-16 h-16 flex items-center  justify-center font-semibold text-white rounded-full  
+                                    className={`w-16 h-16 flex items-center  justify-center font-semibold rounded-full  
                                 ${slideNum === 1 ? "bg-primary/90 text-white" : "bg-primary/5 text-black"}`}
                                 >
                                     1
