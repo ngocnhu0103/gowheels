@@ -1,5 +1,6 @@
 import { Slider, TextField } from "@mui/material";
 import React, { useEffect, useState } from "react";
+import Autocomplete, { usePlacesWidget } from "react-google-autocomplete";
 import Map from "../Map";
 function InfoRental({ formik }) {
     const [location, setLocation] = useState({
@@ -8,14 +9,27 @@ function InfoRental({ formik }) {
         lng: 106.660172,
     });
     useEffect(() => {
-        if (window.navigator.geolocation) {
-            window.navigator.geolocation.getCurrentPosition((position) => {
-                console.log(position);
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition((position) => {
                 setLocation({ ...location, lat: position.latitude, lng: position.longitude });
             });
         }
-        console.log(location);
     }, []);
+    const { ref } = usePlacesWidget({
+        apiKey: "AIzaSyAlyDT1yy-Uvp--G9NT1HEE9s0fxpbcR-U",
+        language: "vi",
+        onPlaceSelected: (place) => {
+            setLocation({
+                address: place.formatted_address,
+                lat: place.geometry.location.lat(),
+                lng: place.geometry.location.lng(),
+            });
+            console.log(location);
+        },
+        options: {
+            componentRestrictions: { country: "vn" },
+        },
+    });
     return (
         <form className="">
             <div>
@@ -46,19 +60,19 @@ function InfoRental({ formik }) {
                     <div className="w-1/2">
                         <p>Giảm giá theo tuần (% trên đơn giá)</p>
                         <Slider
-                            name="sale7"
+                            name="weekDiscount"
                             aria-label="Temperature"
                             min={0}
                             max={100}
                             size="medium"
                             marks={false}
-                            value={formik.values.sale7}
+                            value={formik.values.weekDiscount}
                             color="primary"
                             onChange={formik.handleChange}
                         />
                         <div className="flex justify-between items-center">
                             <p className="text-sm text-gray-400">Giá giảm đề xuất: 10%</p>
-                            <span className="text-right">{formik.values.sale7}%</span>
+                            <span className="text-right">{formik.values.weekDiscount}%</span>
                         </div>
                     </div>
 
@@ -66,11 +80,11 @@ function InfoRental({ formik }) {
                         <p>Giảm giá theo tháng (% trên đơn giá)</p>
 
                         <Slider
-                            name="sale30"
+                            name="monthDiscount"
                             aria-label="Temperature"
                             min={0}
                             max={100}
-                            value={formik.values.sale30}
+                            value={formik.values.monthDiscount}
                             size="medium"
                             marks={false}
                             color="primary"
@@ -78,7 +92,7 @@ function InfoRental({ formik }) {
                         />
                         <div className="flex justify-between items-center">
                             <p className="text-sm text-gray-400">Giá giảm đề xuất: 20%</p>
-                            <span className="text-right">{formik.values.sale30}%</span>
+                            <span className="text-right">{formik.values.monthDiscount}%</span>
                         </div>
                     </div>
                 </div>
@@ -88,7 +102,14 @@ function InfoRental({ formik }) {
             </div>
             <div>
                 <p>Địa chỉ xe</p>
-                <div className="w-2/3 h-[50vh]">
+                <input
+                    ref={ref}
+                    type="text"
+                    placeholder="Search place"
+                    className="w-2/3 py-2 px-3 outline-none rounded-xl border border-gray-200 mt-5"
+                />
+
+                <div className="w-2/3 h-[50vh] mt-5">
                     <Map location={location} zoomLevel={15} />
                 </div>
             </div>

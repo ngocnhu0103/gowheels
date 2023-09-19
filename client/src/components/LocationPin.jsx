@@ -2,9 +2,9 @@ import React from "react";
 import PlaceIcon from "@mui/icons-material/Place";
 function LocationPin({ text }) {
     return (
-        <div className="pin">
-            <PlaceIcon />
-            <p className="pin-text">{text}</p>
+        <div className="text-primary">
+            <PlaceIcon fontSize="large" />
+            <p className="">{text}</p>
         </div>
     );
 }

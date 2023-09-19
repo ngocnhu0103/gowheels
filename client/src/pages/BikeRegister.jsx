@@ -59,8 +59,8 @@ function BikeRegister() {
         initialValues: {
             price: "fasd",
             place: "fsdf",
-            sale7: 0,
-            sale30: 0,
+            weekDiscount: 0,
+            monthDiscount: 0,
         },
         validationSchema: Yup.object({
             price: Yup.number().required("Giá thuê xe bắt buộc"),
@@ -79,6 +79,7 @@ function BikeRegister() {
             formikInfoBike.handleSubmit(e);
         } else if (slideNum === 2) {
             // sumbit 2
+            console.log(formikInfoRental.values);
             formikInfoRental.handleSubmit(e);
         } else {
             // post
