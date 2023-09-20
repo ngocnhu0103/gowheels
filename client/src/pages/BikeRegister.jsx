@@ -10,7 +10,7 @@ import { useFormik } from "formik";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import BikeInfo from "../components/form/BikeInfo";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { saveInfoBike, saveInfoRental } from "../store/bikeRegisterSlice";
 import InfoRental from "../components/form/InfoRental";
 import UploadBikeImg from "../components/form/UploadBikeImg";
@@ -20,6 +20,7 @@ function BikeRegister() {
     const [slideNum, setSlideNum] = useState(1);
     const [selectedTags, setSelectedTags] = useState([]);
     const dispatch = useDispatch();
+    const bikeRegister = useSelector((state) => state.bikeRegister);
     const categories = [
         {
             value: 1,
@@ -57,8 +58,8 @@ function BikeRegister() {
 
     const formikInfoRental = useFormik({
         initialValues: {
-            price: "fasd",
-            place: "fsdf",
+            price: 120,
+            place: "",
             weekDiscount: 0,
             monthDiscount: 0,
         },
@@ -73,16 +74,15 @@ function BikeRegister() {
     });
 
     const submitForm = (e) => {
-        console.log(formikInfoBike.values);
         if (slideNum === 1) {
             selectedTags.length > 0 && (formikInfoBike.values.tags = selectedTags);
             formikInfoBike.handleSubmit(e);
         } else if (slideNum === 2) {
-            // sumbit 2
-            console.log(formikInfoRental.values);
             formikInfoRental.handleSubmit(e);
         } else {
-            // post
+            const values = { ...bikeRegister, images: imgs };
+            console.log(values);
+            // call api
         }
     };
     const render = () => {
@@ -96,7 +96,7 @@ function BikeRegister() {
                 />
             );
         } else if (slideNum === 2) {
-            return <InfoRental formik={formikInfoRental} />;
+            return <InfoRental formik={formikInfoRental} bikeRegister={bikeRegister} />;
         } else {
             return <UploadBikeImg imgs={imgs} setImgs={setImgs} />;
         }
@@ -162,7 +162,7 @@ function BikeRegister() {
                             Quay lại
                         </Button>
                         <Button variant="contained" className="w-1/2" size="large" onClick={submitForm}>
-                            Kế tiếp
+                            {slideNum === 3 ? "Đăng xe" : "Kế tiếp"}
                         </Button>
                     </div>
                 </div>

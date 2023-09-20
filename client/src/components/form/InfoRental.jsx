@@ -1,8 +1,10 @@
 import { Slider, TextField } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import Autocomplete, { usePlacesWidget } from "react-google-autocomplete";
+import { usePlacesWidget } from "react-google-autocomplete";
 import Map from "../Map";
+import { useSelector } from "react-redux";
 function InfoRental({ formik }) {
+    const bikeRegister = useSelector((state) => state.bikeRegister);
     const [location, setLocation] = useState({
         address: "Ho Chi Minh City, Vietnam",
         lat: 10.762622,
@@ -24,10 +26,11 @@ function InfoRental({ formik }) {
                 lat: place.geometry.location.lat(),
                 lng: place.geometry.location.lng(),
             });
-            console.log(location);
+            formik.setFieldValue("place", place.formatted_address);
         },
         options: {
             componentRestrictions: { country: "vn" },
+            types: ["geocode", "establishment"],
         },
     });
     return (
@@ -96,19 +99,20 @@ function InfoRental({ formik }) {
                         </div>
                     </div>
                 </div>
-                {/* {formik.touched.place && formik.errors.place ? (
-                    <p className="text-rose-400 text-xs font-semibold">{formik.errors.place}</p>
-                ) : null} */}
             </div>
             <div>
                 <p>Địa chỉ xe</p>
                 <input
+                    name="place"
+                    defaultValue={bikeRegister.place}
                     ref={ref}
                     type="text"
                     placeholder="Search place"
                     className="w-2/3 py-2 px-3 outline-none rounded-xl border border-gray-200 mt-5"
                 />
-
+                {formik.touched.place && formik.errors.place ? (
+                    <p className="text-rose-400 text-xs font-semibold mt-2">{formik.errors.place}</p>
+                ) : null}
                 <div className="w-2/3 h-[50vh] mt-5">
                     <Map location={location} zoomLevel={15} />
                 </div>

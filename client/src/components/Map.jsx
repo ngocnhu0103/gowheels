@@ -8,8 +8,11 @@ function Map({ location, zoomLevel }) {
     return (
         <div className="h-full w-full">
             <GoogleMapReact
-                bootstrapURLKeys={{ key: "AIzaSyAlyDT1yy-Uvp--G9NT1HEE9s0fxpbcR-U" }}
-                defaultCenter={location}
+                bootstrapURLKeys={{ key: "AIzaSyAmDsGg9Av9N_V8vLzDkIfnpwQGK3nZRjs" }}
+                defaultCenter={{
+                    lat: 10.762622,
+                    lng: 106.660172,
+                }}
                 defaultZoom={zoomLevel}
                 onGoogleApiLoaded={({ map, maps }) => console.log(map, maps)}
                 yesIWantToUseGoogleMapApiInternals
