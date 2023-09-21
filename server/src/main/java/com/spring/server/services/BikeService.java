@@ -62,6 +62,8 @@ public class BikeService {
                 bike.setDescription(bikeData.getDescription());
                 bike.setStatus(bikeData.getStatus());
                 bike.setOwner(owner.get());
+                bike.setWeekDiscount(bikeData.getWeekDiscount());
+                bike.setMonthDiscount(bikeData.getMonthDiscount());
                 bike.setCategory(category.get());
                 bike.setTagList(tags);
                 bike.setPlace(place.get());

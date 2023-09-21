@@ -14,6 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { saveInfoBike, saveInfoRental } from "../store/bikeRegisterSlice";
 import InfoRental from "../components/form/InfoRental";
 import UploadBikeImg from "../components/form/UploadBikeImg";
+import { bikeRegisterAPI } from "../api/bikeAPI";
 function BikeRegister() {
     const [imgs, setImgs] = useState([]);
 
@@ -73,7 +74,7 @@ function BikeRegister() {
         },
     });
 
-    const submitForm = (e) => {
+    const submitForm = async (e) => {
         if (slideNum === 1) {
             selectedTags.length > 0 && (formikInfoBike.values.tags = selectedTags);
             formikInfoBike.handleSubmit(e);
@@ -83,6 +84,7 @@ function BikeRegister() {
             const values = { ...bikeRegister, images: imgs };
             console.log(values);
             // call api
+            await bikeRegisterAPI(dispatch, values);
         }
     };
     const render = () => {

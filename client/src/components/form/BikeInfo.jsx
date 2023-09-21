@@ -22,14 +22,12 @@ function BikeInfo({ formik, categories, selectedTags, setSelectedTags }) {
         },
     ];
 
-    const selectTag = (tag) => {
-        const check = selectedTags.some((t) => tag.id === t.id);
-        check
-            ? setSelectedTags(selectedTags.filter((curTag) => curTag.id !== tag.id))
-            : setSelectedTags([...selectedTags, tag]);
+    const selectTag = (id) => {
+        const check = selectedTags.some((tagId) => id === tagId);
+        check ? setSelectedTags(selectedTags.filter((tagId) => tagId !== id)) : setSelectedTags([...selectedTags, id]);
     };
-    const activedTag = (t) => {
-        return selectedTags.some((tag) => tag.id === t.id);
+    const activedTag = (id) => {
+        return selectedTags.some((tagId) => tagId === id);
     };
 
     return (
@@ -131,7 +129,7 @@ function BikeInfo({ formik, categories, selectedTags, setSelectedTags }) {
                 <ul className="grid grid-cols-4 gap-4 mt-4">
                     {tags.length > 0
                         ? tags.map((tag) => (
-                              <Tag tag={tag} key={tag.id} selectTag={selectTag} activeTag={activedTag(tag)} />
+                              <Tag tag={tag} key={tag.id} selectTag={selectTag} activeTag={activedTag(tag.id)} />
                           ))
                         : ""}
                 </ul>

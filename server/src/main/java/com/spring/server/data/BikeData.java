@@ -20,6 +20,8 @@ public class BikeData {
     private String bikeCode;
     private Long categoryId;
     private String placeId;
+    private Double weekDiscount;
+    private Double monthDiscount;
     private List<Long> tagList;
     private List<String> images;
 }

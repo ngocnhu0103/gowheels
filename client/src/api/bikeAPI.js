@@ -17,7 +17,7 @@ export const getAllBikeAPI = async (dispatch, params) => {
 export const bikeRegisterAPI = async (dispatch, values) => {
     console.log(values);
     try {
-        var response = await baseAPI.post("/bike", { values })
+        var response = await baseAPI.post("/bike", values)
         console.log(response);
 
         dispatch(saveNewBike(response.data))

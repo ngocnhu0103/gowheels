@@ -5,11 +5,13 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 
@@ -26,6 +28,9 @@ public class UserModel implements UserDetails {
     @NotBlank(message = "Vui lòng nhập email")
     @Column(unique = true)
     private String email;
+    private String gender;
+    @CreatedDate
+    private Date createdAt;
     @NotBlank(message = "Vui lòng nhập password")
     private String password;
     private String fullName;

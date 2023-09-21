@@ -4,11 +4,10 @@ import LocationPin from "./LocationPin";
 
 function Map({ location, zoomLevel }) {
     const [places, setPlaces] = useState([]);
-
     return (
         <div className="h-full w-full">
             <GoogleMapReact
-                bootstrapURLKeys={{ key: "AIzaSyAmDsGg9Av9N_V8vLzDkIfnpwQGK3nZRjs" }}
+                bootstrapURLKeys={{ key: import.meta.env.VITE_API_GG_KEY }}
                 defaultCenter={{
                     lat: 10.762622,
                     lng: 106.660172,

@@ -26,6 +26,8 @@ public class Bike implements Serializable {
     @JsonIgnoreProperties({"hibernateLazyInitializer"})
     private List<Image> images;
     private Double price;
+    private Double weekDiscount;
+    private Double monthDiscount;
     private String status;
     private String color;
     @Column(unique = true)

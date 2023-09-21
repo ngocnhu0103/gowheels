@@ -18,8 +18,10 @@ function InfoRental({ formik }) {
         }
     }, []);
     const { ref } = usePlacesWidget({
-        apiKey: "AIzaSyAlyDT1yy-Uvp--G9NT1HEE9s0fxpbcR-U",
+        apiKey: import.meta.env.VITE_API_GG_KEY,
         language: "vi",
+        // googleMapsScriptBaseUrl:
+        //     "https://maps.googleapis.com/maps/api/js?key=AIzaSyB9rQtQvmGpb5lgt0cFfZ5JMDdpgor9RZA&libraries=places",
         onPlaceSelected: (place) => {
             setLocation({
                 address: place.formatted_address,
