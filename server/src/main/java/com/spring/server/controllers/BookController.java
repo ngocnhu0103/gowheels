@@ -17,4 +17,20 @@ public class BookController {
     public ResponseEntity<ResponseObject> createBook(@RequestBody BookData bookData, Authentication authentication){
         return bookService.createBook(bookData,authentication);
     }
+    @GetMapping("/renter")
+    public  ResponseEntity<ResponseObject> getAllRenterBook(Authentication authentication){
+        return  bookService.getAllRenterBook(authentication);
+    }
+    @GetMapping("/owner-bike")
+    public  ResponseEntity<ResponseObject> getAllOwnerBook(Authentication authentication){
+        return  bookService.getAllOwnerBook(authentication);
+    }
+    @PostMapping("/update-status/{bookId}")
+    public  ResponseEntity<ResponseObject> updateStatus(@PathVariable Long bookId, @RequestBody String newStatus){
+        return  bookService.updateStatus(newStatus,bookId);
+    }
+    @PostMapping("/payment/{bookId}")
+    public  ResponseEntity<ResponseObject> updateStatus(@PathVariable Long bookId, @RequestBody String newStatus){
+        return  bookService.updateStatus(newStatus,bookId);
+    }
 }
