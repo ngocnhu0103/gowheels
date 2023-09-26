@@ -30,7 +30,8 @@ public class BookController {
         return  bookService.updateStatus(newStatus,bookId);
     }
     @PostMapping("/payment/{bookId}")
-    public  ResponseEntity<ResponseObject> updateStatus(@PathVariable Long bookId, @RequestBody String newStatus){
-        return  bookService.updateStatus(newStatus,bookId);
+    public  ResponseEntity<ResponseObject> charge(@PathVariable Long bookId, Authentication authentication){
+        return  bookService
+                .charge(bookId,authentication);
     }
 }

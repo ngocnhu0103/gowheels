@@ -6,6 +6,7 @@ import com.spring.server.models.Bike;
 import com.spring.server.models.Booking;
 import com.spring.server.repositories.BikeRepository;
 import com.spring.server.repositories.BookRepository;
+import com.spring.server.repositories.SurchargeRepository;
 import com.spring.server.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,7 @@ public class BookService {
     private final BookRepository bookRepository;
     private final BikeRepository bikeRepository;
     private final UserRepository userRepository;
+    private final SurchargeRepository surchargeRepository;
     public ResponseEntity<ResponseObject> createBook(BookData bookData, Authentication authentication){
         var bike = bikeRepository.findById(bookData.getBikeId());
         var bookList = bookRepository.findAllByBike(bike.get());
@@ -49,13 +51,14 @@ public class BookService {
                 .paymentMethod(bookData.getPaymentMethod()).totalPrice(bookData.getTotalPrice()).status("Đang chờ duyệt").build();
         return ResponseEntity.ok(ResponseObject.builder().statusCode(201).message("Đặt xe thành công").data(newBook).build());
     }
-
+    //@gel all book for renter
     public ResponseEntity<ResponseObject> getAllRenterBook(Authentication authentication){
         var renter = userRepository.findByEmail(authentication.getName());
         var renterBooks = bookRepository.findAllByRenter(renter.get());
 
         return ResponseEntity.ok(ResponseObject.builder().statusCode(200).message("success").data(renterBooks).build());
     }
+    //@gel all book for owner
     public ResponseEntity<ResponseObject> getAllOwnerBook(Authentication authentication){
         var owner = userRepository.findByEmail(authentication.getName());
         var bikes = bikeRepository.findAllByOwner(owner.get());
@@ -70,6 +73,7 @@ public class BookService {
 
         return ResponseEntity.ok(ResponseObject.builder().statusCode(200).message("success").data(bookings).build());
     }
+    //@update status book
     public ResponseEntity<ResponseObject> updateStatus(String newStatus,Long bookId){
         var book = bookRepository.findById(bookId);
         if(!book.isEmpty()){
@@ -80,6 +84,9 @@ public class BookService {
         return  ResponseEntity.status(404).body(ResponseObject.builder().statusCode(404).message("Not found").build());
     }
     // Thanh toan
-    // Cap nhat phu thu
-    //
+    public ResponseEntity<ResponseObject> charge(Long bookId, Authentication authentication){
+        return null;
+    }
+    //@ add the surchage for book
+
 }
