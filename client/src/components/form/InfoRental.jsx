@@ -1,40 +1,51 @@
 import { Slider, TextField } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import { usePlacesWidget } from "react-google-autocomplete";
+import React, { useEffect, useRef, useState } from "react";
 import Map from "../Map";
 import { useSelector } from "react-redux";
+import "leaflet/dist/leaflet.css";
+import "leaflet-geosearch/dist/geosearch.css";
+import { OpenStreetMapProvider } from "leaflet-geosearch";
+
 function InfoRental({ formik }) {
     const bikeRegister = useSelector((state) => state.bikeRegister);
+    const [placeInput, setPlaceInput] = useState("");
+    const [places, setPlaces] = useState(null);
+    const timer = useRef(null);
     const [location, setLocation] = useState({
         address: "Ho Chi Minh City, Vietnam",
         lat: 10.762622,
         lng: 106.660172,
     });
-    useEffect(() => {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition((position) => {
-                setLocation({ ...location, lat: position.latitude, lng: position.longitude });
-            });
-        }
-    }, []);
-    const { ref } = usePlacesWidget({
-        apiKey: import.meta.env.VITE_API_GG_KEY,
-        language: "vi",
-        // googleMapsScriptBaseUrl:
-        //     "https://maps.googleapis.com/maps/api/js?key=AIzaSyB9rQtQvmGpb5lgt0cFfZ5JMDdpgor9RZA&libraries=places",
-        onPlaceSelected: (place) => {
-            setLocation({
-                address: place.formatted_address,
-                lat: place.geometry.location.lat(),
-                lng: place.geometry.location.lng(),
-            });
-            formik.setFieldValue("place", place.formatted_address);
-        },
-        options: {
-            componentRestrictions: { country: "vn" },
-            types: ["geocode", "establishment"],
+    const provider = new OpenStreetMapProvider({
+        params: {
+            countrycodes: "vn",
         },
     });
+    const searchPlaces = async (value) => {
+        console.log(value);
+        const results = await provider.search({ query: value });
+        setPlaces(results);
+    };
+    const handleChange = (e) => {
+        const value = e.target.value;
+        setPlaceInput(e.target.value);
+        if (timer.current) clearTimeout(timer.current);
+        timer.current = setTimeout(() => {
+            searchPlaces(value);
+        }, 800);
+    };
+    const selectedPlace = (place) => {
+        formik.setFieldValue("place", place.label.split("/").join(""));
+        const [lat, lon] = place.bounds[0];
+        setLocation({ address: place.label.split("/").join(""), lat: lat, lng: lon });
+        setPlaceInput(place.label.split("/").join(""));
+        console.log(place);
+        setPlaces(null);
+    };
+    useEffect(() => {
+        bikeRegister.place && setPlaceInput(bikeRegister.place);
+    }, [bikeRegister]);
+
     return (
         <form className="">
             <div>
@@ -103,20 +114,42 @@ function InfoRental({ formik }) {
                 </div>
             </div>
             <div>
-                <p>Địa chỉ xe</p>
-                <input
-                    name="place"
-                    defaultValue={bikeRegister.place}
-                    ref={ref}
-                    type="text"
-                    placeholder="Search place"
-                    className="w-2/3 py-2 px-3 outline-none rounded-xl border border-gray-200 mt-5"
-                />
-                {formik.touched.place && formik.errors.place ? (
-                    <p className="text-rose-400 text-xs font-semibold mt-2">{formik.errors.place}</p>
-                ) : null}
-                <div className="w-2/3 h-[50vh] mt-5">
-                    <Map location={location} zoomLevel={15} />
+                <div className="relative">
+                    <p>Địa chỉ xe</p>
+                    <div className="h-[60vh] mt-5 z-10 overflow-hidden">
+                        <Map location={location} zoomLevel={12} />
+                    </div>
+                    <input
+                        name="place"
+                        value={placeInput}
+                        onChange={handleChange}
+                        type="text"
+                        placeholder="Search place"
+                        className="w-2/3 py-2 px-3 outline-none rounded-xl border border-gray-200 mt-5 "
+                    />
+                    <ul
+                        className={`w-2/3 bg-white p-2 z-50 rounded-xl absolute top-full left-0 
+                ${places && places.length > 0 ? "" : "hidden"}`}
+                    >
+                        {places && places.length > 0
+                            ? places.map((place, index) => {
+                                  return (
+                                      <li
+                                          className="p-2 bg-gray-400 border-b cursor-pointer"
+                                          onClick={() => {
+                                              selectedPlace(place);
+                                          }}
+                                          key={index}
+                                      >
+                                          {place.label.split("/").join("")}
+                                      </li>
+                                  );
+                              })
+                            : null}
+                    </ul>
+                    {formik.touched.place && formik.errors.place ? (
+                        <p className="text-rose-400 text-xs font-semibold mt-2">{formik.errors.place}</p>
+                    ) : null}
                 </div>
             </div>
         </form>

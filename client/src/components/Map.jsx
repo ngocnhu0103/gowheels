@@ -1,25 +1,20 @@
 import React, { useEffect, useState } from "react";
-import GoogleMapReact from "google-map-react";
-import LocationPin from "./LocationPin";
-
+import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
+// import "leaflet";
 function Map({ location, zoomLevel }) {
     const [places, setPlaces] = useState([]);
+
     return (
-        <div className="h-full w-full">
-            <GoogleMapReact
-                bootstrapURLKeys={{ key: import.meta.env.VITE_API_GG_KEY }}
-                defaultCenter={{
-                    lat: 10.762622,
-                    lng: 106.660172,
-                }}
-                defaultZoom={zoomLevel}
-                onGoogleApiLoaded={({ map, maps }) => console.log(map, maps)}
-                yesIWantToUseGoogleMapApiInternals
-                center={location}
-            >
-                <LocationPin lat={location.lat} lng={location.lng} text={location.address} />
-            </GoogleMapReact>
-        </div>
+        <MapContainer key={[location.lat, location.lng]} center={[location.lat, location.lng]} zoom={zoomLevel}>
+            <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+
+            <Marker position={[location.lat, location.lng]}>
+                <Popup>{location.address}</Popup>
+            </Marker>
+        </MapContainer>
     );
 }
 
