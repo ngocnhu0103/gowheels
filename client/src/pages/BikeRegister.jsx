@@ -11,7 +11,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import BikeInfo from "../components/form/BikeInfo";
 import { useDispatch, useSelector } from "react-redux";
-import { saveInfoBike, saveInfoRental } from "../store/bikeRegisterSlice";
+import { clearData, saveInfoBike, saveInfoRental } from "../store/bikeRegisterSlice";
 import InfoRental from "../components/form/InfoRental";
 import UploadBikeImg from "../components/form/UploadBikeImg";
 import { bikeRegisterAPI } from "../api/bikeAPI";
@@ -19,35 +19,23 @@ function BikeRegister() {
     const [imgs, setImgs] = useState([]);
 
     const [slideNum, setSlideNum] = useState(1);
+    const [loading, setLoading] = useState(false);
     const [selectedTags, setSelectedTags] = useState([]);
     const dispatch = useDispatch();
     const bikeRegister = useSelector((state) => state.bikeRegister);
-    const categories = [
-        {
-            value: 1,
-            label: "Xe máy",
-        },
-        {
-            value: 2,
-            label: "Xe ô tô",
-        },
-        {
-            value: 3,
-            label: "Xe đạp",
-        },
-    ];
+
     const formikInfoBike = useFormik({
         initialValues: {
             bikeName: "",
             bikeCode: "",
-            category: 1,
+            categoryId: 1,
             description: "",
             color: "",
         },
         validationSchema: Yup.object({
             bikeCode: Yup.string().required("Biển số xe bắt buộc"),
             bikeName: Yup.string().required("Tên xe là bặt buộc"),
-            category: Yup.number()
+            categoryId: Yup.number()
                 .required()
                 .oneOf([1, 2, 3], "Danh mục phải là một trong các giá trị sau: [Xe máy,Xe ô tô,Xe đạp]"),
         }),
@@ -84,19 +72,15 @@ function BikeRegister() {
             const values = { ...bikeRegister, images: imgs };
             console.log(values);
             // call api
+            setLoading(true);
             await bikeRegisterAPI(dispatch, values);
+            setLoading(false);
+            dispatch(clearData());
         }
     };
     const render = () => {
         if (slideNum === 1) {
-            return (
-                <BikeInfo
-                    formik={formikInfoBike}
-                    categories={categories}
-                    selectedTags={selectedTags}
-                    setSelectedTags={setSelectedTags}
-                />
-            );
+            return <BikeInfo formik={formikInfoBike} selectedTags={selectedTags} setSelectedTags={setSelectedTags} />;
         } else if (slideNum === 2) {
             return <InfoRental formik={formikInfoRental} bikeRegister={bikeRegister} />;
         } else {
@@ -163,7 +147,13 @@ function BikeRegister() {
                         >
                             Quay lại
                         </Button>
-                        <Button variant="contained" className="w-1/2" size="large" onClick={submitForm}>
+                        <Button
+                            disabled={loading}
+                            variant="contained"
+                            className="w-1/2"
+                            size="large"
+                            onClick={submitForm}
+                        >
                             {slideNum === 3 ? "Đăng xe" : "Kế tiếp"}
                         </Button>
                     </div>

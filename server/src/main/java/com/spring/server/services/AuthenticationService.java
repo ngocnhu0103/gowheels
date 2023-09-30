@@ -67,7 +67,7 @@ public class AuthenticationService {
 
             var jwtToken = jwtService.generateToken(user);
             var data = ResponseAuth.builder().token(jwtToken).user(user).build();
-            return ResponseEntity.ok(ResponseObject.builder().statusCode(201).message("Đăng ký thành công").data(data).build());
+            return ResponseEntity.ok(ResponseObject.builder().statusCode(200).message("Đăng ký thành công").data(data).build());
         }catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
@@ -101,7 +101,7 @@ public class AuthenticationService {
 
                 var jwtToken = jwtService.generateToken(user);
                 var data = ResponseAuth.builder().token(jwtToken).user(user).build();
-                return ResponseEntity.ok(ResponseObject.builder().statusCode(201).message("Đăng nhập thành công").data(data).build());
+                return ResponseEntity.ok(ResponseObject.builder().statusCode(200).message("Đăng nhập thành công").data(data).build());
 
 
     }

@@ -19,7 +19,7 @@ public class BikeData {
     private String color;
     private String bikeCode;
     private Long categoryId;
-    private String placeId;
+    private String place;
     private Double weekDiscount;
     private Double monthDiscount;
     private List<Long> tagList;

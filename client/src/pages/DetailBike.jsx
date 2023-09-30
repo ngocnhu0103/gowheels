@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import Tag from "../components/Tag";
@@ -22,12 +22,17 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import EmojiFlagsIcon from "@mui/icons-material/EmojiFlags";
 import Map from "../components/Map";
 import Card from "../components/Card";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import Review from "../components/Review";
 import { Button } from "@mui/material";
 import BookForm from "../components/form/BookForm";
+import { getBikeAPI } from "../api/bikeAPI";
+import { useDispatch, useSelector } from "react-redux";
 function DetailBike() {
     const [showPolicy, setShowPolicy] = useState(false);
+    const { bikeId } = useParams();
+    const dispatch = useDispatch();
+    const { bike } = useSelector((state) => state.bike);
     const [location, setLocation] = useState({
         address: "Tân Bình, Hồ Chí Minh, Vietnam",
         lat: 10.802029,
@@ -85,6 +90,12 @@ function DetailBike() {
             ),
         },
     ];
+    useEffect(() => {
+        const fetchBikeById = async (id) => {
+            await getBikeAPI(dispatch, id);
+        };
+        fetchBikeById(bikeId);
+    }, [bikeId]);
     return (
         <>
             <main className="container w-10/12 mx-auto">
@@ -406,10 +417,10 @@ function DetailBike() {
                 <main className="container w-4/5 mx-auto">
                     <h3 className="text-xl font-semibold mb-4">Xe tương tự</h3>
                     <ul className="grid grid-cols-4 gap-5">
+                        {/* <Card />
                         <Card />
                         <Card />
-                        <Card />
-                        <Card />
+                        <Card /> */}
                     </ul>
                 </main>
             </section>

@@ -10,7 +10,6 @@ function FormLogin({ onClose }) {
     const [loading, setLoading] = useState(false);
 
     const handleLogin = async (e) => {
-        console.log(123);
         e.preventDefault();
         setLoading(true);
         await loginAPI(dispatch, { email, password });

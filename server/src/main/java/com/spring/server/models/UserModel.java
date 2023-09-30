@@ -23,8 +23,8 @@ import java.util.List;
 @Table(name = "users")
 public class UserModel implements UserDetails {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     @NotBlank(message = "Vui lòng nhập email")
     @Column(unique = true)
     private String email;
@@ -38,6 +38,8 @@ public class UserModel implements UserDetails {
     private String address;
     private String avatar;
     private String accountNumber;
+    @OneToMany
+    private List<Bike> likes;
     private boolean isJobber;
     @OneToMany(mappedBy = "owner")
     private List<Bike> bikes ;

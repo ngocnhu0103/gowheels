@@ -11,7 +11,10 @@ function FormRegister({ onClose }) {
     const [loading, setLoading] = useState(false);
 
     const handleRegister = async (values) => {
+        setLoading(true);
         await registerAPI(dispatch, values);
+        setLoading(false);
+        onClose();
     };
 
     const formik = useFormik({
@@ -31,10 +34,7 @@ function FormRegister({ onClose }) {
                 .oneOf([Yup.ref("password")], "Mật khẩu không khớp"),
         }),
         onSubmit: (values) => {
-            setLoading(true);
             handleRegister(values);
-            setLoading(false);
-            onClose();
         },
     });
     return (

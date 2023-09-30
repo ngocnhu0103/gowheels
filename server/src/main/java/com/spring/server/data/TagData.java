@@ -13,6 +13,5 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 public class TagData {
-
     private String newTag;
 }

@@ -8,7 +8,7 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { Modal } from "@mui/material";
 import { useState } from "react";
-function Card({ isRow = false, isManage = false }) {
+function Card({ isRow = false, isManage = false, bike }) {
     const [openDeleteBike, setOpenDeleteBike] = useState(false);
 
     const handleOpenDeleteBike = () => {
@@ -20,27 +20,36 @@ function Card({ isRow = false, isManage = false }) {
     return (
         <li>
             <div className={`p-5 w-full border border-primary/20 rounded-lg shadow ${isRow ? "flex gap-5" : ""}`}>
-                <Link to={`/bike/id`}>
-                    <img className={`rounded-lg  ${isRow ? "w-60" : ""}`} src={xe1} alt="product image" />
+                <Link to={`/bike/${bike.bikeId}`}>
+                    <img
+                        className={`rounded-lg  ${isRow ? "w-60" : ""}`}
+                        src={bike.images[0].url}
+                        alt="product image"
+                    />
                 </Link>
 
                 <div className={` ${isRow ? "pt-0" : "pt-5"}`}>
                     <ul className="flex gap-2 ">
-                        <li className="text-[12px] bg-gray-100 p-1 rounded-xl">
-                            <span>Tiết kiệm nhiên liệu</span>
-                        </li>
-                        <li className="text-[12px] bg-gray-100 p-1 rounded-xl">
-                            <span>Động cơ êm</span>
-                        </li>
+                        {bike.tagList && bike.tagList.length > 0
+                            ? bike.tagList.map((tag, index) => {
+                                  if (index % 2 == 0) {
+                                      return (
+                                          <li key={tag.tagId} className="text-[12px] bg-gray-100 p-1 rounded-xl">
+                                              <span>{tag.tagName}</span>
+                                          </li>
+                                      );
+                                  }
+                              })
+                            : null}
                     </ul>
-                    <Link to={`/bike/id`}>
+                    <Link to={`/bike/${bike.bikeId}`}>
                         <h5 className="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">
-                            Xe Maybach 7 cho
+                            {bike.bikeName}
                         </h5>
                     </Link>
                     <div className="text-gray-400 flex items-center">
                         <PlaceIcon fontSize="15px" />
-                        <p className="text-sm">Cái Răng, Cần Thơ</p>
+                        <p className="text-sm truncate ">{bike.place}</p>
                     </div>
                     <div className="flex items-center mt-2.5 mb-5">
                         <svg
@@ -98,7 +107,7 @@ function Card({ isRow = false, isManage = false }) {
                         </span>
                     </div>
                     <div className="flex items-center justify-between">
-                        <span className="text-3xl font-bold text-gray-900 dark:text-white">$599</span>
+                        <span className="text-3xl font-bold text-gray-900 dark:text-white">{bike.price}</span>
                         <span
                             onClick={(e) => {
                                 console.log(e);

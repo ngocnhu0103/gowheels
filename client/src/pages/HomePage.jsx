@@ -7,10 +7,11 @@ import { useEffect, useState } from "react";
 import Guide from "../components/home/Guide";
 import Footer from "../components/Footer";
 import Places from "../components/home/Places";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getAllBikeAPI } from "../api/bikeAPI";
 function Home() {
     const [showCalendar, setShowCalendar] = useState(false);
+    const { bikeList } = useSelector((state) => state.bike);
     const [filter, setFilter] = useState({
         bikeName: "",
         page: 0,
@@ -23,6 +24,7 @@ function Home() {
     useEffect(() => {
         getAllBike(dispatch, filter);
     }, []);
+    console.log(bikeList);
     return (
         <main
             className="container w-4/5 mx-auto"
@@ -44,7 +46,11 @@ function Home() {
             <div className="py-8">
                 <h1 className="text-center text-5xl font-banner text-primary pb-8">Xe nổi bật</h1>
                 <ul className="grid grid-cols-4 gap-5">
-                    <Card />
+                    {bikeList && bikeList.length > 0
+                        ? bikeList.map((bike) => {
+                              return <Card key={bike.bikeCode} bike={bike} />;
+                          })
+                        : null}
                 </ul>
             </div>
             <Guide />

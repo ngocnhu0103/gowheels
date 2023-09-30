@@ -35,9 +35,10 @@ public class Bike implements Serializable {
     @JsonIgnoreProperties({"hibernateLazyInitializer"})
     @ManyToOne(fetch = FetchType.LAZY)
     private Category category;
-    @JsonIgnoreProperties({"hibernateLazyInitializer"})
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Place place;
+//    @JsonIgnoreProperties({"hibernateLazyInitializer"})
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    private Place place;
+    private String place;
     @JsonIgnoreProperties({"hibernateLazyInitializer"})
     @ManyToMany(fetch = FetchType.LAZY)
     @EqualsAndHashCode.Exclude // không sử dụng trường này trong equals và hashcode
@@ -49,8 +50,10 @@ public class Bike implements Serializable {
 
     private List<Tag> tagList;
     @JsonIgnore
+//@JsonIgnoreProperties({"hibernateLazyInitializer"})
     @ManyToOne(fetch = FetchType.LAZY)
     @EqualsAndHashCode.Exclude // không sử dụng trường này trong equals và hashcode
     @ToString.Exclude // không sử dụng trong toString()
+
     private UserModel owner;
 }

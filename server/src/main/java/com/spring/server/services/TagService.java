@@ -43,7 +43,7 @@ public class TagService {
         try{
             var tagList = tagRepository.findAll();
 
-            return ResponseEntity.ok(ResponseObject.builder().statusCode(201).message("thành công").data(tagList).build());
+            return ResponseEntity.ok(ResponseObject.builder().statusCode(200).message("thành công").data(tagList).build());
         }catch (Exception e){
             System.out.println(e.getMessage());
             return ResponseEntity.internalServerError().build();

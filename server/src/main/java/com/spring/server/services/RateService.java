@@ -18,7 +18,7 @@ public class RateService {
     private final UserRepository userRepository;
     //@services
     //@getAllByOwner
-    public ResponseEntity<ResponseObject> getAll(String userId){
+    public ResponseEntity<ResponseObject> getAll(Long userId){
         try {
             var user = userRepository.findById(userId);
             var rates = rateRepository.findAllByOwner(user.get());

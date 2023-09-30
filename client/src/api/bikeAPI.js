@@ -1,27 +1,38 @@
 import baseAPI from './baseAPI'
 import { showToast } from "../store/toastSlice";
-import { saveDataBike, saveNewBike } from '../store/bikeSlice';
+import { saveDataBike, saveNewBike, setBike } from '../store/bikeSlice';
 
 export const getAllBikeAPI = async (dispatch, params) => {
-    console.log(params);
     try {
         var response = await baseAPI.get("/bike/all", { params })
-        console.log(response);
-        dispatch(saveDataBike(response.data))
+        if (response.statusCode === 200) {
+            dispatch(saveDataBike(response.data))
+        }
     } catch (error) {
-        console.log(error);
         dispatch(showToast({ message: error.message, type: "error" }))
     }
 }
 
 export const bikeRegisterAPI = async (dispatch, values) => {
-    console.log(values);
     try {
         var response = await baseAPI.post("/bike", values)
-        console.log(response);
+        if (response.statusCode === 200) {
+            dispatch(saveNewBike(response.data))
+            dispatch(showToast({ message: response.message, type: "success" }))
+        }
 
-        dispatch(saveNewBike(response.data))
-        dispatch(showToast({ message: response.data.message, type: "success" }))
+    } catch (error) {
+        console.log(error);
+        dispatch(showToast({ message: error.message, type: "error" }))
+    }
+}
+export const getBikeAPI = async (dispatch, id) => {
+    try {
+        var response = await baseAPI.get(`/bike/${id}`,)
+        if (response.statusCode === 200) {
+            dispatch(setBike(response.data))
+            dispatch(showToast({ message: response.message, type: "success" }))
+        }
 
     } catch (error) {
         console.log(error);

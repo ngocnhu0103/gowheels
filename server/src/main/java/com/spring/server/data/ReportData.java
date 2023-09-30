@@ -9,7 +9,7 @@ import java.util.List;
 
 @Data
 public class ReportData {
-    private String reportedPerson;
+    private Long reportedPerson;
     private Date timeReport;
     private String content;
     private List<String> imageList;

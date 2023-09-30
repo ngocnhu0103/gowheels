@@ -1,26 +1,14 @@
 import { MenuItem, TextField } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import Tag from "../Tag";
-function BikeInfo({ formik, categories, selectedTags, setSelectedTags }) {
-    const tags = [
-        {
-            id: 1,
-            tagName: "Tiết kiếm xăng",
-        },
-        {
-            id: 2,
-            tagName: "Tiết kiếm điện",
-        },
-        {
-            id: 3,
-            tagName: "Bản đồ",
-        },
-        {
-            id: 4,
-            tagName: "ETC",
-        },
-    ];
+import { useDispatch, useSelector } from "react-redux";
+import { getTagsAPI } from "../../api/tagAPI";
+import { getCategoriesAPI } from "../../api/categoryAPI";
+function BikeInfo({ formik, selectedTags, setSelectedTags }) {
+    const { tags } = useSelector((state) => state.tag);
+    const { categories } = useSelector((state) => state.category);
+    const dispatch = useDispatch();
 
     const selectTag = (id) => {
         const check = selectedTags.some((tagId) => id === tagId);
@@ -29,7 +17,16 @@ function BikeInfo({ formik, categories, selectedTags, setSelectedTags }) {
     const activedTag = (id) => {
         return selectedTags.some((tagId) => tagId === id);
     };
-
+    useEffect(() => {
+        const fetchTags = async () => {
+            await getTagsAPI(dispatch);
+        };
+        const fetchCategories = async () => {
+            await getCategoriesAPI(dispatch);
+        };
+        fetchTags();
+        fetchCategories();
+    }, []);
     return (
         <form className="">
             <div>
@@ -71,25 +68,25 @@ function BikeInfo({ formik, categories, selectedTags, setSelectedTags }) {
             </div>
             <div>
                 <TextField
-                    id="category"
+                    id="categoryId"
                     select
                     className="w-1/2"
                     size="small"
                     label="Chọn loại xe"
-                    value={formik.values.category}
+                    value={formik.values.categoryId}
                     variant="outlined"
-                    name="category"
+                    name="categoryId"
                     margin="normal"
                     onChange={formik.handleChange}
                 >
                     {categories.map((option) => (
-                        <MenuItem key={option.value} value={option.value}>
-                            {option.label}
+                        <MenuItem key={option.categoryId} value={option.categoryId}>
+                            {option.categoryName}
                         </MenuItem>
                     ))}
                 </TextField>
-                {formik.touched.category && formik.errors.category ? (
-                    <p className="text-rose-400 text-xs font-semibold">{formik.errors.category}</p>
+                {formik.touched.categoryId && formik.errors.categoryId ? (
+                    <p className="text-rose-400 text-xs font-semibold">{formik.errors.categoryId}</p>
                 ) : null}
             </div>
             <div>
@@ -129,7 +126,7 @@ function BikeInfo({ formik, categories, selectedTags, setSelectedTags }) {
                 <ul className="grid grid-cols-4 gap-4 mt-4">
                     {tags.length > 0
                         ? tags.map((tag) => (
-                              <Tag tag={tag} key={tag.id} selectTag={selectTag} activeTag={activedTag(tag.id)} />
+                              <Tag tag={tag} key={tag.tagId} selectTag={selectTag} activeTag={activedTag(tag.tagId)} />
                           ))
                         : ""}
                 </ul>

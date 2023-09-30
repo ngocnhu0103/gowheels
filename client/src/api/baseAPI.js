@@ -1,7 +1,16 @@
 import axios from 'axios';
+import jwt_decode from "jwt-decode";
 import { store } from '../store/store'
+import { clearDataUser } from '../store/authSlice';
 const baseAPI = axios.create({
     baseURL: "http://localhost:8080/api/v1",
+    headers: {
+        'Content-Type': 'application/json',
+
+
+    },
+    withCredentials: false,
+
 })
 
 baseAPI.interceptors.request.use((config) => {
@@ -13,7 +22,15 @@ baseAPI.interceptors.request.use((config) => {
     if (!token) {
         return config;
     }
-    return config.headers.Authorization = token;
+    var { exp } = jwt_decode(token);
+
+    if (Date.now() >= exp * 1000) {
+        store.dispatch(clearDataUser())
+        return config;
+    }
+
+    config.headers = { 'Authorization': `Bearer ${token}` }
+    return config;
 
 })
 
@@ -26,7 +43,6 @@ baseAPI.interceptors.response.use(function (response) {
     return response
 }, function (error) {
     // Do something with response error
-    console.log(error);
     throw error.response.data;
 });
 

@@ -6,7 +6,7 @@ function Tag({ tag, selectTag, activeTag }) {
     return (
         <li
             onClick={() => {
-                selectTag(tag.id);
+                selectTag(tag.tagId);
             }}
             className={`${
                 activeTag ? "bg-primary text-white" : ""

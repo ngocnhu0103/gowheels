@@ -31,12 +31,11 @@ public class BikeService {
     private final ImageRepository imageRepository;
     private final BikePaginationRepository bikePaginationRepository;
     public ResponseEntity<ResponseObject> createBike(BikeData bikeData, Authentication authentication){
-        System.out.println(authentication.getName());
+        System.out.println(bikeData);
         try{
             var foundBike = bikeRepository.findByBikeCode(bikeData.getBikeCode());
             if(foundBike == null ) {
                 var owner = userRepository.findByEmail(authentication.getName());
-                var place = placeRepository.findById(bikeData.getPlaceId());
                 var category = categoryRepository.findById(bikeData.getCategoryId());
 
                 List<Tag> tags = new ArrayList<>();
@@ -66,14 +65,14 @@ public class BikeService {
                 bike.setMonthDiscount(bikeData.getMonthDiscount());
                 bike.setCategory(category.get());
                 bike.setTagList(tags);
-                bike.setPlace(place.get());
+                bike.setPlace(bikeData.getPlace());
                 bike.setImages(images);
                 Bike createdBike = bikeRepository.save(bike);
 
                 System.out.println(createdBike);
 
 
-                return ResponseEntity.ok(ResponseObject.builder().statusCode(201).message("Tạo xe thành công").data(createdBike).build());
+                return ResponseEntity.ok(ResponseObject.builder().statusCode(200).message("Tạo xe thành công").data(createdBike).build());
             }
             return new ResponseEntity<>(ResponseObject.builder().statusCode(402).message("Biển số xe đã tồn tại").data("").build(), HttpStatus.CONFLICT);
         }catch (Exception e){
@@ -93,7 +92,7 @@ public class BikeService {
             }
             bikeList = pageBikes.getContent();
             System.out.println(bikeList);
-            return ResponseEntity.ok(ResponseObject.builder().statusCode(201).message("thành công").data(bikeList).build());
+            return ResponseEntity.ok(ResponseObject.builder().statusCode(200).message("thành công").data(bikeList).build());
         }catch (Exception e){
             System.out.println(e.getMessage());
             return ResponseEntity.ok(ResponseObject.builder().statusCode(500).message(e.getMessage()).data("").build());
@@ -112,7 +111,7 @@ public class BikeService {
             }
             bikeList = pageBikes.getContent();
             System.out.println(bikeList);
-            return ResponseEntity.ok(ResponseObject.builder().statusCode(201).message("thành công").data(bikeList).build());
+            return ResponseEntity.ok(ResponseObject.builder().statusCode(200).message("thành công").data(bikeList).build());
         }catch (Exception e){
             System.out.println(e.getMessage());
             return ResponseEntity.ok(ResponseObject.builder().statusCode(500).message(e.getMessage()).data("").build());
@@ -123,7 +122,7 @@ public class BikeService {
             var bike = bikeRepository.findById(Id);
 
             if(bike.isPresent()){
-                return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().statusCode(201).message("Thành công").data(bike.get()).build());
+                return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().statusCode(200).message("Thành công").data(bike.get()).build());
             }
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResponseObject.builder().message("Not found").build());
         }catch (Exception e){
@@ -137,7 +136,7 @@ public class BikeService {
 
             if (bike.isPresent()) {
                 bikeRepository.deleteById(Id);
-                return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().statusCode(201).message("Xóa bike thành công").data("").build());
+                return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().statusCode(200).message("Xóa bike thành công").data("").build());
             }
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResponseObject.builder().message("Not found").build());
         } catch (Exception e) {
@@ -150,7 +149,6 @@ public class BikeService {
             var bike = bikeRepository.findById(Id);
 
             if (bike.isPresent()) {
-                var place = placeRepository.findById(newBike.getPlaceId());
                 var category = categoryRepository.findById(newBike.getCategoryId());
                 List<Tag> tags = new ArrayList<>();
                 for(Long t : newBike.getTagList()){
@@ -168,14 +166,14 @@ public class BikeService {
                 bike.get().setBikeName(newBike.getBikeName());
                 bike.get().setBikeCode(newBike.getBikeCode());
                 bike.get().setStatus(newBike.getStatus());
-                bike.get().setPlace(place.get());
+                bike.get().setPlace(newBike.getPlace());
                 bike.get().setTagList(tags);
                 bike.get().setCategory(category.get());
                 bike.get().setDescription(newBike.getDescription());
                 bike.get().setColor(newBike.getColor());
                 bike.get().setImages(images);
                 bikeRepository.save(bike.get());
-                return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().statusCode(201).message("Update bike thành công").data(bike.get()).build());
+                return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().statusCode(200).message("Update bike thành công").data(bike.get()).build());
             }
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResponseObject.builder().message("Not found").build());
         } catch (Exception e) {

@@ -5,10 +5,10 @@ const bikeRegisterSlice = createSlice({
     initialState: {
         bikeName: "",
         bikeCode: "",
-        category: null,
+        categoryId: null,
         description: "",
         color: "",
-        tags: [],
+        tagList: [],
         price: null,
         place: "",
         images: [],
@@ -20,10 +20,10 @@ const bikeRegisterSlice = createSlice({
         saveInfoBike: (state, actions) => {
             state.bikeName = actions.payload.bikeName;
             state.bikeCode = actions.payload.bikeCode;
-            state.category = actions.payload.category;
+            state.categoryId = actions.payload.categoryId;
             state.description = actions.payload.description;
             state.color = actions.payload.color;
-            state.tags = actions.payload.tags;
+            state.tagList = actions.payload.tags;
         },
         saveInfoRental: (state, actions) => {
             state.price = actions.payload.price;
@@ -35,8 +35,22 @@ const bikeRegisterSlice = createSlice({
         saveImagesBike: (state, actions) => {
             state.images = actions.payload.images;
         },
+        clearData: (state) => {
+            state.bikeName = null
+            state.bikeCode = null
+            state.categoryId = null
+            state.description = null
+            state.color = null
+            state.tags = null
+            state.price = null
+            state.place = null
+            state.weekDiscount = null
+            state.monthDiscount = null
+            state.images = null
+
+        }
     },
 })
 
-export const { saveInfoBike, saveImagesBike, saveInfoRental } = bikeRegisterSlice.actions
+export const { saveInfoBike, saveImagesBike, saveInfoRental, clearData } = bikeRegisterSlice.actions
 export default bikeRegisterSlice.reducer;
