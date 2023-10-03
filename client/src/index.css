@@ -54,5 +54,5 @@
 }
 /* Map */
 .leaflet-container {
-    @apply h-screen;
+    @apply h-full;
 }

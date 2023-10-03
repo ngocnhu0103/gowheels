@@ -49,7 +49,8 @@ public class BookService {
         var renter = userRepository.findByEmail(authentication.getName());
         var newBook = Booking.builder().bike(bike.get()).renter(renter.get()).startDate(bookData.getStartDate()).endDate(bookData.getEndDate())
                 .paymentMethod(bookData.getPaymentMethod()).totalPrice(bookData.getTotalPrice()).status("Đang chờ duyệt").build();
-        return ResponseEntity.ok(ResponseObject.builder().statusCode(201).message("Đặt xe thành công").data(newBook).build());
+        var createdBook =  bookRepository.save(newBook);
+        return ResponseEntity.ok(ResponseObject.builder().statusCode(200).message("Đặt xe thành công").data(createdBook).build());
     }
     //@gel all book for renter
     public ResponseEntity<ResponseObject> getAllRenterBook(Authentication authentication){

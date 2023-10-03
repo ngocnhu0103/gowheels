@@ -27,10 +27,10 @@ function MyStranport() {
                             </Link>
                         </div>
                         <ul className="w-full grid grid-cols-1 gap-5 relative max-h-[70vh] overflow-auto snap-y snap-mandatory">
-                            <Card isRow={true} isManage={true} />
+                            {/* <Card isRow={true} isManage={true} />
                             <Card isRow={true} />
                             <Card isRow={true} />
-                            <Card isRow={true} />
+                            <Card isRow={true} /> */}
                         </ul>
                     </div>
                 </div>

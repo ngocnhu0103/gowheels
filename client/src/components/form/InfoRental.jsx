@@ -19,10 +19,11 @@ function InfoRental({ formik }) {
     const provider = new OpenStreetMapProvider({
         params: {
             countrycodes: "vn",
+            "accept-language": "vi",
+            addressdetails: 1,
         },
     });
     const searchPlaces = async (value) => {
-        console.log(value);
         const results = await provider.search({ query: value });
         setPlaces(results);
     };

@@ -10,6 +10,7 @@ import Rate from "./pages/Rate";
 import RequiredAuth from "./router/RequiredAuth";
 import BikeRegister from "./pages/BikeRegister";
 import DetailBike from "./pages/DetailBike";
+import NotFound from "./pages/NotFound";
 function AppRoute() {
     return (
         <Routes>
@@ -25,6 +26,7 @@ function AppRoute() {
                 {/* <Route path="/bike/:bikeId" element={<DetailBike />}></Route> */}
             </Route>
             <Route path="/bike/:bikeId" element={<DetailBike />}></Route>
+            <Route path="*" element={<NotFound />}></Route>
         </Routes>
     );
 }

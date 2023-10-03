@@ -24,8 +24,8 @@ function BikeInfo({ formik, selectedTags, setSelectedTags }) {
         const fetchCategories = async () => {
             await getCategoriesAPI(dispatch);
         };
-        fetchTags();
-        fetchCategories();
+        tags || fetchTags();
+        categories || fetchCategories();
     }, []);
     return (
         <form className="">

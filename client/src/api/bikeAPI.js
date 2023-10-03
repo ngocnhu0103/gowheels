@@ -31,7 +31,6 @@ export const getBikeAPI = async (dispatch, id) => {
         var response = await baseAPI.get(`/bike/${id}`,)
         if (response.statusCode === 200) {
             dispatch(setBike(response.data))
-            dispatch(showToast({ message: response.message, type: "success" }))
         }
 
     } catch (error) {

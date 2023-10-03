@@ -24,7 +24,6 @@ function Home() {
     useEffect(() => {
         getAllBike(dispatch, filter);
     }, []);
-    console.log(bikeList);
     return (
         <main
             className="container w-4/5 mx-auto"

@@ -28,7 +28,16 @@ import { Button } from "@mui/material";
 import BookForm from "../components/form/BookForm";
 import { getBikeAPI } from "../api/bikeAPI";
 import { useDispatch, useSelector } from "react-redux";
+import { OpenStreetMapProvider } from "leaflet-geosearch";
 function DetailBike() {
+    const provider = new OpenStreetMapProvider({
+        params: {
+            countrycodes: "vn",
+            "accept-language": "vi",
+            addressdetails: 1,
+        },
+    });
+
     const [showPolicy, setShowPolicy] = useState(false);
     const { bikeId } = useParams();
     const dispatch = useDispatch();
@@ -38,24 +47,7 @@ function DetailBike() {
         lat: 10.802029,
         lng: 106.649307,
     });
-    const tags = [
-        {
-            id: 1,
-            tagName: "Tiết kiếm xăng",
-        },
-        {
-            id: 2,
-            tagName: "Tiết kiếm điện",
-        },
-        {
-            id: 3,
-            tagName: "Bản đồ",
-        },
-        {
-            id: 4,
-            tagName: "ETC",
-        },
-    ];
+
     const rows = [
         {
             stt: 1,
@@ -90,12 +82,25 @@ function DetailBike() {
             ),
         },
     ];
+    const transitionPlace = async (address) => {
+        const result = await provider.search({ query: address });
+        const [lat, lon] = result[0].bounds[0];
+        setLocation({
+            address: address,
+            lat: lat,
+            lng: lon,
+        });
+    };
     useEffect(() => {
         const fetchBikeById = async (id) => {
             await getBikeAPI(dispatch, id);
         };
-        fetchBikeById(bikeId);
+        bike.id !== bikeId ? fetchBikeById(bikeId) : null;
     }, [bikeId]);
+    useEffect(() => {
+        console.log(bike);
+        bike && bike.place && transitionPlace(bike.place);
+    }, [bike]);
     return (
         <>
             <main className="container w-10/12 mx-auto">
@@ -125,7 +130,7 @@ function DetailBike() {
                 <section className="grid grid-cols-4 gap-4">
                     <article className="col-span-3">
                         <div className="flex justify-between items-center ">
-                            <h1 className="text-4xl font-bold">KIA MORNING 2017</h1>
+                            <h1 className="text-4xl font-bold">{bike.bikeName}</h1>
                             <p className="rounded-full border w-10 h-10 flex items-center justify-center cursor-pointer border-gray-400">
                                 {true ? <FavoriteBorderIcon /> : <FavoriteIcon />}
                             </p>
@@ -139,33 +144,33 @@ function DetailBike() {
                                 <LocalShippingIcon className="text-primary" />
                                 <span>188 chuyến</span>
                             </span>
-                            <span className="text-gray-500">Quận Thủ Đức, Hồ Chí Minh</span>
+                            <span className="text-gray-500">{bike.place}</span>
                         </div>
-                        <ul className="flex gap-2 mt-2 pb-8 border-b border-gray-300">
-                            <li className="text-[12px] bg-gray-100 p-1 rounded-xl">
-                                <span>Tiết kiệm nhiên liệu</span>
-                            </li>
-                            <li className="text-[12px] bg-gray-100 p-1 rounded-xl">
-                                <span>Động cơ êm</span>
-                            </li>
-                        </ul>
+                        {/* <ul className="flex gap-2 mt-2 pb-8 border-b border-gray-300">
+                            {
+                                bike.tags && bike.tags.length > 0 ? 
+                                bike.map( tag => {
+                                    return <li key={tag.tagId} className="text-[12px] bg-gray-100 p-1 rounded-xl">
+                                    <span>{tag.tagName}</span>
+                                </li>
+                                })
+                                :null
+                            }
+                            
+                        </ul> */}
                         <section className="mt-8 pb-8 border-b border-gray-300">
                             <h3 className="text-xl font-semibold mb-4">Đặc điểm</h3>
                         </section>
                         <section className="mt-8 pb-8 border-b border-gray-300">
                             <h3 className="text-xl font-semibold mb-4">Mô tả</h3>
-                            <span className="text-gray-500">
-                                Xe rất Tiết Kiệm Xăng . bảo dưỡng tốt. Có cảm biến mùi, bảo hiểm 2 chiều, Anh Chị an tâm
-                                sử dụng.
-                                <br /> ĐẶC BIỆT: Xe Được khử khuẩn Nano sau mỗi lần sử dụng
-                            </span>
+                            <span className="text-gray-500">{bike.description}</span>
                         </section>
                         <section className="mt-8 pb-8 border-b border-gray-300">
                             <h3 className="text-xl font-semibold mb-4">Các tiện nghi khác</h3>
                             <ul className="grid grid-cols-4 gap-4">
-                                {tags && tags.length > 0
-                                    ? tags.map((tag) => {
-                                          return <Tag key={tag.id} tag={tag} />;
+                                {bike.tagList && bike.tagList.length > 0
+                                    ? bike.tagList.map((tag) => {
+                                          return <Tag key={tag.tagId} tag={tag} />;
                                       })
                                     : null}
                             </ul>
@@ -290,7 +295,7 @@ function DetailBike() {
                         </section>
                         <section className="mt-8">
                             <h3 className="text-xl font-semibold mb-8">Vị trí xe</h3>
-                            <div className="w-full h-[50vh]">
+                            <div className="w-full h-[50vh]  ">
                                 <Map location={location} zoomLevel={15} />
                             </div>
                         </section>
@@ -360,7 +365,7 @@ function DetailBike() {
                         </section>
                     </article>
                     <aside className="col-span-1">
-                        <BookForm />
+                        <BookForm price={bike.price} place={bike.place} bikeId={bikeId} />
                         <div className="mt-4 p-4 bg-white rounded-xl border border-gray-200">
                             <h1 className="text-primary font-bold">Phụ phí có thể phát sinh</h1>
                             <ul className="flex items-center flex-col gap-4 mt-4">

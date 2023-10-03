@@ -13,7 +13,7 @@ import categorySlice from './categorySlice';
 
 const persistConfig = {
     key: 'root',
-    whitelist: ['auth'],
+    whitelist: ['auth', 'tag', 'category'],
     storage, // cookies, sesseion
 }
 
