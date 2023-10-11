@@ -17,50 +17,23 @@ import java.util.List;
 
 @Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Table(name = "users")
-public class UserModel implements UserDetails {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @NotBlank(message = "Vui lòng nhập email")
-    @Column(unique = true)
-    private String email;
-    private String gender;
-    @CreatedDate
-    private Date createdAt;
-    @NotBlank(message = "Vui lòng nhập password")
-    private String password;
-    private String fullName;
-    private String phone;
-    private String address;
-    private String avatar;
-    private String accountNumber;
-    @OneToMany
-    private List<Bike> likes;
-    private boolean isJobber;
-    @OneToMany(mappedBy = "owner")
-    private List<Bike> bikes ;
-    @Enumerated(EnumType.STRING)
-    private Role role;
-    private String verificationCode;
 
-    private boolean enabled;
+public class UserModel implements UserDetails {
+    private  User user;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+        return List.of(new SimpleGrantedAuthority(user.getRole().name()));
     }
     @Override
     public String getPassword() {
-        return this.password;
+        return this.user.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return this.email;
+        return this.user.getEmail();
     }
 
     @Override

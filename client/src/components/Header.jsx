@@ -9,8 +9,8 @@ function Header() {
     const user = useSelector((state) => {
         return state.auth.user;
     });
-    const [openLogin, setOpenLogin] = useState(false);
     const [openRegister, setOpenRegister] = useState(false);
+    const [openLogin, setOpenLogin] = useState(false);
 
     const handleOpenLogin = () => {
         setOpenLogin(true);
@@ -47,7 +47,12 @@ function Header() {
                 <div className="flex gap-8">
                     {user ? (
                         <Link to="/profile/update">
-                            <Chip clickable variant="outlined" label={user.fullName} avatar={<Avatar src={srcBg} />} />
+                            <Chip
+                                clickable
+                                variant="outlined"
+                                label={user.fullName}
+                                avatar={<Avatar src={user.avatar.url} />}
+                            />
                         </Link>
                     ) : (
                         <>

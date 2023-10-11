@@ -4,6 +4,7 @@ import { Button } from "@mui/material";
 import { Link } from "react-router-dom";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import { formartVnd } from "../utils/format";
+import { renderStatusBook } from "../utils/renderStatus";
 function BookCard({ book }) {
     console.log(book);
     return (
@@ -17,7 +18,7 @@ function BookCard({ book }) {
                         Chat
                     </Button>
                 </div>
-                <p className="text-primary font-semibold">{book.status}</p>
+                <p className="text-primary font-semibold">{renderStatusBook(book.status)}</p>
             </div>
             <div className="py-5 flex items-center gap-4 border-b border-gray-300">
                 <img src={book.bike.images[0].url} alt="product 1" className="w-24 h-24 object-cover rounded-xl" />

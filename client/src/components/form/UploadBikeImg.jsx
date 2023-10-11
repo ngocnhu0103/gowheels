@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { storage } from "../../firebase.config";
 import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
-import { CircularProgress } from "@mui/material";
+import { CircularProgress, Modal } from "@mui/material";
 function UploadBikeImg({ imgs, setImgs }) {
     const [progresspercent, setProgresspercent] = useState(0);
     const [imgUrl, setImgUrl] = useState(null);
     const [error, setError] = useState(null);
+
+    const [loading, setLoading] = useState(false);
 
     const uploadImage = async (e) => {
         const file = e.target.files[0];
@@ -16,6 +18,7 @@ function UploadBikeImg({ imgs, setImgs }) {
         if (["png", "jpeg", "jpg"].includes((pattern) => pattern !== imgExtend)) {
             setError("Không hỗ trợ loại tệp này");
         } else {
+            setLoading(true);
             setError(null);
             const random = Math.round(Math.random() * 9999);
             const storageRef = ref(storage, `files/${file.name}_${random}`);
@@ -31,10 +34,13 @@ function UploadBikeImg({ imgs, setImgs }) {
                     alert(error);
                 },
                 () => {
-                    getDownloadURL(uploadStack.snapshot.ref).then((downloadURL) => {
-                        setImgs([...imgs, downloadURL]);
-                        setImgUrl(downloadURL);
-                    });
+                    getDownloadURL(uploadStack.snapshot.ref)
+                        .then((downloadURL) => {
+                            setImgs([...imgs, downloadURL]);
+                        })
+                        .finally(() => {
+                            setLoading(false);
+                        });
                 }
             );
         }
@@ -81,15 +87,6 @@ function UploadBikeImg({ imgs, setImgs }) {
                         onChange={uploadImage}
                     />
                     {error && <p className="text-rose-400 text-xs font-semibold mt-2">{error}</p>}
-                    {!imgUrl && (
-                        <div className="absolute w-full h-full flex justify-center items-center inset-0 z-10">
-                            <CircularProgress
-                                variant="determinate"
-                                value={progresspercent}
-                                title={`${progresspercent}%`}
-                            />
-                        </div>
-                    )}
                 </label>
             </div>
 
@@ -107,6 +104,61 @@ function UploadBikeImg({ imgs, setImgs }) {
                       })
                     : null}
             </div>
+            {loading && (
+                <div className="fixed inset-0 flex items-center justify-center w-full h-screen z-10 bg-black/50">
+                    <svg className="bike" viewBox="0 0 48 30" width="48px" height="30px">
+                        <g
+                            fill="none"
+                            stroke="currentColor"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="1"
+                        >
+                            <g transform="translate(9.5,19)">
+                                <circle className="bike__tire" r="9" strokeDasharray="56.549 56.549" />
+                                <g
+                                    className="bike__spokes-spin"
+                                    strokeDasharray="31.416 31.416"
+                                    strokeDashoffset="-23.562"
+                                >
+                                    <circle className="bike__spokes" r="5" />
+                                    <circle className="bike__spokes" r="5" transform="rotate(180,0,0)" />
+                                </g>
+                            </g>
+                            <g transform="translate(24,19)">
+                                <g
+                                    className="bike__pedals-spin"
+                                    strokeDasharray="25.133 25.133"
+                                    strokeDashoffset="-21.991"
+                                    transform="rotate(67.5,0,0)"
+                                >
+                                    <circle className="bike__pedals" r="4" />
+                                    <circle className="bike__pedals" r="4" transform="rotate(180,0,0)" />
+                                </g>
+                            </g>
+                            <g transform="translate(38.5,19)">
+                                <circle className="bike__tire" r="9" strokeDasharray="56.549 56.549" />
+                                <g
+                                    className="bike__spokes-spin"
+                                    strokeDasharray="31.416 31.416"
+                                    strokeDashoffset="-23.562"
+                                >
+                                    <circle className="bike__spokes" r="5" />
+                                    <circle className="bike__spokes" r="5" transform="rotate(180,0,0)" />
+                                </g>
+                            </g>
+                            <polyline className="bike__seat" points="14 3,18 3" strokeDasharray="5 5" />
+                            <polyline
+                                className="bike__body"
+                                points="16 3,24 19,9.5 19,18 8,34 7,24 19"
+                                strokeDasharray="79 79"
+                            />
+                            <path className="bike__handlebars" d="m30,2h6s1,0,1,1-1,1-1,1" strokeDasharray="10 10" />
+                            <polyline className="bike__front" points="32.5 2,38.5 19" strokeDasharray="19 19" />
+                        </g>
+                    </svg>
+                </div>
+            )}
         </div>
     );
 }

@@ -16,6 +16,5 @@ public class BookData {
     private Date endDate;
     private Double totalPrice;
     private String paymentMethod;
-    private String status;
 
 }

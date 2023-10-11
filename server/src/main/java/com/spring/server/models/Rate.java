@@ -23,12 +23,12 @@ public class Rate implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @EqualsAndHashCode.Exclude // không sử dụng trường này trong equals và hashcode
     @ToString.Exclude
-    private UserModel author;
+    private User author;
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @EqualsAndHashCode.Exclude // không sử dụng trường này trong equals và hashcode
     @ToString.Exclude
-    private UserModel owner;
+    private User owner;
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     private Date timeRate;
     private String content;

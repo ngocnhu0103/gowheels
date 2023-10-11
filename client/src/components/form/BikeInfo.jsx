@@ -24,8 +24,8 @@ function BikeInfo({ formik, selectedTags, setSelectedTags }) {
         const fetchCategories = async () => {
             await getCategoriesAPI(dispatch);
         };
-        tags || fetchTags();
-        categories || fetchCategories();
+        fetchTags();
+        fetchCategories();
     }, []);
     return (
         <form className="">
@@ -105,7 +105,11 @@ function BikeInfo({ formik, selectedTags, setSelectedTags }) {
                     rows={4}
                     value={formik.values.description}
                     onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
                 />
+                {formik.touched.description && formik.errors.description ? (
+                    <p className="text-rose-400 text-xs font-semibold">{formik.errors.description}</p>
+                ) : null}
             </div>
             <div>
                 <label className="block" htmlFor="color">

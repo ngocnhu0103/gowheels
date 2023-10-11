@@ -3,6 +3,8 @@ package com.spring.server.controllers;
 import com.spring.server.data.BookData;
 import com.spring.server.data.ResponseObject;
 import com.spring.server.services.BookService;
+import com.spring.server.services.PaymentService;
+import com.stripe.exception.StripeException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class BookController {
     private final BookService bookService;
+    private final PaymentService paymentService;
     @PostMapping
     public ResponseEntity<ResponseObject> createBook(@RequestBody BookData bookData, Authentication authentication){
         return bookService.createBook(bookData,authentication);
@@ -30,8 +33,7 @@ public class BookController {
         return  bookService.updateStatus(newStatus,bookId);
     }
     @PostMapping("/payment/{bookId}")
-    public  ResponseEntity<ResponseObject> charge(@PathVariable Long bookId, Authentication authentication){
-        return  bookService
-                .charge(bookId,authentication);
+    public  String charge(@PathVariable Long bookId, Authentication authentication) throws StripeException {
+        return  paymentService.checkOut(bookId,authentication);
     }
 }

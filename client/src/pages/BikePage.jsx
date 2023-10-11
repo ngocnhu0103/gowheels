@@ -14,12 +14,23 @@ import { Button, Modal } from "@mui/material";
 // import Map from "../components/Map";
 
 import "swiper/css";
+import Map from "../components/Map";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllBikeAPI } from "../api/bikeAPI";
+import { Suspense } from "react";
+import LoadingCard from "../components/loading/LoadingCard";
 
 function BikePage() {
+    const bikes = useSelector((state) => state.bike.bikeList);
     const [place, setPlace] = useState("");
     const [hide, setHide] = useState(0);
     const [isMap, setIsMap] = useState(false);
 
+    const [location, setLocation] = useState({
+        address: "Ho Chi Minh City, Vietnam",
+        lat: 10.762622,
+        lng: 106.660172,
+    });
     const openMap = () => {
         setIsMap(true);
     };
@@ -35,6 +46,18 @@ function BikePage() {
         return window.removeEventListener("scroll", () => {
             setHide(window.scrollY);
         });
+    }, []);
+    const [filter, setFilter] = useState({
+        bikeName: "",
+        page: 0,
+        size: 12,
+    });
+    const dispatch = useDispatch();
+    const getAllBike = async (dispatch, filter) => {
+        await getAllBikeAPI(dispatch, filter);
+    };
+    useEffect(() => {
+        getAllBike(dispatch, filter);
     }, []);
     return (
         <main className="container w-4/5 mx-auto relative">
@@ -142,19 +165,15 @@ function BikePage() {
                     </div>
                 </div>
             </div>
+
             <ul className="grid grid-cols-4 gap-5 mt-60">
-                <Card />
-                <Card />
-                <Card />
-                <Card />
-                <Card />
-                <Card />
-                <Card />
-                <Card />
-                <Card />
-                <Card />
-                <Card />
-                <Card />
+                <Suspense fallback={<LoadingCard />}>
+                    {bikes && bikes.length > 0
+                        ? bikes.map((bike) => {
+                              return <Card bike={bike} key={bike.id} />;
+                          })
+                        : null}
+                </Suspense>
             </ul>
             <Footer />
             <Modal
@@ -163,7 +182,9 @@ function BikePage() {
                 aria-labelledby="parent-modal-title"
                 aria-describedby="parent-modal-description"
             >
-                <div className="mx-auto w-10/12">{/* <Map /> */}</div>
+                <div className="mx-auto mt-10 w-10/12 h-[85vh] rounded-xl overflow-hidden">
+                    <Map location={location} zoomLevel={20} />
+                </div>
             </Modal>
             <div className="fixed bottom-5 left-1/2 -translate-x-1/2">
                 <Button variant="contained" endIcon={<TravelExploreIcon />} onClick={openMap}>

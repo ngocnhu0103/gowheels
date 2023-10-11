@@ -7,6 +7,7 @@ import com.spring.server.models.Category;
 import com.spring.server.models.Image;
 import com.spring.server.models.Tag;
 import com.spring.server.repositories.*;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,16 +23,16 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class BikeService {
     private final BikeRepository bikeRepository;
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final TagRepository tagRepository;
-    private final PlaceRepository placeRepository;
     private final ImageRepository imageRepository;
     private final BikePaginationRepository bikePaginationRepository;
     public ResponseEntity<ResponseObject> createBike(BikeData bikeData, Authentication authentication){
-        System.out.println(bikeData);
+        System.out.println(authentication);
         try{
             var foundBike = bikeRepository.findByBikeCode(bikeData.getBikeCode());
             if(foundBike == null ) {
@@ -85,7 +86,7 @@ public class BikeService {
             List<Bike> bikeList = new ArrayList<>();
             Page<Bike> pageBikes;
             Pageable pageable = PageRequest.of(page, size);
-            if(bikeName == null ){
+            if(bikeName == null){
                 pageBikes = bikePaginationRepository.findAll(pageable);
             } else {
                 pageBikes = bikePaginationRepository.findByBikeNameContaining(bikeName,pageable);
@@ -95,7 +96,7 @@ public class BikeService {
             return ResponseEntity.ok(ResponseObject.builder().statusCode(200).message("thành công").data(bikeList).build());
         }catch (Exception e){
             System.out.println(e.getMessage());
-            return ResponseEntity.ok(ResponseObject.builder().statusCode(500).message(e.getMessage()).data("").build());
+            return ResponseEntity.status(500).body(ResponseObject.builder().message(e.getMessage()).build());
         }
     }
 

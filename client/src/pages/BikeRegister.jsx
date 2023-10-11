@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@mui/material";
 import * as Yup from "yup";
 import { useFormik } from "formik";
@@ -23,7 +23,7 @@ function BikeRegister() {
     const [selectedTags, setSelectedTags] = useState([]);
     const dispatch = useDispatch();
     const bikeRegister = useSelector((state) => state.bikeRegister);
-
+    const navigate = useNavigate();
     const formikInfoBike = useFormik({
         initialValues: {
             bikeName: "",
@@ -35,6 +35,7 @@ function BikeRegister() {
         validationSchema: Yup.object({
             bikeCode: Yup.string().required("Biển số xe bắt buộc"),
             bikeName: Yup.string().required("Tên xe là bặt buộc"),
+            description: Yup.string().max(255, "Mô tả không quá 255 kí tự"),
             categoryId: Yup.number()
                 .required()
                 .oneOf([1, 2, 3], "Danh mục phải là một trong các giá trị sau: [Xe máy,Xe ô tô,Xe đạp]"),
@@ -64,7 +65,7 @@ function BikeRegister() {
 
     const submitForm = async (e) => {
         if (slideNum === 1) {
-            selectedTags.length > 0 && (formikInfoBike.values.tags = selectedTags);
+            formikInfoBike.values.tagList = selectedTags;
             formikInfoBike.handleSubmit(e);
         } else if (slideNum === 2) {
             formikInfoRental.handleSubmit(e);
@@ -75,7 +76,8 @@ function BikeRegister() {
             setLoading(true);
             await bikeRegisterAPI(dispatch, values);
             setLoading(false);
-            dispatch(clearData());
+            await dispatch(clearData());
+            navigate("/");
         }
     };
     const render = () => {

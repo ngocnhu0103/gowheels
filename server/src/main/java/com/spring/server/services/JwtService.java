@@ -1,10 +1,12 @@
 package com.spring.server.services;
 
+import com.spring.server.models.UserModel;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -25,18 +27,18 @@ public class JwtService {
         final Claims claims = extractAllClaims(token);
         return ClaimsResolver.apply(claims);
     }
-    public String generateToken(UserDetails userDetails){
-        return generateToken(new HashMap<>(), userDetails);
+    public String generateToken(UserModel user){
+        return generateToken(new HashMap<>(), user);
     }
     // create token
     public String generateToken(
             Map<String,Object> extraClaims,
-            UserDetails userDetails
+            UserModel user
     )
     {
         return Jwts.builder()
                 .setClaims(extraClaims)
-                .setSubject(userDetails.getUsername())
+                .setSubject(user.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 64 * 24) )
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
@@ -44,9 +46,9 @@ public class JwtService {
     }
 
     // validation token
-    public boolean isTokenValid(String token, UserDetails userDetails){
+    public boolean isTokenValid(String token, UserModel user){
         final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
+        return (username.equals(user.getUsername())) && !isTokenExpired(token);
     }
 
     public boolean isTokenExpired(String token){

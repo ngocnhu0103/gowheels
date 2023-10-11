@@ -7,6 +7,7 @@ import com.spring.server.models.Tag;
 import com.spring.server.services.BikeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +25,7 @@ public class BikeController {
         return bikeService.createBike(bikeData,authentication);
     }
     @GetMapping("/all")
+    
     public ResponseEntity<ResponseObject> getAllBike(@RequestParam(required = false) String bikeName,
                                                      @RequestParam(defaultValue = "0") int page,
                                                      @RequestParam(defaultValue = "12" ) int size) {

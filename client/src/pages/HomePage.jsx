@@ -9,6 +9,7 @@ import Footer from "../components/Footer";
 import Places from "../components/home/Places";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllBikeAPI } from "../api/bikeAPI";
+
 function Home() {
     const [showCalendar, setShowCalendar] = useState(false);
     const { bikeList } = useSelector((state) => state.bike);
@@ -24,6 +25,7 @@ function Home() {
     useEffect(() => {
         getAllBike(dispatch, filter);
     }, []);
+
     return (
         <main
             className="container w-4/5 mx-auto"
@@ -37,7 +39,6 @@ function Home() {
             <Banner />
             <div className="py-8">
                 <h1 className="text-center text-5xl font-banner text-primary pb-8">Địa điểm nổi bật</h1>
-
                 <Places />
             </div>
 

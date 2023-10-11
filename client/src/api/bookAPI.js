@@ -50,3 +50,14 @@ export const updateStatusBookAPI = async (dispatch, bookId) => {
         dispatch(showToast({ message: error.message, type: 'error' }))
     }
 }
+// @ payment book
+export const payment = async (dispatch, bookId) => {
+    try {
+        const response = await baseAPI.get(`/book/payment/${bookId}`);
+        console.log(response);
+
+
+    } catch (error) {
+        dispatch(showToast({ message: error.message, type: 'error' }))
+    }
+}

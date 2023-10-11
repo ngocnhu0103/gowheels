@@ -22,9 +22,8 @@ public class Tag {
     private Long tagId;
     @Column(unique = true)
     private String tagName;
-    @JsonIgnore
     @ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY,mappedBy = "tagList")
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
+//    @EqualsAndHashCode.Exclude
+//    @ToString.Exclude
     List<Bike> bikes;
 }

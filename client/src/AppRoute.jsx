@@ -11,6 +11,7 @@ import RequiredAuth from "./router/RequiredAuth";
 import BikeRegister from "./pages/BikeRegister";
 import DetailBike from "./pages/DetailBike";
 import NotFound from "./pages/NotFound";
+import BikePage from "./pages/BikePage";
 function AppRoute() {
     return (
         <Routes>
@@ -23,8 +24,8 @@ function AppRoute() {
                 <Route path="/profile/myorder" element={<MyOrder />}></Route>
                 <Route path="/profile/rate" element={<Rate />}></Route>
                 <Route path="/bikeregister" element={<BikeRegister />}></Route>
-                {/* <Route path="/bike/:bikeId" element={<DetailBike />}></Route> */}
             </Route>
+            <Route path="/bikes" element={<BikePage />}></Route>
             <Route path="/bike/:bikeId" element={<DetailBike />}></Route>
             <Route path="*" element={<NotFound />}></Route>
         </Routes>

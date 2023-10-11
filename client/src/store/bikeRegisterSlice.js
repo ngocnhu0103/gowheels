@@ -23,7 +23,7 @@ const bikeRegisterSlice = createSlice({
             state.categoryId = actions.payload.categoryId;
             state.description = actions.payload.description;
             state.color = actions.payload.color;
-            state.tagList = actions.payload.tags;
+            state.tagList = actions.payload.tagList;
         },
         saveInfoRental: (state, actions) => {
             state.price = actions.payload.price;
@@ -41,12 +41,12 @@ const bikeRegisterSlice = createSlice({
             state.categoryId = null
             state.description = null
             state.color = null
-            state.tags = null
+            state.tagList = []
             state.price = null
             state.place = null
             state.weekDiscount = null
             state.monthDiscount = null
-            state.images = null
+            state.images = []
 
         }
     },

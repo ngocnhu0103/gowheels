@@ -54,16 +54,19 @@ function InfoRental({ formik }) {
                     Đơn giá
                 </label>
                 <p className="text-sm text-gray-400">Đơn giá áp dụng cho tất cả các ngày</p>
-                <TextField
-                    value={formik.values.price}
-                    onChange={formik.handleChange}
-                    id="price"
-                    size="small"
-                    name="price"
-                    className="w-1/2"
-                    variant="outlined"
-                    margin="normal"
-                />
+                <div className="flex items-center gap-4">
+                    <TextField
+                        value={formik.values.price}
+                        onChange={formik.handleChange}
+                        id="price"
+                        size="small"
+                        name="price"
+                        className="w-1/2"
+                        variant="outlined"
+                        margin="normal"
+                    />
+                    <span className="text-2xl font-bold">K</span>
+                </div>
                 {formik.touched.price && formik.errors.price ? (
                     <p className="text-rose-400 text-xs font-semibold">{formik.errors.price}</p>
                 ) : null}

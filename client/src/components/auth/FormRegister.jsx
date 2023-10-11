@@ -1,4 +1,4 @@
-import { FormControl, Input, InputLabel } from "@mui/material";
+import { FormControl, Input, InputLabel, MenuItem, Select } from "@mui/material";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
@@ -22,12 +22,14 @@ function FormRegister({ onClose }) {
             email: "",
             fullName: "",
             password: "",
+            gender: "",
             repeatPassword: "",
         },
         validationSchema: Yup.object({
             email: Yup.string().trim().email("email không đúng định dạng").required("Vui lòng nhập email"),
             fullName: Yup.string().trim().required("Vui lòng nhập tên hiển thị"),
-            password: Yup.string().trim().length(8, "Mật khẩu phải là 8 ký tự").required("Vui lòng nhập mật khẩu"),
+            gender: Yup.string().required("Vui lòng chọn giới tính").oneOf(["Nữ", "Nam"]),
+            password: Yup.string().trim().min(4, "Mật khẩu phải ít nhất 4 ký tự").required("Vui lòng nhập mật khẩu"),
             repeatPassword: Yup.string()
                 .trim()
                 .required("Vui lòng nhập mật khẩu")
@@ -97,7 +99,23 @@ function FormRegister({ onClose }) {
                         <span className="text-rose-400 text-xs font-semibold">{formik.errors.repeatPassword}</span>
                     ) : null}
                 </FormControl>
-
+                <FormControl margin="dense">
+                    <InputLabel htmlFor="fullName">Giới tính</InputLabel>
+                    <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        name="gender"
+                        value={formik.values.gender}
+                        label="gender"
+                        onChange={formik.handleChange}
+                    >
+                        <MenuItem value={"Nữ"}>Nữ</MenuItem>
+                        <MenuItem value={"Nam"}>Nam</MenuItem>
+                    </Select>
+                    {formik.touched.gender && formik.errors.gender ? (
+                        <span className="text-rose-400 text-xs font-semibold">{formik.errors.gender}</span>
+                    ) : null}
+                </FormControl>
                 <button
                     disabled={loading}
                     className={`mt-4 text-white bg-primary py-2 rounded-md ${loading && "disabled:bg-primary/20"}`}

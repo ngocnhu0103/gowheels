@@ -2,14 +2,17 @@ import { Link } from "react-router-dom";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import PlaceIcon from "@mui/icons-material/Place";
-import xe1 from "../assets/xe1.jpg";
 import EditIcon from "@mui/icons-material/Edit";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { Modal } from "@mui/material";
 import { useState } from "react";
+import { useSelector } from "react-redux";
+import { userLiked } from "../utils/userLiked";
 function Card({ isRow = false, isManage = false, bike }) {
     const [openDeleteBike, setOpenDeleteBike] = useState(false);
+
+    const user = useSelector((state) => state.auth.user);
 
     const handleOpenDeleteBike = () => {
         setOpenDeleteBike(true);
@@ -107,15 +110,21 @@ function Card({ isRow = false, isManage = false, bike }) {
                         </span>
                     </div>
                     <div className="flex items-center justify-between">
-                        <span className="text-3xl font-bold text-gray-900 dark:text-white">{bike.price}</span>
-                        <span
-                            onClick={(e) => {
-                                console.log(e);
-                            }}
-                        >
-                            <FavoriteBorderIcon color="primary" />
-                            <FavoriteIcon color="primary" />
-                        </span>
+                        <span className="text-3xl font-bold text-gray-900 dark:text-white">{bike.price + "K"}</span>
+                        {user && (
+                            <span
+                                className="cursor-pointer"
+                                onClick={(e) => {
+                                    console.log(e);
+                                }}
+                            >
+                                {userLiked(user.likes, bike.bikeId) ? (
+                                    <FavoriteIcon color="primary" />
+                                ) : (
+                                    <FavoriteBorderIcon color="primary" />
+                                )}
+                            </span>
+                        )}
                     </div>
                 </div>
                 {isManage ? (

@@ -88,13 +88,13 @@ function UpdateProfile() {
                                     </p>
                                     <img
                                         className="w-full h-full rounded-full border border-primary"
-                                        src="https://img.lovepik.com/free_png/32/36/56/33b58PICUzwFf44X2nePV_PIC2018.png_860.png"
+                                        src={user.avatar.url}
                                         alt=""
                                     />
                                 </div>
                                 <div className="text-center">
-                                    <p className="font-medium">Tiết Ngọc Như</p>
-                                    <p className="text-sm text-gray-500 mt-2">Ngay tham gia: 20/12/2020</p>
+                                    <p className="font-medium">{user.fullName}</p>
+                                    <p className="text-sm text-gray-500 mt-2">Ngay tham gia: {user.createdAt}</p>
                                 </div>
                             </div>
 

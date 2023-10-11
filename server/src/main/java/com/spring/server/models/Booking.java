@@ -28,8 +28,7 @@ public class Booking implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @EqualsAndHashCode.Exclude // không sử dụng trường này trong equals và hashcode
     @ToString.Exclude
-    private UserModel renter;
-//    @DateTimeFormat()
+    private User renter;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private Date startDate;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")

@@ -304,13 +304,13 @@ function DetailBike() {
                             <div className="flex justify-between">
                                 <div className="flex gap-4">
                                     <img
-                                        src="https://n1-cstg.mioto.vn/m/avatars/avatar-1.png"
+                                        src={bike.owner.avatar.url}
                                         alt="avatar"
                                         className="w-20 h-20 rounded-full border border-gray-300 object-cover"
                                     />
                                     <div className="flex flex-col gap-1">
                                         <Link to={"/profile/id"} className="text-2xl font-semibold">
-                                            Lee Tam
+                                            {bike.owner.fullName}
                                         </Link>
                                         <p className="flex gap-2">
                                             <span className="text-gray-500 flex items-center">
