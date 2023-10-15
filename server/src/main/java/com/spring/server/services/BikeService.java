@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -31,6 +32,7 @@ public class BikeService {
     private final TagRepository tagRepository;
     private final ImageRepository imageRepository;
     private final BikePaginationRepository bikePaginationRepository;
+    private final BookRepository bookRepository;
     public ResponseEntity<ResponseObject> createBike(BikeData bikeData, Authentication authentication){
         System.out.println(authentication);
         try{
@@ -179,6 +181,27 @@ public class BikeService {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResponseObject.builder().message("Not found").build());
         } catch (Exception e) {
             System.out.println(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().message("Internal server error").build());
+        }
+    }
+
+    public ResponseEntity<ResponseObject> searchingBike(String place, Date startDate, Date endDate, int page, int size){
+        try {
+            List<Bike> bikeList = new ArrayList<>();
+            Page<Bike> pageBikes;
+            Pageable pageable = PageRequest.of(page, size);
+            var bikes = bikePaginationRepository.findByPlaceContaining(place,pageable);
+
+            for (Bike bike: bikes.getContent()
+                 ) {
+                var books = bookRepository.findAllByBikeAndStartDateAndEndDate(bike,startDate,endDate);
+                if(books.isEmpty()){
+                    bikeList.add(bike);
+                }
+            }
+            return ResponseEntity.status(200).body(ResponseObject.builder().statusCode(200).data(bikeList).message("Successful").build());
+        }catch (Exception e){
+//            throw new RuntimeException(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().message("Internal server error").build());
         }
     }

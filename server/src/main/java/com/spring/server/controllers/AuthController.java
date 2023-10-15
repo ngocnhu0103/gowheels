@@ -8,6 +8,7 @@ import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
@@ -22,20 +23,15 @@ public class AuthController {
 //    @Pathvariable: /api/v1/user/sdlfaskldfhsadf
     private final AuthenticationService authenticationService;
     @PostMapping("/register")
-    public ResponseEntity<ResponseObject> register(@RequestBody RegisterRequest req, HttpServletRequest httpServletRequest) throws UnsupportedEncodingException, MessagingException {
-        return authenticationService.register(req,getSiteURL(httpServletRequest));
+    public ResponseEntity<ResponseObject> register(@RequestBody RegisterRequest req ) throws UnsupportedEncodingException, MessagingException {
+        return authenticationService.register(req);
     }
     @PostMapping("/login")
     public ResponseEntity<ResponseObject> login(@RequestBody AuthenticationRequest req) {
-//        return ResponseEntity.ok(authenticationService.login(req));
         return authenticationService.login(req);
     }
     @GetMapping("/verify")
-    public ResponseEntity<ResponseObject> verifyUser(@RequestParam("code") String code) {
-        return ResponseEntity.ok(authenticationService.verify(code));
-    }
-    private String getSiteURL(HttpServletRequest request) {
-        String siteURL = request.getRequestURL().toString();
-        return siteURL.replace(request.getServletPath(), "");
+    public ResponseEntity<ResponseObject> verifyUser(@RequestParam("code") String code, Authentication authentication) {
+        return authenticationService.verify(code,authentication);
     }
 }

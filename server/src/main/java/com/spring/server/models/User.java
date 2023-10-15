@@ -1,6 +1,7 @@
 package com.spring.server.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -34,6 +35,7 @@ public class User {
     private String fullName;
     private String phone;
     private String address;
+    @JsonIgnoreProperties({"hibernateLazyInitializer"})
     @OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     private Image avatar;
     private String accountNumber;
@@ -46,7 +48,5 @@ public class User {
     private List<Bike> bikes ;
     @Enumerated(EnumType.STRING)
     private Role role;
-    @JsonIgnore
-    private String verificationCode;
     private boolean enabled;
 }

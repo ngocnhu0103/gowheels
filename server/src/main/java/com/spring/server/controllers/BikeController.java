@@ -11,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 
@@ -49,6 +50,14 @@ public class BikeController {
     @PutMapping("/{id}")
     public ResponseEntity<ResponseObject> editBikeById(@PathVariable Long id, @RequestBody BikeData newBike) {
         return bikeService.editBikeById(id, newBike);
+    }
+    @GetMapping("/search")
+    public ResponseEntity<ResponseObject> searchBike(@RequestParam(required = false) String place,
+                                                     @RequestParam(required = false) Date startDate,
+                                                     @RequestParam(required = false) Date endDate,
+                                                     @RequestParam(defaultValue = "0") int page,
+                                                     @RequestParam(defaultValue = "10" ) int size) {
+        return bikeService.searchingBike(place,startDate,endDate,page,size);
     }
 
 }

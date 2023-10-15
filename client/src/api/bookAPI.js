@@ -50,14 +50,36 @@ export const updateStatusBookAPI = async (dispatch, bookId) => {
         dispatch(showToast({ message: error.message, type: 'error' }))
     }
 }
-// @ payment book
+// @payment book
 export const payment = async (dispatch, bookId) => {
     try {
         const response = await baseAPI.get(`/book/payment/${bookId}`);
-        console.log(response);
-
-
+        if (response.statusCode === 200) {
+            // dispatch(updateBook(response.data));
+        }
     } catch (error) {
-        dispatch(showToast({ message: error.message, type: 'error' }))
+        dispatch(showToast({ message: error.message, type: "error" }));
     }
-}
+};
+// @add surchages
+export const addSurcharge = async (dispatch, bookId, payload) => {
+    try {
+        const response = await baseAPI.get(`/book/add-surcharges/${bookId}`, payload);
+        if (response.statusCode === 200) {
+            // dispatch(updateBook(response.data));
+        }
+    } catch (error) {
+        dispatch(showToast({ message: error.message, type: "error" }));
+    }
+};
+// @book detail
+export const getBookDetail = async (dispatch, bookId) => {
+    try {
+        const response = await baseAPI.get(`/book/${bookId}`);
+        if (response.statusCode === 200) {
+            // dispatch(updateBook(response.data));
+        }
+    } catch (error) {
+        dispatch(showToast({ message: error.message, type: "error" }));
+    }
+};

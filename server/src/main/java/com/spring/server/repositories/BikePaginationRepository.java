@@ -13,6 +13,7 @@ public interface BikePaginationRepository extends PagingAndSortingRepository<Bik
     public Page<Bike> findByBikeNameContaining(String bikeName, Pageable pageable);
     public Page<Bike> findByBikeNameContainingAndTagListIn(String bikeName, Pageable pageable, List<Tag> tags);
 
+    public Page<Bike> findByPlaceContaining(String place, Pageable pageable);
   
 
 }
