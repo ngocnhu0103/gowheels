@@ -1,4 +1,4 @@
-// import { useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
@@ -6,12 +6,11 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import ArrowCircleRightOutlinedIcon from "@mui/icons-material/ArrowCircleRightOutlined";
 import RestartAltOutlinedIcon from "@mui/icons-material/RestartAltOutlined";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import Card from "../components/Card";
 import TravelExploreIcon from "@mui/icons-material/TravelExplore";
 import { Button, Modal } from "@mui/material";
-// import Map from "../components/Map";
 
 import "swiper/css";
 import Map from "../components/Map";
@@ -19,25 +18,50 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAllBikeAPI } from "../api/bikeAPI";
 import { Suspense } from "react";
 import LoadingCard from "../components/loading/LoadingCard";
+import Calendar from "../components/Calendar";
+import moment from "moment";
 
 function BikePage() {
+    let [searchParams, setSearchParams] = useSearchParams();
+
     const bikes = useSelector((state) => state.bike.bikeList);
-    const [place, setPlace] = useState("");
+    const dispatch = useDispatch();
+    const [place, setPlace] = useState(() => {
+        return searchParams.get("place");
+    });
+    const [startDate, setStartDate] = useState(() => {
+        return new Date(Number(searchParams.get("startDate")));
+    });
+    const [endDate, setEndDate] = useState(() => {
+        return new Date(Number(searchParams.get("endDate")));
+    });
+    console.log(startDate, endDate);
     const [hide, setHide] = useState(0);
     const [isMap, setIsMap] = useState(false);
+    const [showCalendar, setShowCalendar] = useState(false);
+
+    const [timeSelected, setTimeSelected] = useState(() => {
+        return {
+            hour: Number(searchParams.get("hour")),
+            minutes: Number(searchParams.get("minutes")),
+        };
+    });
 
     const [location, setLocation] = useState({
         address: "Ho Chi Minh City, Vietnam",
         lat: 10.762622,
         lng: 106.660172,
     });
-    const openMap = () => {
-        setIsMap(true);
+
+    const handleChange = (dates) => {
+        const [start, end] = dates;
+        setStartDate(start);
+        setEndDate(end);
     };
-    const closeMap = () => {
-        setIsMap(false);
+
+    const saveOptions = () => {
+        setShowCalendar(false);
     };
-    // let [searchParams, setSearchParams] = useSearchParams();
     useEffect(() => {
         window.addEventListener("scroll", () => {
             setHide(window.scrollY);
@@ -52,15 +76,15 @@ function BikePage() {
         page: 0,
         size: 12,
     });
-    const dispatch = useDispatch();
     const getAllBike = async (dispatch, filter) => {
         await getAllBikeAPI(dispatch, filter);
     };
+
     useEffect(() => {
         getAllBike(dispatch, filter);
     }, []);
     return (
-        <main className="container w-4/5 mx-auto relative">
+        <main className="container w-4/5 mx-auto relative" onClick={() => setShowCalendar(false)}>
             <div className="fixed left-0 right-0 top-0 bg-white shadow-xl">
                 <div
                     className={`container w-4/5 mx-auto duration-300    ${
@@ -82,20 +106,39 @@ function BikePage() {
                                 }}
                             />
                         </div>
-                        <div className="flex items-center gap-2">
-                            <CalendarMonthIcon />
-                            <div className="flex items-center gap-5">
-                                <div className="flex items-center gap-2">
-                                    <span>31/08/2023</span>
-                                    <p className="h-[15px] w-[1px] bg-gray-600"></p>
-                                    <span>21:00</span>
+                        <div
+                            className="cursor-pointer"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setShowCalendar(true);
+                            }}
+                        >
+                            <div className="flex items-center gap-2">
+                                <CalendarMonthIcon />
+                                <div className="flex items-center gap-5">
+                                    <div className="flex items-center gap-2">
+                                        <span>{moment(startDate).format("DD/MM/YYYY")}</span>
+                                        <p className="h-[15px] w-[1px] bg-gray-600"></p>
+                                        <span>{timeSelected.hour + ":" + timeSelected.minutes}</span>
+                                    </div>
+                                    <ArrowCircleRightOutlinedIcon />
+                                    <div className="flex items-center gap-2">
+                                        <span>{moment(endDate).format("DD/MM/YYYY")}</span>
+                                        <p className="h-[15px] w-[1px] bg-gray-600"></p>
+                                        <span>{timeSelected.hour + ":" + timeSelected.minutes}</span>
+                                    </div>
                                 </div>
-                                <ArrowCircleRightOutlinedIcon />
-                                <div className="flex items-center gap-2">
-                                    <span>31/08/2023</span>
-                                    <p className="h-[15px] w-[1px] bg-gray-600"></p>
-                                    <span>21:00</span>
-                                </div>
+                            </div>
+                            <div className={`${showCalendar ? "block" : "hidden"} absolute top-full   w-[530px]`}>
+                                <Calendar
+                                    startDate={startDate}
+                                    endDate={endDate}
+                                    handleChange={handleChange}
+                                    timeSelected={timeSelected}
+                                    setTimeSelected={setTimeSelected}
+                                    saveCalendar={saveOptions}
+                                    setShowCalendar={setShowCalendar}
+                                />
                             </div>
                         </div>
                     </div>
@@ -178,7 +221,9 @@ function BikePage() {
             <Footer />
             <Modal
                 open={isMap}
-                onClose={closeMap}
+                onClose={() => {
+                    setIsMap(false);
+                }}
                 aria-labelledby="parent-modal-title"
                 aria-describedby="parent-modal-description"
             >
@@ -187,8 +232,14 @@ function BikePage() {
                 </div>
             </Modal>
             <div className="fixed bottom-5 left-1/2 -translate-x-1/2">
-                <Button variant="contained" endIcon={<TravelExploreIcon />} onClick={openMap}>
-                    Ban do
+                <Button
+                    variant="contained"
+                    endIcon={<TravelExploreIcon />}
+                    onClick={() => {
+                        setIsMap(true);
+                    }}
+                >
+                    Bản đồ
                 </Button>
             </div>
         </main>

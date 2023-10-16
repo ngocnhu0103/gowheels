@@ -11,8 +11,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAllBikeAPI } from "../api/bikeAPI";
 
 function Home() {
-    const [showCalendar, setShowCalendar] = useState(false);
     const { bikeList } = useSelector((state) => state.bike);
+    const [showCalendar, setShowCalendar] = useState(false);
     const [filter, setFilter] = useState({
         bikeName: "",
         page: 0,

@@ -1,8 +1,7 @@
 import { Button } from "@mui/material";
-import React, { useState } from "react";
 import DatePicker from "react-datepicker";
 
-function Calendar({ saveBookData, startDate, endDate, handleChange, timeSelected, setTimeSelected }) {
+function Calendar({ saveCalendar, startDate, endDate, handleChange, timeSelected, setTimeSelected }) {
     const hours = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
 
     return (
@@ -50,7 +49,7 @@ function Calendar({ saveBookData, startDate, endDate, handleChange, timeSelected
                 </select>
             </div>
             <div className="mt-4 flex justify-end">
-                <Button variant="contained" size="medium" onClick={saveBookData}>
+                <Button variant="contained" size="medium" onClick={saveCalendar}>
                     Áp dụng
                 </Button>
             </div>

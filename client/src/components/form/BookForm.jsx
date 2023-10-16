@@ -84,7 +84,7 @@ function BookForm({ price, place, bikeId }) {
                         handleChange={handleChange}
                         timeSelected={timeSelected}
                         setTimeSelected={setTimeSelected}
-                        saveBookData={saveBookData}
+                        saveCalendar={saveBookData}
                         setShowCalendar={setShowCalendar}
                     />
                 </div>
