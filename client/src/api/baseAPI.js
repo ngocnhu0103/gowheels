@@ -2,6 +2,7 @@ import axios from 'axios';
 import jwt_decode from "jwt-decode";
 import { store } from '../store/store'
 import { clearDataUser } from '../store/authSlice';
+import { showToast } from '../store/toastSlice';
 const baseAPI = axios.create({
     baseURL: "http://localhost:8080/api/v1",
     headers: {
@@ -26,6 +27,7 @@ baseAPI.interceptors.request.use((config) => {
 
     if (Date.now() >= exp * 1000) {
         store.dispatch(clearDataUser())
+        store.dispatch(showToast({ message: "Hết phiên đăng nhập", type: "error" }))
         return config;
     }
 

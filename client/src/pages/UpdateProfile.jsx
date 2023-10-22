@@ -1,25 +1,31 @@
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import CenterFocusWeakIcon from "@mui/icons-material/CenterFocusWeak";
-import { useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Header from "../components/Header";
 import Navigation from "../components/profile/Navigation";
 import { useLocation } from "react-router-dom";
 import Footer from "../components/Footer";
+import moment from "moment";
+import { Modal } from "@mui/material";
+import UploadImage from "../components/auth/UploadImage";
+import { registerOwnerAPI, updateInfoAPI, uploadAvatarAPI } from "../api/authAPI";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 function UpdateProfile() {
     const location = useLocation();
     const activeName = location.pathname.split("/")[location.pathname.split("/").length - 1];
     const user = useSelector((state) => {
         return state.auth.user;
     });
+    const [isShowUpload, setIsShowUpload] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [avt, setAvt] = useState(null);
+    const dispatch = useDispatch();
     const initialValues = {
-        email: "fsadafasdfsdf",
         address: "",
         phone: "",
-        idCode: "",
         accountNumber: "",
-        gender: "",
     };
     const formikUpdate = useFormik({
         initialValues,
@@ -29,8 +35,14 @@ function UpdateProfile() {
             phone: Yup.string()
                 .trim()
                 .matches(/(84|0[3|5|7|8|9])+([0-9]{8})\b/g, "Không đúng định dạng"),
-            idCode: Yup.string().trim(),
         }),
+        onSubmit: async (values) => {
+            console.log(values);
+            // call api
+            setLoading(true);
+            await updateInfoAPI(dispatch, values);
+            setLoading(false);
+        },
     });
     const formikRegister = useFormik({
         initialValues,
@@ -41,14 +53,19 @@ function UpdateProfile() {
                 .trim()
                 .matches(/(84|0[3|5|7|8|9])+([0-9]{8})\b/g, "Không đúng định dạng")
                 .required("Vui lòng nhập số điện thoại"),
-            idCode: Yup.string().trim().required("Vui lòng nhập số căn cước công dân"),
         }),
+        onSubmit: async (values) => {
+            console.log(values);
+            // call api
+            setLoading(true);
+            await registerOwnerAPI(dispatch, values);
+            setLoading(false);
+        },
     });
 
     const handleUpdate = (e) => {
         e.preventDefault();
         console.log("update");
-        formikRegister.handleReset(e);
         console.log(formikUpdate.values);
         formikUpdate.handleSubmit(e);
     };
@@ -61,16 +78,20 @@ function UpdateProfile() {
     useEffect(() => {
         if (user) {
             formikRegister.setValues({
-                email: user.email,
-                address: user.address,
-                accountNumber: user.accountNumber,
-                phone: user.phone,
-                gender: user.gender,
-                idCode: user.idCode,
+                address: user.address || "",
+                accountNumber: user.accountNumber || "",
+                phone: user.phone || "",
+            });
+            formikUpdate.setValues({
+                address: user.address || "",
+                accountNumber: user.accountNumber || "",
+                phone: user.phone || "",
             });
         }
     }, []);
-
+    const handleUpload = async () => {
+        await uploadAvatarAPI(dispatch, { url: avt });
+    };
     return (
         <main className="container w-4/5 mx-auto ">
             <Header />
@@ -83,18 +104,52 @@ function UpdateProfile() {
                         <div className="grid grid-cols-5 mt-12 gap-6 items-start">
                             <div className="col-span-2 flex gap-5 flex-col justify-center items-center bg-gray-100/90 rounded-xl p-4">
                                 <div className="w-40 h-40 rounded-full relative ">
-                                    <p className="p-2 rounded-full bg-gray-200 absolute bottom-1 right-2 z-10">
+                                    <p
+                                        onClick={() => {
+                                            setIsShowUpload(true);
+                                        }}
+                                        className="p-2 rounded-full bg-gray-200 absolute bottom-1 right-2 z-10 cursor-pointer"
+                                    >
                                         <CenterFocusWeakIcon />
                                     </p>
                                     <img
                                         className="w-full h-full rounded-full border border-primary"
-                                        src={user.avatar.url}
+                                        src={
+                                            user?.avatar?.url ||
+                                            "https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg"
+                                        }
                                         alt=""
                                     />
                                 </div>
+                                {
+                                    <Modal
+                                        open={isShowUpload}
+                                        onClose={() => {
+                                            setIsShowUpload(false);
+                                        }}
+                                        aria-labelledby="parent-modal-title"
+                                        aria-describedby="parent-modal-description"
+                                    >
+                                        <>
+                                            <UploadImage
+                                                avt={avt}
+                                                setAvt={setAvt}
+                                                handleUpload={handleUpload}
+                                                onClose={() => {
+                                                    setIsShowUpload(false);
+                                                }}
+                                            />
+                                        </>
+                                    </Modal>
+                                }
                                 <div className="text-center">
-                                    <p className="font-medium">{user.fullName}</p>
-                                    <p className="text-sm text-gray-500 mt-2">Ngay tham gia: {user.createdAt}</p>
+                                    <div className="flex gap-2 items-center justify-center">
+                                        <p className="font-medium">{user.fullName}</p>
+                                        {user.jobber && <CheckCircleIcon color="success" />}
+                                    </div>
+                                    <p className="text-sm text-gray-500 mt-2">
+                                        Ngày tham gia: {moment(user.createdAt).fromNow()}
+                                    </p>
                                 </div>
                             </div>
 
@@ -106,8 +161,8 @@ function UpdateProfile() {
                                     <input
                                         name="email"
                                         disabled
-                                        value={formikRegister.values.email}
-                                        className="flex-1 py-2 px-1 outline-none cursor-not-allowed disabled:text-gray-200"
+                                        value={user.email}
+                                        className="flex-1 py-2 px-1 outline-none cursor-not-allowed disabled:text-gray-400"
                                         type="text"
                                     />
                                 </div>
@@ -118,8 +173,8 @@ function UpdateProfile() {
                                     <input
                                         name="gender"
                                         disabled
-                                        value={formikRegister.values.gender}
-                                        className="flex-1 py-2 px-1 outline-none "
+                                        value={user.gender}
+                                        className="flex-1 py-2 px-1 outline-none cursor-not-allowed disabled:text-gray-400"
                                         type="text"
                                     />
                                 </div>
@@ -173,30 +228,6 @@ function UpdateProfile() {
                                 ) : null}
                                 <div className="flex items-center gap-4 ">
                                     <label className="w-2/6" htmlFor="">
-                                        Căn cước công dân
-                                    </label>
-                                    <input
-                                        onBlur={(e) => {
-                                            formikUpdate.handleBlur(e);
-                                            formikRegister.handleBlur(e);
-                                        }}
-                                        onChange={(e) => {
-                                            formikUpdate.handleChange(e);
-                                            formikRegister.handleChange(e);
-                                        }}
-                                        value={formikRegister.values.idCode}
-                                        name="idCode"
-                                        className="flex-1 py-2 px-1 outline-none "
-                                        type="text"
-                                    />
-                                </div>
-                                {formikRegister.touched.idCode && formikRegister.errors.idCode ? (
-                                    <span className="text-rose-400 text-xs font-semibold">
-                                        {formikRegister.errors.idCode}
-                                    </span>
-                                ) : null}
-                                <div className="flex items-center gap-4 ">
-                                    <label className="w-2/6" htmlFor="">
                                         Số tài khoản
                                     </label>
                                     <input
@@ -222,16 +253,19 @@ function UpdateProfile() {
 
                                 <div className="flex justify-between">
                                     <button
-                                        className={`mt-4 text-white bg-primary py-2 px-8 rounded-md `}
+                                        type="submit"
+                                        className={`mt-4 text-white bg-primary py-2 px-8 rounded-md disabled:bg-gray-300`}
                                         onClick={handleUpdate}
+                                        disabled={loading}
                                     >
-                                        Cập nhật thông tin
+                                        {loading ? "loading..." : "Cập nhật thông tin"}
                                     </button>
                                     <button
-                                        className={`mt-4 text-primary border-primary border  py-2 px-8 rounded-md `}
+                                        className={`mt-4 text-primary border-primary border  py-2 px-8 rounded-md disabled:text-gray-300 disabled:border-gray-300`}
                                         onClick={handleRegisterOwner}
+                                        disabled={loading}
                                     >
-                                        Đăng ký làm chủ xe
+                                        {loading ? "loading..." : "Đăng ký làm chủ xe"}
                                     </button>
                                 </div>
                             </form>

@@ -7,7 +7,6 @@ import com.spring.server.models.Category;
 import com.spring.server.models.Image;
 import com.spring.server.models.Tag;
 import com.spring.server.repositories.*;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -24,7 +24,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+
 public class BikeService {
     private final BikeRepository bikeRepository;
     private final UserRepository userRepository;
@@ -33,6 +33,8 @@ public class BikeService {
     private final ImageRepository imageRepository;
     private final BikePaginationRepository bikePaginationRepository;
     private final BookRepository bookRepository;
+
+    @Transactional
     public ResponseEntity<ResponseObject> createBike(BikeData bikeData, Authentication authentication){
         System.out.println(authentication);
         try{
@@ -49,9 +51,7 @@ public class BikeService {
 
                 List<Image> images = new ArrayList<>();
                 for(String t : bikeData.getImages()){
-                    Image img = new Image();
-                    img.setUrl(t);
-
+                    var img = Image.builder().url(t).build();
                     images.add(img);
 
                 }
@@ -77,7 +77,7 @@ public class BikeService {
 
                 return ResponseEntity.ok(ResponseObject.builder().statusCode(200).message("Tạo xe thành công").data(createdBike).build());
             }
-            return new ResponseEntity<>(ResponseObject.builder().statusCode(402).message("Biển số xe đã tồn tại").data("").build(), HttpStatus.CONFLICT);
+            return  ResponseEntity.status(400).body(ResponseObject.builder().statusCode(400).message("Biển số xe đã tồn tại").data("").build());
         }catch (Exception e){
             System.out.println(e.getMessage());
             return ResponseEntity.internalServerError().build();
@@ -88,7 +88,7 @@ public class BikeService {
             List<Bike> bikeList = new ArrayList<>();
             Page<Bike> pageBikes;
             Pageable pageable = PageRequest.of(page, size);
-            if(bikeName == null){
+            if(bikeName == ""){
                 pageBikes = bikePaginationRepository.findAll(pageable);
             } else {
                 pageBikes = bikePaginationRepository.findByBikeNameContaining(bikeName,pageable);

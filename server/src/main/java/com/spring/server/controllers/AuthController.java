@@ -34,4 +34,8 @@ public class AuthController {
     public ResponseEntity<ResponseObject> verifyUser(@RequestParam("code") String code, Authentication authentication) {
         return authenticationService.verify(code,authentication);
     }
+    @GetMapping("/resend")
+    public ResponseEntity<ResponseObject> reSendOtp(Authentication authentication) throws UnsupportedEncodingException, MessagingException{
+        return authenticationService.reSendOtp(authentication);
+    }
 }

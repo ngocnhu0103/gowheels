@@ -1,8 +1,11 @@
 package com.spring.server.config;
 
+
+import com.fasterxml.jackson.datatype.hibernate5.jakarta.Hibernate5JakartaModule;
 import com.spring.server.repositories.UserRepository;
 import com.spring.server.services.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -46,4 +49,10 @@ public class AppConfig {
     public PasswordEncoder passwordEncoder(){
         return  new BCryptPasswordEncoder();
     }
+
+//    @Bean
+//    public Jackson2ObjectMapperBuilderCustomizer customizeJackson() {
+//        return builder -> builder.modules(new Hibernate5JakartaModule());
+//    }
+
 }

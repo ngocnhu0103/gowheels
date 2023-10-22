@@ -5,16 +5,19 @@ import * as Yup from "yup";
 import { useDispatch } from "react-redux";
 import { registerAPI } from "../../api/authAPI";
 import { useState } from "react";
-function FormRegister({ onClose }) {
+function FormRegister({ onClose, openComfirm }) {
     const dispatch = useDispatch();
 
     const [loading, setLoading] = useState(false);
 
     const handleRegister = async (values) => {
         setLoading(true);
-        await registerAPI(dispatch, values);
+        const status = await registerAPI(dispatch, values);
         setLoading(false);
         onClose();
+        if (status === 200) {
+            openComfirm();
+        }
     };
 
     const formik = useFormik({

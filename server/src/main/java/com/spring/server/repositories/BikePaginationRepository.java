@@ -4,6 +4,7 @@ import com.spring.server.models.Bike;
 import com.spring.server.models.Tag;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
@@ -14,6 +15,6 @@ public interface BikePaginationRepository extends PagingAndSortingRepository<Bik
     public Page<Bike> findByBikeNameContainingAndTagListIn(String bikeName, Pageable pageable, List<Tag> tags);
 
     public Page<Bike> findByPlaceContaining(String place, Pageable pageable);
-  
+
 
 }

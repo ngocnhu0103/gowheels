@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
@@ -13,7 +14,8 @@ import java.util.List;
 
 @Table(name="booking")
 @Entity
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -22,12 +24,10 @@ public class Booking implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
     @JsonIgnoreProperties({"hibernateLazyInitializer"})
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Bike bike;
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
-    @EqualsAndHashCode.Exclude // không sử dụng trường này trong equals và hashcode
-    @ToString.Exclude
+    @JsonIgnoreProperties({"fullName"})
+    @ManyToOne(fetch = FetchType.EAGER)
     private User renter;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private Date startDate;
@@ -35,8 +35,9 @@ public class Booking implements Serializable {
     private Date endDate;
     private Double totalPrice;
     private String paymentMethod;
+    private boolean isDeposit;
     private String status;
-    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     @JsonIgnoreProperties({"hibernateLazyInitializer"})
     private List<Surcharge> surchargeList;
 

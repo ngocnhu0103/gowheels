@@ -10,7 +10,8 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Table(name="rate")
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -19,15 +20,9 @@ public class Rate implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
-    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
-    @EqualsAndHashCode.Exclude // không sử dụng trường này trong equals và hashcode
-    @ToString.Exclude
     private User author;
-    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
-    @EqualsAndHashCode.Exclude // không sử dụng trường này trong equals và hashcode
-    @ToString.Exclude
     private User owner;
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     private Date timeRate;

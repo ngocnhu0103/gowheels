@@ -35,9 +35,13 @@ const authSlice = createSlice({
                     book.status = actions.payload.status;
                 }
             })
-        }
+        },
+        updateUser: (state, actions) => {
+            state.user = actions.payload;
+        },
+
     }
 
 })
-export const { saveData, clearDataUser, addNewBook, saveMyBooks, saveBooksMyBike, updateBook } = authSlice.actions;
+export const { saveData, clearDataUser, addNewBook, saveMyBooks, saveBooksMyBike, updateBook, updateUser } = authSlice.actions;
 export default authSlice.reducer;

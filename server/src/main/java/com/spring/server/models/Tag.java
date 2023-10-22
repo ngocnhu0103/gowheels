@@ -25,5 +25,6 @@ public class Tag {
     @ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY,mappedBy = "tagList")
 //    @EqualsAndHashCode.Exclude
 //    @ToString.Exclude
+    @JsonIgnore
     List<Bike> bikes;
 }

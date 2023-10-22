@@ -20,4 +20,5 @@ public class Image {
     @Length(max = 500)
     private String url;
 
+
 }

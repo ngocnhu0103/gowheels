@@ -1,10 +1,8 @@
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import { storage } from "../../firebase.config";
 import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
-import { CircularProgress, Modal } from "@mui/material";
 function UploadBikeImg({ imgs, setImgs }) {
     const [progresspercent, setProgresspercent] = useState(0);
-    const [imgUrl, setImgUrl] = useState(null);
     const [error, setError] = useState(null);
 
     const [loading, setLoading] = useState(false);

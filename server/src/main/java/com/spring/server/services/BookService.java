@@ -48,7 +48,7 @@ public class BookService {
 
         var renter = userRepository.findByEmail(authentication.getName());
         var newBook = Booking.builder().bike(bike.get()).renter(renter.get()).startDate(bookData.getStartDate()).endDate(bookData.getEndDate())
-                .paymentMethod(bookData.getPaymentMethod()).totalPrice(bookData.getTotalPrice()).status("Đang chờ duyệt").build();
+                .paymentMethod(bookData.getPaymentMethod()).isDeposit(false).totalPrice(bookData.getTotalPrice()).status("Đang chờ duyệt").build();
         var createdBook =  bookRepository.save(newBook);
         return ResponseEntity.ok(ResponseObject.builder().statusCode(200).message("Đặt xe thành công").data(createdBook).build());
     }

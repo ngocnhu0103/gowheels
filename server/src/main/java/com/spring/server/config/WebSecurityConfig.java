@@ -10,7 +10,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -53,34 +55,6 @@ public class WebSecurityConfig {
 
         http.cors(Customizer.withDefaults());
         http.csrf(csrf -> csrf.disable())
-                .exceptionHandling(exception -> exception.accessDeniedHandler((request, response, accessDeniedException) ->
-                        {
-                            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Error: Forbiden");
-
-                        }
-
-                ))
-                .exceptionHandling(exception -> exception.authenticationEntryPoint((request, response, authException) ->
-                        {
-
-                            response.addHeader("Access-Control-Allow-Origin","*");
-                            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-
-                            final Map<String, Object> body = new HashMap<>();
-                            body.put("status", HttpServletResponse.SC_UNAUTHORIZED);
-                            body.put("error", "Unauthorized");
-                            body.put("message", authException.getMessage());
-                            body.put("path", request.getServletPath());
-
-                            final ObjectMapper mapper = new ObjectMapper();
-                            mapper.writeValue(response.getOutputStream(), body);
-                            response.flushBuffer();
-
-                        }
-
-                        ))
-
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth ->
                         auth.requestMatchers("/api/v1/auth/**").permitAll()
@@ -91,7 +65,46 @@ public class WebSecurityConfig {
         http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
 
+        http.exceptionHandling(exception -> exception.accessDeniedHandler((request, response, accessDeniedException) ->
+                {
+                    System.out.println(request);
+//                            response.addHeader("Access-Control-Allow-Origin","*");
+//                            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+//                            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+//
+//                            final Map<String, Object> body = new HashMap<>();
+//                            body.put("status", HttpServletResponse.SC_FORBIDDEN);
+//                            body.put("error", "Forbidden");
+//                            body.put("message", accessDeniedException.getMessage());
+//                            body.put("path", request.getServletPath());
+//
+//                            final ObjectMapper mapper = new ObjectMapper();
+//                            mapper.writeValue(response.getOutputStream(), body);
+//                            response.flushBuffer();
 
+                }
+
+        ));
+        http.exceptionHandling(exception -> exception.authenticationEntryPoint((request, response, authException) ->
+                {
+
+                    response.addHeader("Access-Control-Allow-Origin","*");
+                    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+
+                    final Map<String, Object> body = new HashMap<>();
+                    body.put("status", HttpServletResponse.SC_UNAUTHORIZED);
+                    body.put("error", "Unauthorized");
+                    body.put("message", authException.getMessage());
+                    body.put("path", request.getServletPath());
+
+                    final ObjectMapper mapper = new ObjectMapper();
+                    mapper.writeValue(response.getOutputStream(), body);
+                    response.flushBuffer();
+
+                }
+
+        ));
         return http.build();
     }
 

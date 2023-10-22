@@ -15,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@JsonIdentityInfo(generator= ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
+@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class,property = "@bikeId")
 public class Bike implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,8 +23,8 @@ public class Bike implements Serializable {
     private String bikeName;
     @Length(max = 500)
     private String description;
-    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
-    @JsonIgnoreProperties({"hibernateLazyInitializer"})
+    @OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private List<Image> images;
     private Double price;
     private Double weekDiscount;
@@ -33,18 +33,18 @@ public class Bike implements Serializable {
     private String color;
     @Column(unique = true)
     private String bikeCode;
-    @JsonIgnoreProperties({"hibernateLazyInitializer"})
-    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @ManyToOne
     private Category category;
     private String place;
-    @JsonIgnoreProperties({"hibernateLazyInitializer"})
-    @ManyToMany(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "bike_tag",
             joinColumns = @JoinColumn(name = "bikeId"),
             inverseJoinColumns = @JoinColumn(name = "tagId"))
     private List<Tag> tagList;
-    @JsonIgnoreProperties({"hibernateLazyInitializer"})
-    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @ManyToOne(fetch = FetchType.EAGER)
     private User owner;
 }

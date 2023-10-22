@@ -4,16 +4,15 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.util.Date;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -36,7 +35,7 @@ public class User {
     private String phone;
     private String address;
     @JsonIgnoreProperties({"hibernateLazyInitializer"})
-    @OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     private Image avatar;
     private String accountNumber;
     private Double balance;
@@ -44,6 +43,7 @@ public class User {
     @OneToMany(fetch = FetchType.EAGER)
     private List<Bike> likes;
     private boolean isJobber;
+    @JsonIgnore
     @OneToMany(mappedBy = "owner",fetch = FetchType.EAGER)
     private List<Bike> bikes ;
     @Enumerated(EnumType.STRING)

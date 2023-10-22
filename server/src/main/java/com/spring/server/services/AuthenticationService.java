@@ -60,7 +60,8 @@ public class AuthenticationService {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().statusCode(401).message("Mật khẩu không khớp").data("").build());
         }
 
-        var avatar = Image.builder().url("https://firebasestorage.googleapis.com/v0/b/gowheels-b0d13.appspot.com/o/files%2FuserDefault.png_5120?alt=media&token=09d7c9ae-3b20-482a-9adf-45f0da7e807d&_gl=1*1jyyhh6*_ga*MTk4NTg3MTE0MS4xNjk0ODY1NjA1*_ga_CW55HF8NVT*MTY5NzAzMzQ5NS4zLjEuMTY5NzAzMzUzOC4xNy4wLjA.").build();
+        var avatar = Image.builder()
+                .url("https://firebasestorage.googleapis.com/v0/b/gowheels-b0d13.appspot.com/o/user%2FuserDefault.png?alt=media&token=99c64f3a-2325-4bfa-b2d7-934d5d1cbb17&_gl=1*rf1ywc*_ga*MTk4NTg3MTE0MS4xNjk0ODY1NjA1*_ga_CW55HF8NVT*MTY5Nzk3MDY5NC43LjEuMTY5Nzk3MDc2MS42MC4wLjA.").build();
 
 
          Random r = new Random();
@@ -101,25 +102,27 @@ public class AuthenticationService {
     public ResponseEntity<ResponseObject> login(AuthenticationRequest req){
 
         try {
+            var currentUser = userRepository.findByEmail(req.getEmail());
+
+            if(currentUser.isEmpty()){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                        ResponseObject.builder().statusCode(404).message("Email chưa được đăng ký").data("").build()
+                );
+            }
+
+            if(!passwordEncoder.matches(req.getPassword(),currentUser.get().getPassword())){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                        ResponseObject.builder().statusCode(401).message("Mật khẩu không đúng").data("").build()
+                );
+            }
+
+
             Authentication authentication =  authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                     req.getEmail(),
                     req.getPassword()
             ));
 
             UserModel userModel = (UserModel) authentication.getPrincipal();
-
-            if(userModel == null){
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                        ResponseObject.builder().statusCode(404).message("Email chưa được đăng ký").data("").build()
-                );
-            }
-
-            if(!passwordEncoder.matches(req.getPassword(),userModel.getPassword())){
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                        ResponseObject.builder().statusCode(401).message("Mật khẩu không đúng").data("").build()
-                );
-            }
-
 
 
             var jwtToken = jwtService.generateToken(userModel);
@@ -201,7 +204,33 @@ public class AuthenticationService {
 
         return ResponseEntity.status(200).body(ResponseObject
                 .builder()
+                        .data(user).statusCode(200)
                 .message("Verify email successfully")
+                .build());
+    }
+
+    public ResponseEntity<ResponseObject> reSendOtp(Authentication authentication) throws MessagingException, UnsupportedEncodingException {
+        var user = userRepository.findByEmail(authentication.getName());
+        var userOtp = verifyOTPRepository.findByUser(user.get());
+
+        Random r = new Random();
+        Integer random = r.nextInt(900000) + 100000;
+        Calendar date = Calendar.getInstance();
+        long timeInSecs = date.getTimeInMillis();
+
+        userOtp.setOtp(random.toString());
+        userOtp.setExpiryDate(new Date(timeInSecs + (3 * 60 * 1000)));
+
+
+        verifyOTPRepository.save(userOtp);
+
+        sendVerificationEmail(user.get());
+
+
+        return ResponseEntity.status(200).body(ResponseObject
+                .builder()
+                .data(userOtp.getExpiryDate()).statusCode(200)
+                .message("Resend otp successfully")
                 .build());
     }
 }
