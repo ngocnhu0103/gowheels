@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Header from "../components/Header";
 import Navigation from "../components/profile/Navigation";
 import Footer from "../components/Footer";
-import { getMyBooksAPI } from "../api/bookAPI";
+import { getMyBooksAPI, paymentDepositAPI, updateStatusBookAPI } from "../api/bookAPI";
 import { Skeleton } from "@mui/material";
 const BookCard = lazy(() => import("../components/BookCard"));
 
@@ -51,6 +51,12 @@ function MyOrder() {
             </div>
         );
     };
+    const updateStatus = async (bookId, newStatus) => {
+        await updateStatusBookAPI(dispatch, bookId, newStatus);
+    };
+    const paymentDeposit = async (bookId) => {
+        await paymentDepositAPI(dispatch, bookId);
+    };
     return (
         <main className="container w-4/5 mx-auto ">
             <Header />
@@ -65,7 +71,15 @@ function MyOrder() {
                             <Suspense fallback={<BookLoading />}>
                                 {myBooks && myBooks.length > 0
                                     ? myBooks.map((book) => {
-                                          return <BookCard book={book} key={book.id} />;
+                                          return (
+                                              <BookCard
+                                                  book={book}
+                                                  user={user}
+                                                  key={book.id}
+                                                  updateStatus={updateStatus}
+                                                  paymentDeposit={paymentDeposit}
+                                              />
+                                          );
                                       })
                                     : null}
                             </Suspense>

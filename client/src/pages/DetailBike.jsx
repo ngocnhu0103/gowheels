@@ -97,35 +97,29 @@ function DetailBike() {
         };
         bike.id !== bikeId ? fetchBikeById(bikeId) : null;
     }, [bikeId]);
+
     useEffect(() => {
-        console.log(bike);
         bike && bike.place && transitionPlace(bike.place);
     }, [bike]);
     return (
         <>
             <main className="container w-10/12 mx-auto">
                 <Header />
-                <section className="grid grid-rows-3 grid-flow-col gap-4 items-stretch my-4">
-                    <img
-                        className="rounded-lg object-cover row-span-3 col-span-3"
-                        src="https://n1-pstg.mioto.vn/cho_thue_xe_o_to_tu_lai_thue_xe_du_lich_hochiminh/kia_morning_2017/p/g/2023/02/14/11/8WcRQtQB6Eqd60lcj4PDZQ.jpg"
-                        alt="anhto"
-                    />
-                    <img
-                        className="rounded-lg object-cover "
-                        src="https://n1-pstg.mioto.vn/cho_thue_xe_o_to_tu_lai_thue_xe_du_lich_hochiminh/kia_morning_2017/p/g/2023/02/14/11/dvar1MQFm4YB5TVOmcdvsA.jpg"
-                        alt="anhnho1"
-                    />
-                    <img
-                        className="rounded-lg object-cover "
-                        src="https://n1-pstg.mioto.vn/cho_thue_xe_o_to_tu_lai_thue_xe_du_lich_hochiminh/kia_morning_2017/p/g/2023/02/14/11/dvar1MQFm4YB5TVOmcdvsA.jpg"
-                        alt="anhnho1"
-                    />
-                    <img
-                        className="rounded-lg object-cover "
-                        src="https://n1-pstg.mioto.vn/cho_thue_xe_o_to_tu_lai_thue_xe_du_lich_hochiminh/kia_morning_2017/p/g/2023/02/14/11/dvar1MQFm4YB5TVOmcdvsA.jpg"
-                        alt="anhnho1"
-                    />
+                <section className="grid grid-rows-3 grid-flow-col gap-4 items-stretch my-4 h-full max-h-[678px]">
+                    {bike.images && bike.images.length > 0
+                        ? bike.images.map((img, index) => {
+                              return (
+                                  <img
+                                      key={img.imgId}
+                                      className={`${
+                                          index == 0 && "row-span-3 col-span-3"
+                                      } rounded-lg object-cover w-full h-full `}
+                                      src={img.url}
+                                      alt="anhto"
+                                  />
+                              );
+                          })
+                        : null}
                 </section>
                 <section className="grid grid-cols-4 gap-4">
                     <article className="col-span-3">
@@ -146,21 +140,6 @@ function DetailBike() {
                             </span>
                             <span className="text-gray-500">{bike.place}</span>
                         </div>
-                        {/* <ul className="flex gap-2 mt-2 pb-8 border-b border-gray-300">
-                            {
-                                bike.tags && bike.tags.length > 0 ? 
-                                bike.map( tag => {
-                                    return <li key={tag.tagId} className="text-[12px] bg-gray-100 p-1 rounded-xl">
-                                    <span>{tag.tagName}</span>
-                                </li>
-                                })
-                                :null
-                            }
-                            
-                        </ul> */}
-                        <section className="mt-8 pb-8 border-b border-gray-300">
-                            <h3 className="text-xl font-semibold mb-4">Đặc điểm</h3>
-                        </section>
                         <section className="mt-8 pb-8 border-b border-gray-300">
                             <h3 className="text-xl font-semibold mb-4">Mô tả</h3>
                             <span className="text-gray-500">{bike.description}</span>
@@ -304,13 +283,13 @@ function DetailBike() {
                             <div className="flex justify-between">
                                 <div className="flex gap-4">
                                     <img
-                                        src={bike.owner.avatar.url}
+                                        src={bike.owner?.avatar.url}
                                         alt="avatar"
                                         className="w-20 h-20 rounded-full border border-gray-300 object-cover"
                                     />
                                     <div className="flex flex-col gap-1">
                                         <Link to={"/profile/id"} className="text-2xl font-semibold">
-                                            {bike.owner.fullName}
+                                            {bike.owner?.fullName}
                                         </Link>
                                         <p className="flex gap-2">
                                             <span className="text-gray-500 flex items-center">

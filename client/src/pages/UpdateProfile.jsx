@@ -10,8 +10,10 @@ import Footer from "../components/Footer";
 import moment from "moment";
 import { Modal } from "@mui/material";
 import UploadImage from "../components/auth/UploadImage";
-import { registerOwnerAPI, updateInfoAPI, uploadAvatarAPI } from "../api/authAPI";
+import { reSendOtpAPI, registerOwnerAPI, updateInfoAPI, uploadAvatarAPI } from "../api/authAPI";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import FormComfirm from "../components/auth/FormComfirm";
+import ComfirmModal from "../components/modal/ComfirmModal";
 function UpdateProfile() {
     const location = useLocation();
     const activeName = location.pathname.split("/")[location.pathname.split("/").length - 1];
@@ -55,25 +57,34 @@ function UpdateProfile() {
                 .required("Vui lòng nhập số điện thoại"),
         }),
         onSubmit: async (values) => {
-            console.log(values);
-            // call api
             setLoading(true);
             await registerOwnerAPI(dispatch, values);
             setLoading(false);
         },
     });
 
+    const [isComfirm, setIsComfirm] = useState(false);
+    const openComfirm = () => {
+        setIsComfirm(true);
+    };
+    const closeComfirm = () => {
+        setIsComfirm(false);
+    };
+
     const handleUpdate = (e) => {
         e.preventDefault();
-        console.log("update");
-        console.log(formikUpdate.values);
         formikUpdate.handleSubmit(e);
     };
-    const handleRegisterOwner = (e) => {
+    const handleRegisterOwner = async (e) => {
         e.preventDefault();
-        console.log("chu xe");
-        console.log(formikRegister.values);
-        formikRegister.handleSubmit(e);
+        if (user.enabled) {
+            formikRegister.handleSubmit(e);
+        } else {
+            setLoading(true);
+            await reSendOtpAPI(dispatch);
+            setLoading(false);
+            openComfirm();
+        }
     };
     useEffect(() => {
         if (user) {
@@ -92,6 +103,7 @@ function UpdateProfile() {
     const handleUpload = async () => {
         await uploadAvatarAPI(dispatch, { url: avt });
     };
+    console.log(user);
     return (
         <main className="container w-4/5 mx-auto ">
             <Header />
@@ -272,6 +284,18 @@ function UpdateProfile() {
                         </div>
                     </div>
                 </div>
+                {
+                    <Modal
+                        open={isComfirm}
+                        onClose={closeComfirm}
+                        aria-labelledby="parent-modal-title"
+                        aria-describedby="parent-modal-description"
+                    >
+                        <>
+                            <FormComfirm onClose={closeComfirm} user={user} />
+                        </>
+                    </Modal>
+                }
             </section>
             <Footer />
         </main>

@@ -7,8 +7,6 @@ const baseAPI = axios.create({
     baseURL: "http://localhost:8080/api/v1",
     headers: {
         'Content-Type': 'application/json',
-
-
     },
     withCredentials: false,
 
@@ -24,7 +22,6 @@ baseAPI.interceptors.request.use((config) => {
         return config;
     }
     var { exp } = jwt_decode(token);
-
     if (Date.now() >= exp * 1000) {
         store.dispatch(clearDataUser())
         store.dispatch(showToast({ message: "Hết phiên đăng nhập", type: "error" }))

@@ -16,6 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -204,5 +206,23 @@ public class BikeService {
 //            throw new RuntimeException(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().message("Internal server error").build());
         }
+    }
+
+    public ResponseEntity<ResponseObject> likeBike(Long bikeId, Authentication authentication) {
+        var user = userRepository.findByEmail(authentication.getName());
+        var bike = bikeRepository.findById(bikeId);
+        user.get().getLikes().add(bike.get());
+
+        userRepository.save(user.get());
+
+        return ResponseEntity.status(200).body(ResponseObject.builder().statusCode(200).data(user.get()).message("Đã thêm yêu thích").build());
+    }
+    public ResponseEntity<ResponseObject> dislikeBike(Long bikeId, Authentication authentication) {
+        var user = userRepository.findByEmail(authentication.getName());
+        var bike = bikeRepository.findById(bikeId);
+        user.get().getLikes().remove(bike.get());
+
+        userRepository.save(user.get());
+        return ResponseEntity.status(200).body(ResponseObject.builder().statusCode(200).data(user.get()).message("Successful").build());
     }
 }

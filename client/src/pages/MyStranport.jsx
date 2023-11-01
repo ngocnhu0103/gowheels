@@ -28,12 +28,21 @@ function MyStranport() {
                                 </Link>
                             )}
                         </div>
-                        <ul className="w-full grid grid-cols-1 gap-5 relative max-h-[70vh] overflow-auto snap-y snap-mandatory">
-                            {/* <Card isRow={true} isManage={true} />
+                        {!user.jobber ? (
+                            <div className="flex items-center justify-center flex-col h-[50vh]">
+                                <p className="text-center text-3xl text-gray-400">Đăng ký làm chủ xe để đăng xe!</p>
+                                <Link to={"/profile/update"}>
+                                    <span className="text-primary hover:text-primary/50">Đăng ký</span>
+                                </Link>
+                            </div>
+                        ) : (
+                            <ul className="w-full grid grid-cols-1 gap-5 relative max-h-[70vh] overflow-auto snap-y snap-mandatory">
+                                {/* <Card isRow={true} isManage={true} />
                             <Card isRow={true} />
                             <Card isRow={true} />
                             <Card isRow={true} /> */}
-                        </ul>
+                            </ul>
+                        )}
                     </div>
                 </div>
             </section>

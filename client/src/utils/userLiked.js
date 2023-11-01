@@ -1,3 +1,3 @@
-export const userLiked = (userLikes, bikeId) => {
-    return [...userLikes].some(like => like === bikeId);
+export const userLiked = (userLikes = [], bikeId) => {
+    return [...userLikes].some(like => like.bikeId === bikeId);
 }

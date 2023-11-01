@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { Link } from "react-router-dom";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
@@ -6,13 +7,15 @@ import EditIcon from "@mui/icons-material/Edit";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { Modal } from "@mui/material";
-import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { userLiked } from "../utils/userLiked";
+import { likeBikeAPI, unLikeBikeAPI } from "../api/bikeAPI";
 function Card({ isRow = false, isManage = false, bike }) {
     const [openDeleteBike, setOpenDeleteBike] = useState(false);
-
+    const timer = useRef(null);
     const user = useSelector((state) => state.auth.user);
+    const dispatch = useDispatch();
 
     const handleOpenDeleteBike = () => {
         setOpenDeleteBike(true);
@@ -20,12 +23,30 @@ function Card({ isRow = false, isManage = false, bike }) {
     const handleCloseDeleteBike = () => {
         setOpenDeleteBike(false);
     };
+    const likeBike = async (bikeId) => {
+        await likeBikeAPI(dispatch, bikeId);
+    };
+    const disLikeBike = async (bikeId) => {
+        await unLikeBikeAPI(dispatch, bikeId);
+    };
+    const handleLike = (bikeId) => {
+        if (timer.current) clearTimeout(timer.current);
+        timer.current = setTimeout(() => {
+            likeBike(bikeId);
+        }, 500);
+    };
+    const handleDisLike = (bikeId) => {
+        if (timer.current) clearTimeout(timer.current);
+        timer.current = setTimeout(() => {
+            disLikeBike(bikeId);
+        }, 500);
+    };
     return (
         <li>
             <div className={`p-5 w-full border border-primary/20 rounded-lg shadow ${isRow ? "flex gap-5" : ""}`}>
                 <Link to={`/bike/${bike.bikeId}`}>
                     <img
-                        className={`rounded-lg  ${isRow ? "w-60" : ""}`}
+                        className={`rounded-lg  ${isRow ? "w-60" : "w-full max-h-[180px]"}`}
                         src={bike.images[0].url}
                         alt="product image"
                     />
@@ -33,20 +54,22 @@ function Card({ isRow = false, isManage = false, bike }) {
 
                 <div className={` ${isRow ? "pt-0" : "pt-5"}`}>
                     <ul className="flex gap-2 ">
-                        {bike.tagList && bike.tagList.length > 0
-                            ? bike.tagList.map((tag, index) => {
-                                  if (index % 2 == 0) {
-                                      return (
-                                          <li key={tag.tagId} className="text-[12px] bg-gray-100 p-1 rounded-xl">
-                                              <span>{tag.tagName}</span>
-                                          </li>
-                                      );
-                                  }
-                              })
-                            : null}
+                        {bike.tagList && bike.tagList.length > 0 ? (
+                            bike.tagList.map((tag, index) => {
+                                if (index % 2 == 0) {
+                                    return (
+                                        <li key={tag.tagId} className="text-[12px] bg-gray-100 p-1 rounded-xl">
+                                            <span>{tag.tagName}</span>
+                                        </li>
+                                    );
+                                }
+                            })
+                        ) : (
+                            <div className="h-6"></div>
+                        )}
                     </ul>
                     <Link to={`/bike/${bike.bikeId}`}>
-                        <h5 className="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">
+                        <h5 className="text-xl truncate font-semibold tracking-tight text-gray-900 dark:text-white">
                             {bike.bikeName}
                         </h5>
                     </Link>
@@ -114,11 +137,15 @@ function Card({ isRow = false, isManage = false, bike }) {
                         {user && (
                             <span
                                 className="cursor-pointer"
-                                onClick={(e) => {
-                                    console.log(e);
+                                onClick={() => {
+                                    if (userLiked(user.likes || [], bike.bikeId)) {
+                                        handleDisLike(bike.bikeId);
+                                    } else {
+                                        handleLike(bike.bikeId);
+                                    }
                                 }}
                             >
-                                {userLiked(user.likes, bike.bikeId) ? (
+                                {userLiked(user.likes || [], bike.bikeId) ? (
                                     <FavoriteIcon color="primary" />
                                 ) : (
                                     <FavoriteBorderIcon color="primary" />

@@ -1,6 +1,7 @@
 import baseAPI from './baseAPI'
 import { showToast } from "../store/toastSlice";
 import { saveDataBike, saveNewBike, setBike } from '../store/bikeSlice';
+import { updateUser } from '../store/authSlice';
 
 export const getAllBikeAPI = async (dispatch, params) => {
     try {
@@ -50,27 +51,32 @@ export const searchBikesAPI = async (dispatch, params) => {
         console.log("Bike not found", error);
     }
 };
-export const likeBike = async (dispatch, bikeId) => {
+export const likeBikeAPI = async (dispatch, bikeId) => {
     try {
         const response = await baseAPI.post(`/bike/like/${bikeId}`);
+        console.log(response);
         if (response.statusCode === 200) {
-            // dispatch()
+            dispatch(updateUser(response.data))
+            dispatch(showToast({ message: response.message, type: "success" }))
+
         }
     } catch (error) {
         console.log("Bike not found", error);
     }
 };
-export const unLikeBike = async (dispatch, bikeId) => {
+export const unLikeBikeAPI = async (dispatch, bikeId) => {
     try {
-        const response = await baseAPI.post(`/bike/unlike/${bikeId}`);
+        const response = await baseAPI.post(`/bike/dislike/${bikeId}`);
+        console.log(response);
+
         if (response.statusCode === 200) {
-            // dispatch()
+            dispatch(updateUser(response.data))
         }
     } catch (error) {
         console.log("Bike not found", error);
     }
 };
-export const similarBike = async (dispatch, bikeId) => {
+export const similarBikeAPI = async (dispatch, bikeId) => {
     try {
         const response = await baseAPI.get(`/bike/similar/${bikeId}`);
         if (response.statusCode === 200) {

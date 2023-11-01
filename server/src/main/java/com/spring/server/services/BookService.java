@@ -13,8 +13,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -25,16 +29,21 @@ public class BookService {
     private final BikeRepository bikeRepository;
     private final UserRepository userRepository;
     private final SurchargeRepository surchargeRepository;
-    public ResponseEntity<ResponseObject> createBook(BookData bookData, Authentication authentication){
+    public ResponseEntity<ResponseObject> createBook(BookData bookData, Authentication authentication) throws ParseException{
+        if(CompareToDate(bookData.getStartDate(),bookData.getEndDate()) == 0){
+            return  ResponseEntity.status(400).body(
+                    ResponseObject.builder().statusCode(400).message("Ngày nhận xe và trả xe không hợp lệ").data("").build()
+            );
+        }
         var bike = bikeRepository.findById(bookData.getBikeId());
-        var bookList = bookRepository.findAllByBike(bike.get());
+        var bookList = bookRepository.findByBike(bike.get());
         if(bookList.size() > 0) {
           boolean checkDate = false;
           for(Booking booking : bookList) {
-              if(bookData.getStartDate().compareTo(booking.getEndDate()) > 0) {
+              if(CompareToDate(bookData.getStartDate(),booking.getEndDate()) > 0) {
                   checkDate = true;
                   continue;
-              } else if(bookData.getEndDate().compareTo(booking.getStartDate()) < 0){
+              } else if(CompareToDate(bookData.getEndDate(),booking.getStartDate()) < 0){
                   checkDate = true;
                   continue;
               } else {
@@ -55,9 +64,17 @@ public class BookService {
     //@gel all book for renter
     public ResponseEntity<ResponseObject> getAllRenterBook(Authentication authentication){
         var renter = userRepository.findByEmail(authentication.getName());
-        var renterBooks = bookRepository.findAllByRenter(renter.get());
-
+        var renterBooks = bookRepository.findByRenter(renter.get());
         return ResponseEntity.ok(ResponseObject.builder().statusCode(200).message("success").data(renterBooks).build());
+    }
+    //@gel all book detail
+    public ResponseEntity<ResponseObject> getBookById(Long id){
+        var book = bookRepository.findById(id);
+
+        if(book.isEmpty()){
+            return ResponseEntity.status(404).body(ResponseObject.builder().statusCode(404).message("Book not found").build());
+        }
+        return ResponseEntity.ok(ResponseObject.builder().statusCode(200).message("success").data(book.get()).build());
     }
     //@gel all book for owner
     public ResponseEntity<ResponseObject> getAllOwnerBook(Authentication authentication){
@@ -66,7 +83,7 @@ public class BookService {
         List<Booking> bookings = new ArrayList<>();
         for (Bike bike: bikes
              ) {
-            var bookList = bookRepository.findAllByBike(bike);
+            var bookList = bookRepository.findByBike(bike);
             if(!bookList.isEmpty()){
                 bookings.addAll(bookList);
             }
@@ -90,4 +107,24 @@ public class BookService {
     }
     //@ add the surchage for book
 
+    public ResponseEntity<ResponseObject> deposited(Long bookId, Authentication authentication){
+        var book = bookRepository.findById(bookId);
+        if(!book.isEmpty()){
+            book.get().setStatus("Đã thanh toán tiền cọc");
+            book.get().setDeposit(true);
+            bookRepository.save(book.get());
+            return ResponseEntity.ok(ResponseObject.builder().statusCode(200).message("success").data(book.get()).build());
+        }
+        return  ResponseEntity.status(404).body(ResponseObject.builder().statusCode(404).message("Not found").build());
+    }
+
+
+    private int CompareToDate(Date date1, Date date2) throws ParseException {
+        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+        String str1 = format.format(date1);
+        String str2 = format.format(date2);
+        return format.parse(str1).compareTo(format.parse(str2));
+
+
+    }
 }

@@ -115,6 +115,7 @@ public class UserService {
             curUser.get().setAccountNumber(data.getAccountNumber());
             curUser.get().setPhone(data.getPhone());
             curUser.get().setJobber(true);
+            curUser.get().setPoint(100);
             userRepository.save(curUser.get());
             System.out.println(curUser);
             return ResponseEntity.status(200).body(

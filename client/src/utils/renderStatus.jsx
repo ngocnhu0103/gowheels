@@ -6,6 +6,9 @@ export const renderStatusBook = (value) => {
         case "Đã duyệt":
             tag = <Chip variant="filled" label={value} color="success" />;
             break;
+        case "Đã cọc":
+            tag = <Chip variant="filled" label={value} color="success" />;
+            break;
         case "Đã bàn giao":
             tag = <Chip variant="filled" label={value} color="success" />;
             break;

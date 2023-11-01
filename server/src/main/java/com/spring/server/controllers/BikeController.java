@@ -60,4 +60,13 @@ public class BikeController {
         return bikeService.searchingBike(place,startDate,endDate,page,size);
     }
 
+
+    @PostMapping("/like/{id}")
+    public ResponseEntity<ResponseObject> likeBike(@PathVariable Long id, Authentication authentication) {
+        return bikeService.likeBike(id,authentication);
+    }
+    @PostMapping("/dislike/{id}")
+    public ResponseEntity<ResponseObject> dislikeBike(@PathVariable Long id, Authentication authentication) {
+        return bikeService.dislikeBike(id, authentication);
+    }
 }

@@ -21,7 +21,7 @@ function FormComfirm({ onClose, user }) {
     };
     const reSendOtp = async () => {
         setMinutes(2);
-        seconds(59);
+        setSeconds(59);
         await reSendOtpAPI(dispatch);
     };
 

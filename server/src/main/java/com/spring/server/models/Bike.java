@@ -15,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class,property = "@bikeId")
+//@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class,property = "@bikeId")
 public class Bike implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,7 +37,7 @@ public class Bike implements Serializable {
     @ManyToOne
     private Category category;
     private String place;
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @JsonIgnoreProperties
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "bike_tag",

@@ -3,11 +3,13 @@ import Card from "../components/Card";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 import Navigation from "../components/profile/Navigation";
+import { useSelector } from "react-redux";
 
 function BikeFavs() {
     const location = useLocation();
     const activeName = location.pathname.split("/")[location.pathname.split("/").length - 1];
-
+    const { likes } = useSelector((state) => state.auth.user);
+    console.log(likes);
     return (
         <main className="container w-4/5 mx-auto ">
             <Header />

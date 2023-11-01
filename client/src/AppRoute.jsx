@@ -1,4 +1,3 @@
-import React from "react";
 import { Route, Routes } from "react-router-dom";
 import Home from "./pages/HomePage";
 import UpdateProfile from "./pages/UpdateProfile";
@@ -12,6 +11,9 @@ import BikeRegister from "./pages/BikeRegister";
 import DetailBike from "./pages/DetailBike";
 import NotFound from "./pages/NotFound";
 import BikePage from "./pages/BikePage";
+import MyOrderDetail from "./pages/MyOrderDetail";
+import PaymentSuccess from "./pages/payment/PaymentSuccess";
+import PaymentFailure from "./pages/payment/PaymentFailure";
 function AppRoute() {
     return (
         <Routes>
@@ -22,8 +24,11 @@ function AppRoute() {
                 <Route path="/profile/mystranport" element={<MyStranport />}></Route>
                 <Route path="/profile/order" element={<Order />}></Route>
                 <Route path="/profile/myorder" element={<MyOrder />}></Route>
+                <Route path="/profile/myorder/:bookId" element={<MyOrderDetail />}></Route>
                 <Route path="/profile/rate" element={<Rate />}></Route>
                 <Route path="/bikeregister" element={<BikeRegister />}></Route>
+                <Route path="/success" element={<PaymentSuccess />}></Route>
+                <Route path="/failure" element={<PaymentFailure />}></Route>
             </Route>
             <Route path="/bikes" element={<BikePage />}></Route>
             <Route path="/bike/:bikeId" element={<DetailBike />}></Route>

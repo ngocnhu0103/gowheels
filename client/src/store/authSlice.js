@@ -11,16 +11,14 @@ const authSlice = createSlice({
         saveData: (state, actions) => {
             state.token = actions.payload.token;
             state.user = actions.payload.user;
-
         },
         clearDataUser: (state) => {
             state.token = null;
             state.user = null;
-            state.myBooks = null;
-            state.bookMyBike = null;
+            state.myBooks = [];
+            state.bookMyBike = [];
         },
         addNewBook: (state, actions) => {
-            console.log(actions.payload);
             state.myBooks = [...state.myBooks, actions.payload];
         },
         saveMyBooks: (state, actions) => {
