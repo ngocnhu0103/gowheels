@@ -9,7 +9,6 @@ function BikeFavs() {
     const location = useLocation();
     const activeName = location.pathname.split("/")[location.pathname.split("/").length - 1];
     const { likes } = useSelector((state) => state.auth.user);
-    console.log(likes);
     return (
         <main className="container w-4/5 mx-auto ">
             <Header />
@@ -19,11 +18,11 @@ function BikeFavs() {
                 <div className="col-span-2  rounded-xl p-4">
                     <div className="">
                         <h1 className=" text-3xl font-banner text-primary pb-5">Xe yêu thích</h1>
-                        <ul className="w-full grid grid-cols-1 gap-5 relative max-h-[70vh] overflow-auto snap-y snap-mandatory">
-                            {/* <Card isRow={true} />
-                            <Card isRow={true} />
-                            <Card isRow={true} />
-                            <Card isRow={true} /> */}
+                        <ul className="w-full grid grid-cols-3 gap-5 relative max-h-[70vh] overflow-auto snap-y snap-mandatory">
+                            {likes &&
+                                likes.map((item) => {
+                                    return <Card key={item.bikeId} bike={item} />;
+                                })}
                         </ul>
                     </div>
                 </div>

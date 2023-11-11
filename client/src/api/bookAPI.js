@@ -1,7 +1,7 @@
 import baseAPI from "./baseAPI";
 import { showToast } from "../store/toastSlice";
 import { addNewBook, saveBooksMyBike, saveMyBooks, updateBook } from "../store/authSlice";
-import { selectedBook } from "../store/bookSlice";
+import { selectedBook, updateBookDetail } from "../store/bookSlice";
 // Slice
 export const bookingAPI = async (dispatch, book) => {
     try {
@@ -42,9 +42,12 @@ export const getBooksMyBikeAPI = async (dispatch) => {
 export const updateStatusBookAPI = async (dispatch, bookId, payload) => {
     try {
         const response = await baseAPI.post(`/book/update-status/${bookId}`, payload);
-        console.log("updateStatus", response);
         if (response.statusCode === 200) {
             dispatch(updateBook(response.data));
+            if (payload.newStatus === "Đã xác nhận") {
+                dispatch(updateBookDetail(response.data));
+            }
+
         }
     } catch (error) {
         dispatch(showToast({ message: error.message, type: 'error' }))
@@ -55,7 +58,7 @@ export const paymentAPI = async (dispatch, bookId) => {
     try {
         const response = await baseAPI.post(`/book/payment/${bookId}`);
         if (response.statusCode === 200) {
-            // dispatch(updateBook(response.data));
+            return response.data
         }
     } catch (error) {
         dispatch(showToast({ message: error.message, type: "error" }));
@@ -67,7 +70,7 @@ export const paymentDepositAPI = async (dispatch, bookId) => {
         const response = await baseAPI.post(`/book/payment-deposit/${bookId}`);
         if (response.statusCode === 200) {
 
-            // dispatch(updateBook(response.data));
+            return response.data
         }
     } catch (error) {
         dispatch(showToast({ message: error.message, type: "error" }));
@@ -76,21 +79,46 @@ export const paymentDepositAPI = async (dispatch, bookId) => {
 export const afterPaymentDepositAPI = async (dispatch, bookId, params) => {
     try {
         const response = await baseAPI.get(`/book/payment/check/${bookId}`, { params });
+        if (response.statusCode === 200) {
+            dispatch(updateBook(response.data));
+        }
+    } catch (error) {
+        dispatch(showToast({ message: error.message, type: "error" }));
+    }
+};
+export const afterPaymentAPI = async (dispatch, bookId, params) => {
+    try {
+        const response = await baseAPI.get(`/book/payment/check-end/${bookId}`, { params });
         console.log(response);
         if (response.statusCode === 200) {
-
-            // dispatch(updateBook(response.data));
+            dispatch(updateBook(response.data));
         }
     } catch (error) {
         dispatch(showToast({ message: error.message, type: "error" }));
     }
 };
 // @add surchages
-export const addSurcharge = async (dispatch, bookId, payload) => {
+export const addSurchargeAPI = async (dispatch, bookId, payload) => {
+    console.log(payload);
     try {
-        const response = await baseAPI.get(`/book/add-surcharges/${bookId}`, payload);
+        const response = await baseAPI.put(`/book/add-surchages/${bookId}`, payload);
+        console.log(response);
         if (response.statusCode === 200) {
-            // dispatch(updateBook(response.data));
+            dispatch(updateBookDetail(response.data));
+            dispatch(showToast({ message: response.message, type: "success" }));
+        }
+    } catch (error) {
+        dispatch(showToast({ message: error.message, type: "error" }));
+    }
+};
+// @edit surchages
+export const editSurchargeAPI = async (dispatch, bookId, payload) => {
+    try {
+        const response = await baseAPI.put(`/book/edit-surchages/${bookId}`, payload);
+        console.log(response);
+        if (response.statusCode === 200) {
+            dispatch(updateBookDetail(response.data));
+            dispatch(showToast({ message: response.message, type: "success" }));
         }
     } catch (error) {
         dispatch(showToast({ message: error.message, type: "error" }));
@@ -102,6 +130,18 @@ export const getBookDetailAPI = async (dispatch, bookId) => {
         const response = await baseAPI.get(`/book/${bookId}`);
         if (response.statusCode === 200) {
             dispatch(selectedBook(response.data));
+        }
+    } catch (error) {
+        dispatch(showToast({ message: error.message, type: "error" }));
+    }
+};
+// @get surchages
+export const getSurchagesAPI = async (dispatch) => {
+    try {
+        const response = await baseAPI.get(`/surchage`);
+        console.log(response.data);
+        if (response.statusCode === 200) {
+            return response.data
         }
     } catch (error) {
         dispatch(showToast({ message: error.message, type: "error" }));

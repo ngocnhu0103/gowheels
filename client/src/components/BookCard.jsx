@@ -6,7 +6,7 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { formartVnd } from "../utils/format";
 import { renderStatusBook } from "../utils/renderStatus";
 
-function BookCard({ book, user, updateStatus, paymentDeposit }) {
+function BookCard({ book, user, updateStatus, paymentDeposit, payment }) {
     const renderByUser = (book, user) => {
         // owner
         if (user.email === book?.bike?.owner.email) {
@@ -25,8 +25,26 @@ function BookCard({ book, user, updateStatus, paymentDeposit }) {
                             Duyệt đơn
                         </Button>
                     );
+                case "Đã cọc":
+                    return (
+                        <Button variant="contained" onClick={() => updateStatus(book.id, { newStatus: "Đã bàn giao" })}>
+                            Bàn giao
+                        </Button>
+                    );
                 case "Đang kiểm kê":
-                    return <Button variant="contained">Xác nhận</Button>;
+                    return (
+                        <>
+                            <Link to={`/profile/order/${book.id}`}>
+                                <Button variant="contained">Thêm phụ thu</Button>
+                            </Link>
+                            <Button
+                                variant="contained"
+                                onClick={() => updateStatus(book.id, { newStatus: "Đã xác nhận" })}
+                            >
+                                Xác nhận
+                            </Button>
+                        </>
+                    );
                 default:
                     return null;
             }
@@ -54,8 +72,26 @@ function BookCard({ book, user, updateStatus, paymentDeposit }) {
                             <Button variant="contained">Chi tiết</Button>
                         </Link>
                     );
+                case "Đã bàn giao":
+                    return (
+                        <>
+                            <Link to={`/profile/myorder/${book.id}`}>
+                                <Button variant="contained">Chi tiết</Button>
+                            </Link>
+                            <Button
+                                variant="contained"
+                                onClick={() => updateStatus(book.id, { newStatus: "Đang kiểm kê" })}
+                            >
+                                Trả xe
+                            </Button>
+                        </>
+                    );
                 case "Đã xác nhận":
-                    return <Button variant="contained">Thanh toán</Button>;
+                    return (
+                        <Button variant="contained" onClick={() => payment(book.id)}>
+                            Thanh toán
+                        </Button>
+                    );
                 case "Đang chờ duyệt":
                     return null;
                 default:

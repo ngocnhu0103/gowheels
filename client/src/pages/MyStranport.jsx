@@ -4,14 +4,23 @@ import { Button } from "@mui/material";
 import Footer from "../components/Footer";
 import Navigation from "../components/profile/Navigation";
 import Header from "../components/Header";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import { myStranportAPI } from "../api/bikeAPI";
 
 function MyStranport() {
     const location = useLocation();
     const activeName = location.pathname.split("/")[location.pathname.split("/").length - 1];
-    const user = useSelector((state) => {
-        return state.auth.user;
+    const { user, myBikes } = useSelector((state) => {
+        return state.auth;
     });
+    const dispatch = useDispatch();
+    useEffect(() => {
+        const fetchMyBike = async () => {
+            await myStranportAPI(dispatch);
+        };
+        fetchMyBike();
+    }, []);
     return (
         <main className="container w-4/5 mx-auto ">
             <Header />
@@ -37,6 +46,11 @@ function MyStranport() {
                             </div>
                         ) : (
                             <ul className="w-full grid grid-cols-1 gap-5 relative max-h-[70vh] overflow-auto snap-y snap-mandatory">
+                                {myBikes &&
+                                    myBikes.map((item) => {
+                                        return <Card key={item.bikeId} isRow bike={item} isManage />;
+                                    })}
+
                                 {/* <Card isRow={true} isManage={true} />
                             <Card isRow={true} />
                             <Card isRow={true} />

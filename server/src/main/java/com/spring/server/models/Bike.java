@@ -47,4 +47,7 @@ public class Bike implements Serializable {
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @ManyToOne(fetch = FetchType.EAGER)
     private User owner;
+
+    private Double lat;
+    private Double lng;
 }

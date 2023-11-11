@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Header from "../components/Header";
 import Navigation from "../components/profile/Navigation";
 import Footer from "../components/Footer";
-import { getMyBooksAPI, paymentDepositAPI, updateStatusBookAPI } from "../api/bookAPI";
+import { getMyBooksAPI, paymentAPI, paymentDepositAPI, updateStatusBookAPI } from "../api/bookAPI";
 import { Skeleton } from "@mui/material";
 const BookCard = lazy(() => import("../components/BookCard"));
 
@@ -55,7 +55,12 @@ function MyOrder() {
         await updateStatusBookAPI(dispatch, bookId, newStatus);
     };
     const paymentDeposit = async (bookId) => {
-        await paymentDepositAPI(dispatch, bookId);
+        const data = await paymentDepositAPI(dispatch, bookId);
+        await window.location.replace(data);
+    };
+    const payment = async (bookId) => {
+        const data = await paymentAPI(dispatch, bookId);
+        await window.location.replace(data);
     };
     return (
         <main className="container w-4/5 mx-auto ">
@@ -78,6 +83,7 @@ function MyOrder() {
                                                   key={book.id}
                                                   updateStatus={updateStatus}
                                                   paymentDeposit={paymentDeposit}
+                                                  payment={payment}
                                               />
                                           );
                                       })

@@ -6,11 +6,12 @@ import PlaceIcon from "@mui/icons-material/Place";
 import EditIcon from "@mui/icons-material/Edit";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import { Modal } from "@mui/material";
 import { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { userLiked } from "../utils/userLiked";
-import { likeBikeAPI, unLikeBikeAPI } from "../api/bikeAPI";
+import { likeBikeAPI, unLikeBikeAPI, updateStatusBikeAPI } from "../api/bikeAPI";
 function Card({ isRow = false, isManage = false, bike }) {
     const [openDeleteBike, setOpenDeleteBike] = useState(false);
     const timer = useRef(null);
@@ -41,9 +42,22 @@ function Card({ isRow = false, isManage = false, bike }) {
             disLikeBike(bikeId);
         }, 500);
     };
+    const changeStatusBike = async (bikeId, newStatus) => {
+        await updateStatusBikeAPI(dispatch, bikeId, { newStatus });
+    };
+    const handleChangeStatus = (bikeId, newStatus) => {
+        if (timer.current) clearTimeout(timer.current);
+        timer.current = setTimeout(() => {
+            changeStatusBike(bikeId, newStatus);
+        }, 500);
+    };
     return (
         <li>
-            <div className={`p-5 w-full border border-primary/20 rounded-lg shadow ${isRow ? "flex gap-5" : ""}`}>
+            <div
+                className={`p-5 w-full border border-primary/20  rounded-lg shadow ${
+                    isRow ? "flex gap-5" : "min-h-[400px]"
+                }`}
+            >
                 <Link to={`/bike/${bike.bikeId}`}>
                     <img
                         className={`rounded-lg  ${isRow ? "w-60" : "w-full max-h-[180px]"}`}
@@ -160,8 +174,17 @@ function Card({ isRow = false, isManage = false, bike }) {
                             <EditIcon />
                         </li>
 
-                        <li className="mb-3 cursor-pointer">
-                            <VisibilityOffIcon />
+                        <li
+                            className="mb-3 cursor-pointer"
+                            onClick={() => {
+                                if (bike.status === "show") {
+                                    handleChangeStatus(bike.bikeId, "hidden");
+                                } else {
+                                    handleChangeStatus(bike.bikeId, "show");
+                                }
+                            }}
+                        >
+                            {bike.status === "show" ? <VisibilityOffIcon /> : <VisibilityIcon />}
                         </li>
                         <li onClick={handleOpenDeleteBike} className="mb-3 cursor-pointer">
                             <DeleteOutlineIcon />

@@ -5,7 +5,9 @@ const authSlice = createSlice({
         token: null,
         user: null,
         myBooks: [],
-        bookMyBike: []
+        bookMyBike: [],
+        myBikes: [],
+
     },
     reducers: {
         saveData: (state, actions) => {
@@ -17,6 +19,7 @@ const authSlice = createSlice({
             state.user = null;
             state.myBooks = [];
             state.bookMyBike = [];
+            state.myBikes = [];
         },
         addNewBook: (state, actions) => {
             state.myBooks = [...state.myBooks, actions.payload];
@@ -33,13 +36,29 @@ const authSlice = createSlice({
                     book.status = actions.payload.status;
                 }
             })
+            state.myBooks.forEach((book) => {
+                if (book.id === actions.payload.id) {
+                    book.status = actions.payload.status;
+                }
+            })
         },
         updateUser: (state, actions) => {
             state.user = actions.payload;
         },
+        updateBikes: (state, actions) => {
+            state.myBikes = actions.payload;
+        },
+        updateMyBike: (state, actions) => {
+            state.myBikes = state.myBikes.map((bike) => {
+                if (bike.bikeId === actions.payload.bikeId) {
+                    return bike = actions.payload
+                }
+                return bike
+            })
 
+        },
     }
 
 })
-export const { saveData, clearDataUser, addNewBook, saveMyBooks, saveBooksMyBike, updateBook, updateUser } = authSlice.actions;
+export const { saveData, clearDataUser, addNewBook, saveMyBooks, saveBooksMyBike, updateBook, updateUser, updateBikes, updateMyBike } = authSlice.actions;
 export default authSlice.reducer;

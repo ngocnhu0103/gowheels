@@ -37,6 +37,8 @@ public class Booking implements Serializable {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private Date endDate;
     private Double totalPrice;
+    private String note;
+    private Double surchargePrice;
     private String paymentMethod;
     private boolean isDeposit;
     private String status;

@@ -60,8 +60,8 @@ public class PaymentService {
         SessionCreateParams.Builder paramsBuilder = SessionCreateParams.builder()
                 .setMode(SessionCreateParams.Mode.PAYMENT)
                 .setCustomer(customer.getId())
-                .setSuccessUrl(environment.getProperty("client.url") + "success?session_id={CHECKOUT_SESSION_ID}&bookId=" + bookId)
-                .setCancelUrl(environment.getProperty("client.url") + "failure");
+                .setSuccessUrl(environment.getProperty("client.url") + "success/end?session_id={CHECKOUT_SESSION_ID}&bookId=" + bookId)
+                .setCancelUrl(environment.getProperty("client.url") + "failure/end");
 
 
         paramsBuilder.addLineItem(SessionCreateParams.LineItem.builder()
@@ -137,6 +137,35 @@ public class PaymentService {
             book.get().setDeposit(true);
             book.get().setStatus("Đã cọc");
             bookRepository.save(book.get());
+
+            return ResponseEntity.status(200).body(ResponseObject.builder().statusCode(200).message("successful").data(session.getMetadata()).build());
+        }
+
+        return ResponseEntity.status(404).body(ResponseObject.builder().statusCode(404).message("Session Not found").data("").build());
+    }
+    public ResponseEntity<ResponseObject> findBySessionIdAfterPayment(String sessionId,Long bookId) throws StripeException{
+        Stripe.apiKey = environment.getProperty("stripe.api.key");
+        Session session = Session.retrieve(sessionId);
+
+        if(session != null){
+            var book = bookRepository.findById(bookId);
+            var owner = userRepository.findById(
+                    book.get().getBike().getOwner().getId()
+            );
+            if(book.get().getStatus().compareTo("Đã thanh toán") != 0) {
+                Double currentBalance = owner.get().getBalance();
+                owner.get().setBalance(
+                        (double)
+                        Math.round(
+                                (currentBalance + session.getAmountTotal()) * 100
+                        )/100
+                );
+                book.get().setStatus("Đã thanh toán");
+
+                bookRepository.save(book.get());
+                userRepository.save(owner.get());
+            }
+
 
             return ResponseEntity.status(200).body(ResponseObject.builder().statusCode(200).message("successful").data(session.getMetadata()).build());
         }

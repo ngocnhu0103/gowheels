@@ -9,11 +9,14 @@ const bookSlice = createSlice({
         selectedBook: (state, actions) => {
             state.book = actions.payload;
         },
+        updateBookDetail: (state, actions) => {
+            state.book = actions.payload;
+        },
 
     },
 })
 
 
-export const { selectedBook } = bookSlice.actions
+export const { selectedBook, updateBookDetail } = bookSlice.actions
 
 export default bookSlice.reducer;

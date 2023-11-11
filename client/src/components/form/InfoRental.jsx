@@ -1,5 +1,6 @@
+/* eslint-disable react/prop-types */
 import { Slider, TextField } from "@mui/material";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Map from "../Map";
 import { useSelector } from "react-redux";
 import "leaflet/dist/leaflet.css";
@@ -33,14 +34,15 @@ function InfoRental({ formik }) {
         if (timer.current) clearTimeout(timer.current);
         timer.current = setTimeout(() => {
             searchPlaces(value);
-        }, 800);
+        }, 1000);
     };
     const selectedPlace = (place) => {
-        formik.setFieldValue("place", place.label.split("/").join(""));
         const [lat, lon] = place.bounds[0];
+        formik.setFieldValue("place", place.label.split("/").join(""));
+        formik.setFieldValue("lat", lat);
+        formik.setFieldValue("lng", lon);
         setLocation({ address: place.label.split("/").join(""), lat: lat, lng: lon });
         setPlaceInput(place.label.split("/").join(""));
-        console.log(place);
         setPlaces(null);
     };
     useEffect(() => {
@@ -129,6 +131,7 @@ function InfoRental({ formik }) {
                         onChange={handleChange}
                         type="text"
                         placeholder="Search place"
+                        autoComplete="off"
                         className="w-2/3 py-2 px-3 outline-none rounded-xl border border-gray-200 mt-5 "
                     />
                     <ul

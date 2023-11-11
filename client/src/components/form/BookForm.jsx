@@ -33,7 +33,7 @@ function BookForm({ price, place, bikeId }) {
     const booking = async () => {
         const book = {
             bikeId: bikeId,
-            paymentMethod: "Tra sau",
+            paymentMethod: "Thanh toán thẻ",
             startDate: startDate,
             endDate: endDate,
             totalPrice: totalAmount,
@@ -44,7 +44,8 @@ function BookForm({ price, place, bikeId }) {
         await bookingAPI(dispatch, book);
     };
     useEffect(() => {
-        const total = space * price + price * 0.05;
+        let total = space * price;
+        total = total + total * 0.05;
         setTotalAmount(total);
     }, [space, price]);
 
@@ -111,7 +112,7 @@ function BookForm({ price, place, bikeId }) {
                         <p>Phí dịch vụ</p>
                         <HelpOutlineIcon fontSize="small" />
                     </div>
-                    <span className="font-bold">{formartVnd(price * 0.05)}/ ngày</span>
+                    <span className="font-bold">{formartVnd(price * 0.05 * space)}/ ngày</span>
                 </div>
             </div>
             <div className="flex items-center justify-between py-2 border-b border-gray-200">

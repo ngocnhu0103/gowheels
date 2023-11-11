@@ -2,6 +2,7 @@ package com.spring.server.services;
 
 import com.spring.server.data.BikeData;
 import com.spring.server.data.ResponseObject;
+import com.spring.server.data.StatusData;
 import com.spring.server.models.Bike;
 import com.spring.server.models.Category;
 import com.spring.server.models.Image;
@@ -71,6 +72,8 @@ public class BikeService {
                 bike.setCategory(category.get());
                 bike.setTagList(tags);
                 bike.setPlace(bikeData.getPlace());
+                bike.setLat(bikeData.getLat());
+                bike.setLng(bikeData.getLng());
                 bike.setImages(images);
                 Bike createdBike = bikeRepository.save(bike);
 
@@ -91,9 +94,9 @@ public class BikeService {
             Page<Bike> pageBikes;
             Pageable pageable = PageRequest.of(page, size);
             if(bikeName == ""){
-                pageBikes = bikePaginationRepository.findAll(pageable);
+                pageBikes = bikePaginationRepository.findAllByStatus(pageable,"show");
             } else {
-                pageBikes = bikePaginationRepository.findByBikeNameContaining(bikeName,pageable);
+                pageBikes = bikePaginationRepository.findByBikeNameContainingAndStatus(bikeName,pageable,"show");
             }
             bikeList = pageBikes.getContent();
             System.out.println(bikeList);
@@ -104,24 +107,24 @@ public class BikeService {
         }
     }
 
-    public ResponseEntity<ResponseObject> getAllBikeByTags(String bikeName, int page, int size,List<Tag> tags){
-        try{
-            List<Bike> bikeList = new ArrayList<>();
-            Page<Bike> pageBikes;
-            Pageable pageable = PageRequest.of(page, size);
-            if(bikeName == null ){
-                pageBikes = bikePaginationRepository.findAll(pageable);
-            } else {
-                pageBikes = bikePaginationRepository.findByBikeNameContainingAndTagListIn(bikeName,pageable,tags);
-            }
-            bikeList = pageBikes.getContent();
-            System.out.println(bikeList);
-            return ResponseEntity.ok(ResponseObject.builder().statusCode(200).message("thành công").data(bikeList).build());
-        }catch (Exception e){
-            System.out.println(e.getMessage());
-            return ResponseEntity.ok(ResponseObject.builder().statusCode(500).message(e.getMessage()).data("").build());
-        }
-    }
+//    public ResponseEntity<ResponseObject> getAllBikeByTags(String bikeName, int page, int size,List<Tag> tags){
+//        try{
+//            List<Bike> bikeList = new ArrayList<>();
+//            Page<Bike> pageBikes;
+//            Pageable pageable = PageRequest.of(page, size);
+//            if(bikeName == null ){
+//                pageBikes = bikePaginationRepository.findAll(pageable);
+//            } else {
+//                pageBikes = bikePaginationRepository.findByBikeNameContainingAndTagListIn(bikeName,pageable,tags);
+//            }
+//            bikeList = pageBikes.getContent();
+//            System.out.println(bikeList);
+//            return ResponseEntity.ok(ResponseObject.builder().statusCode(200).message("thành công").data(bikeList).build());
+//        }catch (Exception e){
+//            System.out.println(e.getMessage());
+//            return ResponseEntity.ok(ResponseObject.builder().statusCode(500).message(e.getMessage()).data("").build());
+//        }
+//    }
     public ResponseEntity<ResponseObject> getBikeById(Long Id){
         try{
             var bike = bikeRepository.findById(Id);
@@ -172,6 +175,8 @@ public class BikeService {
                 bike.get().setBikeCode(newBike.getBikeCode());
                 bike.get().setStatus(newBike.getStatus());
                 bike.get().setPlace(newBike.getPlace());
+                bike.get().setLat(newBike.getLat());
+                bike.get().setLng(newBike.getLng());
                 bike.get().setTagList(tags);
                 bike.get().setCategory(category.get());
                 bike.get().setDescription(newBike.getDescription());
@@ -187,12 +192,41 @@ public class BikeService {
         }
     }
 
-    public ResponseEntity<ResponseObject> searchingBike(String place, Date startDate, Date endDate, int page, int size){
+    public ResponseEntity<ResponseObject> searchingBike(String place,String categoryName,List<Long> tagIds , Date startDate, Date endDate, int page, int size){
+        List<Tag> tags = new ArrayList<>();
+        Page<Bike> bikes;
+        if(tagIds != null) {
+            for (Long id: tagIds
+            ) {
+                var tag = tagRepository.findById(id);
+                tags.add(tag.get());
+            }
+        }
+        if (place == null){
+            place = "";
+        }
+        System.out.println("place = " + place);
+        System.out.println("categoryName = " + categoryName);
+        System.out.println("tagIds = " + tagIds);
         try {
             List<Bike> bikeList = new ArrayList<>();
-            Page<Bike> pageBikes;
             Pageable pageable = PageRequest.of(page, size);
-            var bikes = bikePaginationRepository.findByPlaceContaining(place,pageable);
+
+//            Page<Bike> pageBikes;
+//            var bikes = bikePaginationRepository.findByPlaceContainingAndStatus(place,pageable,"show");
+//            var bikes = bikePaginationRepository
+//                    .findByPlaceContainingAndCategoryCategoryNameContainingAndStatusAndTagListIn(pageable,place,name,"show",tags);
+            if(categoryName == null && tagIds == null ){
+                bikes = bikePaginationRepository.findByPlaceContainingAndStatus(place,pageable,"show");
+            } else if (categoryName == null) {
+                bikes = bikePaginationRepository.findByPlaceContainingAndStatusAndTagListIn(pageable,place,"show",tags);
+            } else if (tagIds == null) {
+                bikes = bikePaginationRepository.findByPlaceContainingAndCategoryCategoryNameContainingAndStatus(pageable,place,categoryName,"show");
+            }else {
+                bikes =
+            bikePaginationRepository.findByPlaceContainingAndCategoryCategoryNameContainingAndStatusAndTagListIn(pageable,place,categoryName,"show",tags);
+            }
+
 
             for (Bike bike: bikes.getContent()
                  ) {
@@ -225,4 +259,19 @@ public class BikeService {
         userRepository.save(user.get());
         return ResponseEntity.status(200).body(ResponseObject.builder().statusCode(200).data(user.get()).message("Successful").build());
     }
+    public ResponseEntity<ResponseObject> getMyStranport( Authentication authentication) {
+        var user = userRepository.findByEmail(authentication.getName());
+        var bikes = bikeRepository.findAllByOwner(user.get());
+
+        return ResponseEntity.status(200).body(ResponseObject.builder().statusCode(200).data(bikes).message("Successful").build());
+    }
+    public ResponseEntity<ResponseObject> updateBikeStatus(Long bikeId, StatusData statusData) {
+        var bike = bikeRepository.findById(bikeId);
+
+        bike.get().setStatus(statusData.getNewStatus());
+
+        bikeRepository.save(bike.get());
+        return ResponseEntity.status(200).body(ResponseObject.builder().statusCode(200).data(bike.get()).message("Successful").build());
+    }
+
 }

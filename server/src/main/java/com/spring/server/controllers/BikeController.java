@@ -2,6 +2,7 @@ package com.spring.server.controllers;
 
 import com.spring.server.data.BikeData;
 import com.spring.server.data.ResponseObject;
+import com.spring.server.data.StatusData;
 import com.spring.server.models.Bike;
 import com.spring.server.models.Tag;
 import com.spring.server.services.BikeService;
@@ -32,13 +33,13 @@ public class BikeController {
                                                      @RequestParam(defaultValue = "12" ) int size) {
         return bikeService.getAllBike(bikeName,page,size);
     }
-    @GetMapping("/all/tag")
-    public ResponseEntity<ResponseObject> getAllBikeByTags(@RequestParam(required = false) String bikeName,
-                                                           @RequestParam(defaultValue = "0") int page,
-                                                           @RequestParam(defaultValue = "12" ) int size,
-                                                           @RequestParam(required = false) List<Tag> tags) {
-        return bikeService.getAllBikeByTags(bikeName,page,size,tags);
-    }
+//    @GetMapping("/all/tag")
+//    public ResponseEntity<ResponseObject> getAllBikeByTags(@RequestParam(required = false) String bikeName,
+//                                                           @RequestParam(defaultValue = "0") int page,
+//                                                           @RequestParam(defaultValue = "12" ) int size,
+//                                                           @RequestParam(required = false) List<Tag> tags) {
+//        return bikeService.getAllBikeByTags(bikeName,page,size,tags);
+//    }
     @GetMapping("/{id}")
     public ResponseEntity<ResponseObject> getBikeById(@PathVariable Long id) {
         return bikeService.getBikeById(id);
@@ -53,11 +54,13 @@ public class BikeController {
     }
     @GetMapping("/search")
     public ResponseEntity<ResponseObject> searchBike(@RequestParam(required = false) String place,
+                                                     @RequestParam(required = false) String categoryName,
+                                                     @RequestParam(required = false) List<Long> tagIds,
                                                      @RequestParam(required = false) Date startDate,
                                                      @RequestParam(required = false) Date endDate,
                                                      @RequestParam(defaultValue = "0") int page,
                                                      @RequestParam(defaultValue = "10" ) int size) {
-        return bikeService.searchingBike(place,startDate,endDate,page,size);
+        return bikeService.searchingBike(place,categoryName,tagIds,startDate,endDate,page,size);
     }
 
 
@@ -69,4 +72,14 @@ public class BikeController {
     public ResponseEntity<ResponseObject> dislikeBike(@PathVariable Long id, Authentication authentication) {
         return bikeService.dislikeBike(id, authentication);
     }
+    @GetMapping("/mystranport")
+    public ResponseEntity<ResponseObject> getMyStranport( Authentication authentication) {
+        return bikeService.getMyStranport( authentication);
+    }
+    @PostMapping("/update-status/{id}")
+    public ResponseEntity<ResponseObject> dislikeBike(@PathVariable Long id,@RequestBody StatusData statusData) {
+        return bikeService.updateBikeStatus(id, statusData);
+    }
+
+
 }

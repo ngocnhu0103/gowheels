@@ -6,16 +6,17 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import ArrowCircleRightOutlinedIcon from "@mui/icons-material/ArrowCircleRightOutlined";
 import RestartAltOutlinedIcon from "@mui/icons-material/RestartAltOutlined";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
-import { useEffect, useState } from "react";
+import MapIcon from "@mui/icons-material/Map";
+import { useEffect, useRef, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import Card from "../components/Card";
-import TravelExploreIcon from "@mui/icons-material/TravelExplore";
+// import TravelExploreIcon from "@mui/icons-material/TravelExplore";
 import { Button, Modal } from "@mui/material";
 
 import "swiper/css";
 import Map from "../components/Map";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllBikeAPI } from "../api/bikeAPI";
+import { getAllBikeAPI, searchBikesAPI } from "../api/bikeAPI";
 import { Suspense } from "react";
 import LoadingCard from "../components/loading/LoadingCard";
 import Calendar from "../components/Calendar";
@@ -23,7 +24,7 @@ import moment from "moment";
 
 function BikePage() {
     let [searchParams, setSearchParams] = useSearchParams();
-
+    const timer = useRef(null);
     const bikes = useSelector((state) => state.bike.bikeList);
     const dispatch = useDispatch();
     const [place, setPlace] = useState(() => {
@@ -35,8 +36,8 @@ function BikePage() {
     const [endDate, setEndDate] = useState(() => {
         return new Date(Number(searchParams.get("endDate")));
     });
-    console.log(startDate, endDate);
     const [hide, setHide] = useState(0);
+    const [currentLocation, setCurrentLocation] = useState([0, 0]);
     const [isMap, setIsMap] = useState(false);
     const [showCalendar, setShowCalendar] = useState(false);
 
@@ -72,17 +73,28 @@ function BikePage() {
         });
     }, []);
     const [filter, setFilter] = useState({
-        bikeName: "",
         page: 0,
         size: 12,
     });
     const getAllBike = async (dispatch, filter) => {
         await getAllBikeAPI(dispatch, filter);
     };
-
+    const searchBike = async (params) => {
+        await searchBikesAPI(dispatch, params);
+    };
     useEffect(() => {
         getAllBike(dispatch, filter);
     }, []);
+    useEffect(() => {
+        if (timer.current) clearTimeout(timer.current);
+        timer.current = setTimeout(() => {
+            searchBike({
+                place,
+                startDate: Date(startDate),
+                endDate: Date(endDate),
+            });
+        }, 1000);
+    }, [place, startDate, endDate]);
     return (
         <main className="container w-4/5 mx-auto relative" onClick={() => setShowCalendar(false)}>
             <div className="fixed left-0 right-0 top-0 bg-white shadow-xl">
@@ -213,7 +225,7 @@ function BikePage() {
                 <Suspense fallback={<LoadingCard />}>
                     {bikes && bikes.length > 0
                         ? bikes.map((bike) => {
-                              return <Card bike={bike} key={bike.id} />;
+                              return <Card bike={bike} key={bike.bikeId} />;
                           })
                         : null}
                 </Suspense>
@@ -228,14 +240,27 @@ function BikePage() {
                 aria-describedby="parent-modal-description"
             >
                 <div className="mx-auto mt-10 w-10/12 h-[85vh] rounded-xl overflow-hidden">
-                    <Map location={location} zoomLevel={20} />
+                    {bikes && bikes.length > 0 && (
+                        <Map zoomLevel={20} bikes={bikes} currentLocation={currentLocation} />
+                    )}
                 </div>
             </Modal>
             <div className="fixed bottom-5 left-1/2 -translate-x-1/2">
                 <Button
                     variant="contained"
-                    endIcon={<TravelExploreIcon />}
+                    endIcon={<MapIcon />}
                     onClick={() => {
+                        if (navigator.geolocation) {
+                            navigator.geolocation.getCurrentPosition((position) => {
+                                const latitude = position.coords.latitude;
+                                const longitude = position.coords.longitude;
+                                console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+                                setCurrentLocation([latitude, longitude]);
+                            });
+                        } else {
+                            console.log("Geolocation not supported");
+                        }
+
                         setIsMap(true);
                     }}
                 >

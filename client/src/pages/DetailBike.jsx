@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import Tag from "../components/Tag";
@@ -21,32 +21,21 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import EmojiFlagsIcon from "@mui/icons-material/EmojiFlags";
 import Map from "../components/Map";
-import Card from "../components/Card";
+// import Card from "../components/Card";
 import { Link, useParams } from "react-router-dom";
 import Review from "../components/Review";
 import { Button } from "@mui/material";
 import BookForm from "../components/form/BookForm";
 import { getBikeAPI } from "../api/bikeAPI";
 import { useDispatch, useSelector } from "react-redux";
-import { OpenStreetMapProvider } from "leaflet-geosearch";
+import { userLiked } from "../utils/userLiked";
 function DetailBike() {
-    const provider = new OpenStreetMapProvider({
-        params: {
-            countrycodes: "vn",
-            "accept-language": "vi",
-            addressdetails: 1,
-        },
-    });
-
     const [showPolicy, setShowPolicy] = useState(false);
     const { bikeId } = useParams();
     const dispatch = useDispatch();
     const { bike } = useSelector((state) => state.bike);
-    const [location, setLocation] = useState({
-        address: "Tân Bình, Hồ Chí Minh, Vietnam",
-        lat: 10.802029,
-        lng: 106.649307,
-    });
+    const { user } = useSelector((state) => state.auth);
+    const [location, setLocation] = useState(null);
 
     const rows = [
         {
@@ -82,15 +71,6 @@ function DetailBike() {
             ),
         },
     ];
-    const transitionPlace = async (address) => {
-        const result = await provider.search({ query: address });
-        const [lat, lon] = result[0].bounds[0];
-        setLocation({
-            address: address,
-            lat: lat,
-            lng: lon,
-        });
-    };
     useEffect(() => {
         const fetchBikeById = async (id) => {
             await getBikeAPI(dispatch, id);
@@ -99,8 +79,15 @@ function DetailBike() {
     }, [bikeId]);
 
     useEffect(() => {
-        bike && bike.place && transitionPlace(bike.place);
+        bike &&
+            bike.place &&
+            setLocation({
+                address: bike.place,
+                lat: bike.lat,
+                lng: bike.lng,
+            });
     }, [bike]);
+
     return (
         <>
             <main className="container w-10/12 mx-auto">
@@ -125,9 +112,11 @@ function DetailBike() {
                     <article className="col-span-3">
                         <div className="flex justify-between items-center ">
                             <h1 className="text-4xl font-bold">{bike.bikeName}</h1>
-                            <p className="rounded-full border w-10 h-10 flex items-center justify-center cursor-pointer border-gray-400">
-                                {true ? <FavoriteBorderIcon /> : <FavoriteIcon />}
-                            </p>
+                            {user && (
+                                <p className="rounded-full border w-10 h-10 flex items-center justify-center cursor-pointer border-gray-400">
+                                    {userLiked(user.likes, bike.bikeId) ? <FavoriteBorderIcon /> : <FavoriteIcon />}
+                                </p>
+                            )}
                         </div>
                         <div className="mt-4 flex items-center gap-2 ">
                             <span className="text-gray-500 flex items-center">
@@ -275,7 +264,7 @@ function DetailBike() {
                         <section className="mt-8">
                             <h3 className="text-xl font-semibold mb-8">Vị trí xe</h3>
                             <div className="w-full h-[50vh]  ">
-                                <Map location={location} zoomLevel={15} />
+                                {!!location && <Map location={location} zoomLevel={15} />}
                             </div>
                         </section>
                         <section className="mt-8 pb-8 ">

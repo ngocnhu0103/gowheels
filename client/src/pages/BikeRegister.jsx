@@ -50,6 +50,8 @@ function BikeRegister() {
         initialValues: {
             price: 120,
             place: "",
+            lat: 0,
+            lng: 0,
             weekDiscount: 0,
             monthDiscount: 0,
         },

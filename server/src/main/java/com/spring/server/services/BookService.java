@@ -2,6 +2,7 @@ package com.spring.server.services;
 
 import com.spring.server.data.BookData;
 import com.spring.server.data.ResponseObject;
+import com.spring.server.data.SurchageData;
 import com.spring.server.models.Bike;
 import com.spring.server.models.Booking;
 import com.spring.server.repositories.BikeRepository;
@@ -101,23 +102,34 @@ public class BookService {
         }
         return  ResponseEntity.status(404).body(ResponseObject.builder().statusCode(404).message("Not found").build());
     }
-    // Thanh toan
-    public ResponseEntity<ResponseObject> charge(Long bookId, Authentication authentication){
-        return null;
-    }
-    //@ add the surchage for book
 
-    public ResponseEntity<ResponseObject> deposited(Long bookId, Authentication authentication){
+    public ResponseEntity<ResponseObject> addSurchage(SurchageData surchageData, Long bookId){
         var book = bookRepository.findById(bookId);
         if(!book.isEmpty()){
-            book.get().setStatus("Đã thanh toán tiền cọc");
-            book.get().setDeposit(true);
+            book.get().setNote(surchageData.getNote());
+            book.get().setSurchargePrice(surchageData.getSurchagePrice());
+            var currentAmount = book.get().getTotalPrice();
+            var updatedAmount = currentAmount + surchageData.getSurchagePrice();
+            book.get().setTotalPrice(updatedAmount);
             bookRepository.save(book.get());
             return ResponseEntity.ok(ResponseObject.builder().statusCode(200).message("success").data(book.get()).build());
         }
         return  ResponseEntity.status(404).body(ResponseObject.builder().statusCode(404).message("Not found").build());
     }
+    public ResponseEntity<ResponseObject> editSurchage(SurchageData surchageData, Long bookId){
+        var book = bookRepository.findById(bookId);
+        if(!book.isEmpty()){
+            var currentAmount = book.get().getTotalPrice();
+            var updatedAmount = currentAmount + surchageData.getSurchagePrice() - book.get().getSurchargePrice();
+            book.get().setTotalPrice(updatedAmount);
+            book.get().setNote(surchageData.getNote());
+            book.get().setSurchargePrice(surchageData.getSurchagePrice());
 
+            bookRepository.save(book.get());
+            return ResponseEntity.ok(ResponseObject.builder().statusCode(200).message("success").data(book.get()).build());
+        }
+        return  ResponseEntity.status(404).body(ResponseObject.builder().statusCode(404).message("Not found").build());
+    }
 
     private int CompareToDate(Date date1, Date date2) throws ParseException {
         SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");

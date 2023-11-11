@@ -5,9 +5,8 @@ import { useDispatch, useSelector } from "react-redux";
 import Header from "../components/Header";
 import Navigation from "../components/profile/Navigation";
 import Footer from "../components/Footer";
-import { getBookDetailAPI } from "../api/bookAPI";
-import { Button, Skeleton } from "@mui/material";
-import BookCard from "../components/BookCard";
+import { getBookDetailAPI, getSurchagesAPI } from "../api/bookAPI";
+import { Button } from "@mui/material";
 import { renderStatusBook } from "../utils/renderStatus";
 import { formartVnd } from "../utils/format";
 
@@ -42,7 +41,6 @@ function MyOrderDetail() {
             setDiposit(temp);
         }
     }, [book]);
-    console.log(book);
 
     return (
         <main className="container w-4/5 mx-auto ">
@@ -126,7 +124,7 @@ function MyOrderDetail() {
                                         <p className="font-semibold">Phụ phí: </p>
                                         <p className="font-semibold text-gray-400">
                                             {" "}
-                                            {formartVnd(book.totalPrice * 0.1)}
+                                            {formartVnd(book.totalPrice * 0.05)}
                                         </p>
                                     </div>
                                     <div className="flex gap-2 w-[360px] justify-between">
