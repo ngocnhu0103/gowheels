@@ -1,5 +1,6 @@
+/* eslint-disable react/prop-types */
 import { Button, Modal } from "@mui/material";
-import React, { useState } from "react";
+import { useState } from "react";
 
 function ComfirmModal({ open, onClose, title, handle }) {
     const [loading, setLoading] = useState(false);

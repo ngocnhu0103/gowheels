@@ -1,12 +1,33 @@
 /* eslint-disable react/prop-types */
-import { Button } from "@mui/material";
+import { Button, Modal } from "@mui/material";
 import { Link } from "react-router-dom";
-import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
+// import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import ReviewStartList from "./review/ReviewStartList";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
 import { formartVnd } from "../utils/format";
 import { renderStatusBook } from "../utils/renderStatus";
+import { postCommentAPI } from "../api/commentAPI";
 
 function BookCard({ book, user, updateStatus, paymentDeposit, payment }) {
+    const [openReview, setOpenReview] = useState(false);
+    const [loading, setLoading] = useState("off");
+    const [startNumber, setStartNumber] = useState(0);
+    const [content, setContent] = useState("");
+    const dispatch = useDispatch();
+    const rating = async () => {
+        setLoading("rating");
+        await postCommentAPI(dispatch, {
+            bookId: book.id,
+            ownerId: book.bike?.owner.id,
+            startNumber,
+            createdAt: new Date(),
+            content,
+        });
+        setLoading("off");
+        setOpenReview(false);
+    };
     const renderByUser = (book, user) => {
         // owner
         if (user.email === book?.bike?.owner.email) {
@@ -53,7 +74,11 @@ function BookCard({ book, user, updateStatus, paymentDeposit, payment }) {
                 case "Đã thanh toán":
                     return (
                         <>
-                            <Button variant="contained">Đánh giá</Button>
+                            {!book.reviewed && (
+                                <Button variant="contained" onClick={() => setOpenReview(true)}>
+                                    Đánh giá
+                                </Button>
+                            )}
                             <Button variant="outlined">Đặt lại</Button>
                             <Link to={`/profile/myorder/${book.id}`}>
                                 <Button variant="contained">Chi tiết</Button>
@@ -99,17 +124,16 @@ function BookCard({ book, user, updateStatus, paymentDeposit, payment }) {
             }
         }
     };
-
     return (
         <li className="p-4 bg-white shadow-xl rounded-xl">
             <div className="flex justify-between h-12 border-b border-gray-300 items-center">
                 <div className="flex gap-2 items-center">
                     <Link to={"/profile/${id nguoi dung}"}>
-                        <span className="font-semibold hover:text-black/50 ">Ngan My Store</span>
+                        <span className="font-semibold hover:text-black/50 ">{book.bike?.owner?.email}</span>
                     </Link>
-                    <Button variant="outlined" startIcon={<ChatBubbleOutlineIcon />} size="small">
+                    {/* <Button variant="outlined" startIcon={<ChatBubbleOutlineIcon />} size="small">
                         Chat
-                    </Button>
+                    </Button> */}
                 </div>
                 <div>{renderStatusBook(book.status)}</div>
             </div>
@@ -140,6 +164,43 @@ function BookCard({ book, user, updateStatus, paymentDeposit, payment }) {
                 <span className="text-2xl text-primary">{formartVnd(book.totalPrice)}</span>
             </div>
             <div className="flex justify-end items-center gap-4">{renderByUser(book, user)}</div>
+            <Modal
+                open={openReview}
+                onClose={() => {
+                    setOpenReview(false);
+                }}
+                aria-labelledby="parent-modal-title"
+                aria-describedby="parent-modal-description"
+            >
+                <div className="w-full h-screen flex items-center justify-center">
+                    <div className="w-full max-w-[600px] flex flex-col items-center justify-center gap-10 p-4 rounded-lg bg-white shadow-lg">
+                        <h1 className="text-xl font-bold">Đánh giá chủ xe</h1>
+                        <form className="w-full items-center flex flex-col gap-4">
+                            <ReviewStartList actived={startNumber} addNumberStart={setStartNumber} />
+                            <div className="w-full flex flex-col gap-2">
+                                <p className="text-lg font-bold">Nội dung</p>
+                                <textarea
+                                    value={content}
+                                    onChange={(e) => {
+                                        setContent(e.target.value);
+                                    }}
+                                    name="content"
+                                    rows="4"
+                                    className="border w-full p-4"
+                                ></textarea>
+                            </div>
+                        </form>
+                        <div className="flex items-center gap-5">
+                            <Button variant="contained" onClick={rating} disabled={loading === "rating"}>
+                                {loading === "rating" ? "..." : "Đánh giá"}
+                            </Button>
+                            <Button variant="outlined" onClick={() => setOpenReview(false)}>
+                                Hủy
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            </Modal>
         </li>
     );
 }

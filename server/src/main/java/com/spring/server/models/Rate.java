@@ -21,7 +21,9 @@ public class Rate implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({"hibernateLazyInitializer"})
     private User author;
+    @JsonIgnoreProperties({"hibernateLazyInitializer"})
     @ManyToOne(fetch = FetchType.LAZY)
     private User owner;
     @DateTimeFormat(pattern = "dd/MM/yyyy")

@@ -1,28 +1,31 @@
 import baseAPI from "./baseAPI";
 import { showToast } from "../store/toastSlice";
-export const getCommentsAPI = async (dispatch, bookId) => {
+import { saveComments } from "../store/commentSlice";
+export const getCommentsAPI = async (dispatch, userId) => {
     try {
-        const response = await baseAPI.get(`/comment/${bookId}`);
+        const response = await baseAPI.get(`/review/${userId}`);
+        console.log(response);
         if (response.statusCode === 200) {
-            // dispatch(saveCategories(response.data));
+            dispatch(saveComments(response.data));
         }
     } catch (error) {
         dispatch(showToast({ message: error.message, type: "error" }));
     }
 };
-export const postComment = async (dispatch, payload) => {
+export const postCommentAPI = async (dispatch, payload) => {
+    console.log(payload);
     try {
-        const response = await baseAPI.post(`/comment/`, payload);
+        const response = await baseAPI.post(`/review`, payload);
         if (response.statusCode === 200) {
-            // dispatch(saveCategories(response.data));
+            dispatch(showToast({ message: response.message, type: "success" }));
         }
     } catch (error) {
         dispatch(showToast({ message: error.message, type: "error" }));
     }
 };
-export const deleteComment = async (dispatch, commentId) => {
+export const deleteCommentAPI = async (dispatch, commentId) => {
     try {
-        const response = await baseAPI.delete(`/comment/${commentId}`);
+        const response = await baseAPI.delete(`/review/${commentId}`);
         if (response.statusCode === 200) {
             // dispatch(saveCategories(response.data));
         }

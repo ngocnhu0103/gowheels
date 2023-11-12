@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useSearchParams } from "react-router-dom";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -11,7 +12,7 @@ import { useEffect, useRef, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import Card from "../components/Card";
 // import TravelExploreIcon from "@mui/icons-material/TravelExplore";
-import { Button, Modal } from "@mui/material";
+import { Button, FormControl, InputLabel, MenuItem, Modal, Select } from "@mui/material";
 
 import "swiper/css";
 import Map from "../components/Map";
@@ -21,15 +22,18 @@ import { Suspense } from "react";
 import LoadingCard from "../components/loading/LoadingCard";
 import Calendar from "../components/Calendar";
 import moment from "moment";
+import { getTagsAPI } from "../api/tagAPI";
 
 function BikePage() {
     let [searchParams, setSearchParams] = useSearchParams();
     const timer = useRef(null);
     const bikes = useSelector((state) => state.bike.bikeList);
+    const tags = useSelector((state) => state.tag.tags);
     const dispatch = useDispatch();
     const [place, setPlace] = useState(() => {
         return searchParams.get("place");
     });
+    const [categoryName, setCategoryName] = useState("");
     const [startDate, setStartDate] = useState(() => {
         return new Date(Number(searchParams.get("startDate")));
     });
@@ -82,19 +86,45 @@ function BikePage() {
     const searchBike = async (params) => {
         await searchBikesAPI(dispatch, params);
     };
+    const fetchTags = async () => {
+        await getTagsAPI(dispatch);
+    };
+    const resetFiltter = () => {
+        setCategoryName("");
+        setPlace("");
+        setStartDate(new Date());
+        setEndDate(new Date());
+        setTimeSelected({
+            hour: Number(new Date().getMinutes() >= 30 ? new Date().getHours() + 1 : new Date().getHours()),
+            minutes: Number(new Date().getMinutes() >= 30 ? 0 : 30),
+        });
+        setSearchParams({
+            categoryName: "",
+            place: "",
+            startDate: moment(new Date()).format("x"),
+            endDate: moment(new Date()).format("x"),
+            hour: Number(new Date().getMinutes() >= 30 ? new Date().getHours() + 1 : new Date().getHours()),
+            minutes: Number(new Date().getMinutes() >= 30 ? 0 : 30),
+        });
+    };
     useEffect(() => {
         getAllBike(dispatch, filter);
+        if (tags) {
+            fetchTags();
+        }
     }, []);
     useEffect(() => {
         if (timer.current) clearTimeout(timer.current);
         timer.current = setTimeout(() => {
             searchBike({
                 place,
+                categoryName,
                 startDate: Date(startDate),
                 endDate: Date(endDate),
             });
         }, 1000);
-    }, [place, startDate, endDate]);
+    }, [place, startDate, endDate, categoryName]);
+
     return (
         <main className="container w-4/5 mx-auto relative" onClick={() => setShowCalendar(false)}>
             <div className="fixed left-0 right-0 top-0 bg-white shadow-xl">
@@ -131,13 +161,19 @@ function BikePage() {
                                     <div className="flex items-center gap-2">
                                         <span>{moment(startDate).format("DD/MM/YYYY")}</span>
                                         <p className="h-[15px] w-[1px] bg-gray-600"></p>
-                                        <span>{timeSelected.hour + ":" + timeSelected.minutes}</span>
+                                        <span>
+                                            {timeSelected.hour + ":" + timeSelected.minutes}
+                                            {timeSelected.minutes == 0 && "0"}
+                                        </span>
                                     </div>
                                     <ArrowCircleRightOutlinedIcon />
                                     <div className="flex items-center gap-2">
                                         <span>{moment(endDate).format("DD/MM/YYYY")}</span>
                                         <p className="h-[15px] w-[1px] bg-gray-600"></p>
-                                        <span>{timeSelected.hour + ":" + timeSelected.minutes}</span>
+                                        <span>
+                                            {timeSelected.hour + ":" + timeSelected.minutes}
+                                            {timeSelected.minutes == 0 && "0"}
+                                        </span>
                                     </div>
                                 </div>
                             </div>
@@ -153,9 +189,26 @@ function BikePage() {
                                 />
                             </div>
                         </div>
+                        <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
+                            <InputLabel id="demo-select-small-label">Loại xe</InputLabel>
+                            <Select
+                                labelId="demo-select-small-label"
+                                id="demo-select-small"
+                                value={categoryName}
+                                label="Loại xe"
+                                onChange={(e) => {
+                                    setCategoryName(e.target.value);
+                                    setSearchParams((prev) => [...prev.entries(), ["categoryName", e.target.value]]);
+                                }}
+                            >
+                                <MenuItem value={"Xe oto"}>Xe oto</MenuItem>
+                                <MenuItem value={"Xe đạp"}>Xe Đạp</MenuItem>
+                                <MenuItem value={"Xe máy"}>Xe Máy</MenuItem>
+                            </Select>
+                        </FormControl>
                     </div>
                     <div className="flex items-center justify-center gap-5 mt-5">
-                        <div className="w-1/10">
+                        <div className="w-1/10" onClick={resetFiltter}>
                             <p className="w-8 h-8 flex items-center justify-center border border-gray-600 text-gray-600 rounded-full cursor-pointer">
                                 <RestartAltOutlinedIcon />
                             </p>
@@ -168,48 +221,18 @@ function BikePage() {
                                 onSwiper={(swiper) => console.log(swiper)}
                                 onSlideChange={() => console.log("slide change")}
                             >
-                                <SwiperSlide>
-                                    <div className="p-2 border flex items-center gap-2 border-gray-600 rounded-3xl text-gray-600 cursor-pointer ">
-                                        <RestartAltOutlinedIcon />
-                                        <span>Tiet kiem xang</span>
-                                    </div>
-                                </SwiperSlide>
-                                <SwiperSlide>
-                                    <div className="p-2 border flex items-center gap-2 border-gray-600 rounded-3xl text-gray-600 cursor-pointer ">
-                                        <RestartAltOutlinedIcon />
-                                        <span>Tiet kiem xang</span>
-                                    </div>
-                                </SwiperSlide>
-                                <SwiperSlide>
-                                    <div className="p-2 border flex items-center gap-2 border-gray-600 rounded-3xl text-gray-600 cursor-pointer ">
-                                        <RestartAltOutlinedIcon />
-                                        <span>Tiet kiem xang</span>
-                                    </div>
-                                </SwiperSlide>
-                                <SwiperSlide>
-                                    <div className="p-2 border flex items-center gap-2 border-gray-600 rounded-3xl text-gray-600 cursor-pointer ">
-                                        <RestartAltOutlinedIcon />
-                                        <span>Tiet kiem xang</span>
-                                    </div>
-                                </SwiperSlide>
-                                <SwiperSlide>
-                                    <div className="p-2 border flex items-center gap-2 border-gray-600 rounded-3xl text-gray-600 cursor-pointer ">
-                                        <RestartAltOutlinedIcon />
-                                        <span>Tiet kiem xang</span>
-                                    </div>
-                                </SwiperSlide>
-                                <SwiperSlide>
-                                    <div className="p-2 border flex items-center gap-2 border-gray-600 rounded-3xl text-gray-600 cursor-pointer ">
-                                        <RestartAltOutlinedIcon />
-                                        <span>Tiet kiem xang</span>
-                                    </div>
-                                </SwiperSlide>
-                                <SwiperSlide>
-                                    <div className="p-2 border flex items-center gap-2 border-gray-600 rounded-3xl text-gray-600 cursor-pointer ">
-                                        <RestartAltOutlinedIcon />
-                                        <span>Tiet kiem xang</span>
-                                    </div>
-                                </SwiperSlide>
+                                {tags && tags.length > 0
+                                    ? tags.map((item) => {
+                                          return (
+                                              <SwiperSlide key={item.tagId}>
+                                                  <div className="p-2 border flex items-center gap-2 border-gray-600 rounded-3xl text-gray-600 cursor-pointer ">
+                                                      <RestartAltOutlinedIcon />
+                                                      <span>{item.tagName}</span>
+                                                  </div>
+                                              </SwiperSlide>
+                                          );
+                                      })
+                                    : null}
                             </Swiper>
                         </div>
 

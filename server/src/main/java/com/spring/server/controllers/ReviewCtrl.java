@@ -20,6 +20,7 @@ public class ReviewCtrl {
     }
     @PostMapping
     public ResponseEntity<ResponseObject> rating(@RequestBody RateData rateData, Authentication authentication) {
+        System.out.println("rateData = " + rateData);
         return rateService.rating(rateData,authentication);
     }
     @DeleteMapping("/{id}")

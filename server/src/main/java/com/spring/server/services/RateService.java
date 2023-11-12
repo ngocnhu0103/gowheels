@@ -3,6 +3,7 @@ package com.spring.server.services;
 import com.spring.server.data.RateData;
 import com.spring.server.data.ResponseObject;
 import com.spring.server.models.Rate;
+import com.spring.server.repositories.BookRepository;
 import com.spring.server.repositories.RateRepository;
 import com.spring.server.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ public class RateService {
     //@DJ
     private final RateRepository rateRepository;
     private final UserRepository userRepository;
+    private final BookRepository bookRepository;
     //@services
     //@getAllByOwner
     public ResponseEntity<ResponseObject> getAll(Long userId){
@@ -32,12 +34,15 @@ public class RateService {
     public ResponseEntity<ResponseObject> rating(RateData rateData , Authentication authentication){
         try {
             var owner = userRepository.findById(rateData.getOwnerId());
+            var book = bookRepository.findById(rateData.getBookId());
             var author = userRepository.findByEmail(authentication.getName());
             var rate = Rate.builder().author(author.get())
                     .owner(owner.get()).content(rateData.getContent())
                     .timeRate(rateData.getCreatedAt())
                     .startNumber(rateData.getStartNumber()).build();
             rateRepository.save(rate);
+            book.get().setReviewed(true);
+            bookRepository.save(book.get());
             return ResponseEntity.ok().body(ResponseObject.builder().message("post success").statusCode(200).data(rate).build());
         }catch (Exception e){
             return ResponseEntity.badRequest().body(ResponseObject.builder().message(e.getMessage()).build());

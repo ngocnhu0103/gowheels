@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import Tag from "../components/Tag";
@@ -29,10 +29,12 @@ import BookForm from "../components/form/BookForm";
 import { getBikeAPI } from "../api/bikeAPI";
 import { useDispatch, useSelector } from "react-redux";
 import { userLiked } from "../utils/userLiked";
+import { getCommentsAPI } from "../api/commentAPI";
 function DetailBike() {
     const [showPolicy, setShowPolicy] = useState(false);
     const { bikeId } = useParams();
     const dispatch = useDispatch();
+    const { comments } = useSelector((state) => state.comment);
     const { bike } = useSelector((state) => state.bike);
     const { user } = useSelector((state) => state.auth);
     const [location, setLocation] = useState(null);
@@ -75,19 +77,29 @@ function DetailBike() {
         const fetchBikeById = async (id) => {
             await getBikeAPI(dispatch, id);
         };
+
         bike.id !== bikeId ? fetchBikeById(bikeId) : null;
     }, [bikeId]);
 
     useEffect(() => {
-        bike &&
+        const fetchComments = async (userId) => {
+            await getCommentsAPI(dispatch, userId);
+        };
+        if (bike) {
             bike.place &&
-            setLocation({
-                address: bike.place,
-                lat: bike.lat,
-                lng: bike.lng,
-            });
+                setLocation({
+                    address: bike.place,
+                    lat: bike.lat,
+                    lng: bike.lng,
+                });
+            bike.owner && fetchComments(bike.owner.id);
+        }
     }, [bike]);
-
+    const avgs = useMemo(() => {
+        return comments.reduce((old, current) => {
+            return (old += current?.startNumber);
+        }, 0);
+    }, [comments]);
     return (
         <>
             <main className="container w-10/12 mx-auto">
@@ -315,15 +327,18 @@ function DetailBike() {
                             <p className="flex gap-2">
                                 <span className="text-gray-500 flex items-center">
                                     <StarIcon className="text-yellow-300" />
-                                    <span>5.0</span>
+                                    <span>{comments && comments.length && avgs / comments.length}</span>
                                 </span>
-                                :<span className="text-gray-700"> 187 đánh giá</span>
+                                :<span className="text-gray-700"> {comments.length} đánh giá</span>
                             </p>
                             <ul className="my-8 grid grid-cols-1 gap-4">
-                                <Review />
-                                <Review />
-                                <Review />
-                                <Review />
+                                {comments && comments.length > 0 ? (
+                                    comments.map((value) => {
+                                        return <Review key={value.id} review={value} />;
+                                    })
+                                ) : (
+                                    <p className="text-xl font-semibold text-yellow-300">Chưa có đánh giá nào!</p>
+                                )}
                             </ul>
                             <p className="text-right">
                                 <Button size="large" variant="outlined">

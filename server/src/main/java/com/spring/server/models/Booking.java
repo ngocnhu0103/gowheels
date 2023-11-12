@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.springframework.boot.context.properties.bind.DefaultValue;
@@ -41,6 +42,7 @@ public class Booking implements Serializable {
     private Double surchargePrice;
     private String paymentMethod;
     private boolean isDeposit;
+    private boolean reviewed;
     private String status;
     @OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     @JsonIgnoreProperties({"hibernateLazyInitializer"})
