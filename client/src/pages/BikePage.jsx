@@ -23,6 +23,7 @@ import LoadingCard from "../components/loading/LoadingCard";
 import Calendar from "../components/Calendar";
 import moment from "moment";
 import { getTagsAPI } from "../api/tagAPI";
+import { checkActived } from "../utils/checkSelectedTag";
 
 function BikePage() {
     let [searchParams, setSearchParams] = useSearchParams();
@@ -33,7 +34,9 @@ function BikePage() {
     const [place, setPlace] = useState(() => {
         return searchParams.get("place");
     });
-    const [categoryName, setCategoryName] = useState("");
+    const [categoryName, setCategoryName] = useState(() => {
+        return searchParams.get("categoryName");
+    });
     const [startDate, setStartDate] = useState(() => {
         return new Date(Number(searchParams.get("startDate")));
     });
@@ -41,6 +44,16 @@ function BikePage() {
         return new Date(Number(searchParams.get("endDate")));
     });
     const [hide, setHide] = useState(0);
+    const [selectedTags, setSelectedTags] = useState([]);
+
+    const addTags = (tagId) => {
+        const currentTag = selectedTags.some((t) => t === tagId);
+        if (currentTag) {
+            setSelectedTags(selectedTags.filter((t) => t !== tagId));
+        } else {
+            setSelectedTags([...selectedTags, tagId]);
+        }
+    };
     const [currentLocation, setCurrentLocation] = useState([0, 0]);
     const [isMap, setIsMap] = useState(false);
     const [showCalendar, setShowCalendar] = useState(false);
@@ -50,12 +63,6 @@ function BikePage() {
             hour: Number(searchParams.get("hour")),
             minutes: Number(searchParams.get("minutes")),
         };
-    });
-
-    const [location, setLocation] = useState({
-        address: "Ho Chi Minh City, Vietnam",
-        lat: 10.762622,
-        lng: 106.660172,
     });
 
     const handleChange = (dates) => {
@@ -116,14 +123,16 @@ function BikePage() {
     useEffect(() => {
         if (timer.current) clearTimeout(timer.current);
         timer.current = setTimeout(() => {
+            console.log(selectedTags);
             searchBike({
                 place,
                 categoryName,
                 startDate: Date(startDate),
                 endDate: Date(endDate),
+                tagIds: selectedTags.length > 0 ? selectedTags.join(",") : selectedTags,
             });
         }, 1000);
-    }, [place, startDate, endDate, categoryName]);
+    }, [place, startDate, endDate, categoryName, selectedTags]);
 
     return (
         <main className="container w-4/5 mx-auto relative" onClick={() => setShowCalendar(false)}>
@@ -225,7 +234,18 @@ function BikePage() {
                                     ? tags.map((item) => {
                                           return (
                                               <SwiperSlide key={item.tagId}>
-                                                  <div className="p-2 border flex items-center gap-2 border-gray-600 rounded-3xl text-gray-600 cursor-pointer ">
+                                                  <div
+                                                      onClick={() => {
+                                                          addTags(item.tagId);
+                                                      }}
+                                                      className={`p-2 border flex items-center gap-2  rounded-3xl  cursor-pointer 
+                                                  ${
+                                                      checkActived(selectedTags, item.tagId)
+                                                          ? "bg-primary text-white border-0"
+                                                          : "text-gray-600 border-gray-600"
+                                                  }
+                                                  `}
+                                                  >
                                                       <RestartAltOutlinedIcon />
                                                       <span>{item.tagName}</span>
                                                   </div>

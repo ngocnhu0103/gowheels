@@ -135,4 +135,18 @@ public class UserService {
             );
         }
     }
+
+    public ResponseEntity<ResponseObject> getUser(Long userId) {
+        try {
+            var user = userRepository.findById(userId);
+
+            if(user.isEmpty()){
+                return ResponseEntity.status(404).body(ResponseObject.builder().statusCode(404).message("User not found").build());
+            }
+            return ResponseEntity.status(200).body(ResponseObject.builder().statusCode(200).message("get success").data(user.get()).build());
+        }
+        catch (Exception e){
+            return ResponseEntity.status(500).body(ResponseObject.builder().statusCode(500).message(e.getMessage()).build());
+        }
+    }
 }

@@ -17,11 +17,13 @@ import PaymentFailure from "./pages/payment/PaymentFailure";
 import PaymentSuccessEnd from "./pages/payment/PaymentSuccessEnd";
 import PaymentFailureEnd from "./pages/payment/PaymentFailureEnd";
 import OrderDetail from "./pages/OrderDetail";
+import Profile from "./pages/Profile";
 
 function AppRoute() {
     return (
         <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/profile/:userId" element={<Profile />}></Route>
             <Route element={<RequiredAuth />}>
                 <Route index path="/profile/update" element={<UpdateProfile />}></Route>
                 <Route path="/profile/favs" element={<BikeFavs />}></Route>

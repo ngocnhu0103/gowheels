@@ -76,6 +76,10 @@ public class BikeController {
     public ResponseEntity<ResponseObject> getMyStranport( Authentication authentication) {
         return bikeService.getMyStranport( authentication);
     }
+    @GetMapping("/getbikes/{userId}")
+    public ResponseEntity<ResponseObject> getBikes(@PathVariable Long userId) {
+        return bikeService.getBikes(userId);
+    }
     @PostMapping("/update-status/{id}")
     public ResponseEntity<ResponseObject> dislikeBike(@PathVariable Long id,@RequestBody StatusData statusData) {
         return bikeService.updateBikeStatus(id, statusData);

@@ -2,7 +2,7 @@
 import { Button, Modal } from "@mui/material";
 import { useState } from "react";
 
-function ComfirmModal({ open, onClose, title, handle }) {
+function ComfirmModal({ open, onClose, title, handle, buttonName = "Cập nhật" }) {
     const [loading, setLoading] = useState(false);
     const handleClick = () => {
         setLoading(true);
@@ -22,7 +22,7 @@ function ComfirmModal({ open, onClose, title, handle }) {
 
                     <div className="flex items-center gap-5">
                         <Button variant="contained" onClick={handleClick} disabled={loading}>
-                            {loading ? "..." : "Update"}
+                            {loading ? "..." : buttonName}
                         </Button>
                         <Button variant="outlined" onClick={onClose}>
                             Cancel

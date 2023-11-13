@@ -1,6 +1,6 @@
 import baseAPI from "./baseAPI";
 import { showToast } from "../store/toastSlice";
-import { saveComments } from "../store/commentSlice";
+import { leaveComment, saveComments } from "../store/commentSlice";
 export const getCommentsAPI = async (dispatch, userId) => {
     try {
         const response = await baseAPI.get(`/review/${userId}`);
@@ -27,7 +27,7 @@ export const deleteCommentAPI = async (dispatch, commentId) => {
     try {
         const response = await baseAPI.delete(`/review/${commentId}`);
         if (response.statusCode === 200) {
-            // dispatch(saveCategories(response.data));
+            dispatch(leaveComment({ commentId }));
         }
     } catch (error) {
         dispatch(showToast({ message: error.message, type: "error" }));

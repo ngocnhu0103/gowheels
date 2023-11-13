@@ -195,6 +195,7 @@ public class BikeService {
     public ResponseEntity<ResponseObject> searchingBike(String place,String categoryName,List<Long> tagIds , Date startDate, Date endDate, int page, int size){
         List<Tag> tags = new ArrayList<>();
         Page<Bike> bikes;
+        System.out.println("tagIds = " + tagIds);
         if(tagIds != null) {
             for (Long id: tagIds
             ) {
@@ -274,4 +275,10 @@ public class BikeService {
         return ResponseEntity.status(200).body(ResponseObject.builder().statusCode(200).data(bike.get()).message("Successful").build());
     }
 
+    public ResponseEntity<ResponseObject> getBikes(Long userId) {
+        var user = userRepository.findById(userId);
+        var bikes = bikeRepository.findAllByOwner(user.get());
+
+        return ResponseEntity.status(200).body(ResponseObject.builder().statusCode(200).data(bikes).message("Successful").build());
+    }
 }

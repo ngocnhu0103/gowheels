@@ -60,6 +60,7 @@ public class WebSecurityConfig {
                         auth.requestMatchers("/api/v1/auth/**").permitAll()
                                 .requestMatchers(HttpMethod.GET,"/api/v1/bike/**").permitAll()
                                 .requestMatchers(HttpMethod.GET,"/api/v1/review/**").permitAll()
+                                .requestMatchers(HttpMethod.GET,"/api/v1/user/getuser/**").permitAll()
                                 .requestMatchers("/api/v1/tag/**").permitAll()
                                 .anyRequest().authenticated()
                         );

@@ -85,3 +85,13 @@ export const updateInfoAPI = async (dispatch, payload) => {
         dispatch(showToast({ message: error.message, type: "error" }));
     }
 };
+export const getProfileAPI = async (dispatch, userId) => {
+    try {
+        const response = await baseAPI.get(`/user/getuser/${userId}`);
+        if (response.statusCode === 200) {
+            return response.data
+        }
+    } catch (error) {
+        dispatch(showToast({ message: error.message, type: "error" }));
+    }
+};

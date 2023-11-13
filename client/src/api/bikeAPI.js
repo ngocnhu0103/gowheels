@@ -107,3 +107,15 @@ export const updateStatusBikeAPI = async (dispatch, bikeId, paylaod) => {
         console.log("Bike not found", error);
     }
 };
+
+export const getBikesAPI = async (dispatch, userId) => {
+    try {
+        const response = await baseAPI.get(`/bike/getbikes/${userId}`);
+        if (response.statusCode === 200) {
+            return response.data;
+        }
+    } catch (error) {
+        console.log("Bikes not found", error);
+        dispatch(showToast({ message: error.message, type: "error" }))
+    }
+};

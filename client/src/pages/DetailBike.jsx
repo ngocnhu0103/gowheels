@@ -125,7 +125,7 @@ function DetailBike() {
                         <div className="flex justify-between items-center ">
                             <h1 className="text-4xl font-bold">{bike.bikeName}</h1>
                             {user && (
-                                <p className="rounded-full border w-10 h-10 flex items-center justify-center cursor-pointer border-gray-400">
+                                <p className="rounded-full border w-10 h-10 flex items-center justify-center cursor-pointer text-red-500 border-gray-400">
                                     {userLiked(user.likes, bike.bikeId) ? <FavoriteBorderIcon /> : <FavoriteIcon />}
                                 </p>
                             )}

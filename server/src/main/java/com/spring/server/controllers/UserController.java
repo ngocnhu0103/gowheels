@@ -27,4 +27,9 @@ public class UserController {
     public ResponseEntity<ResponseObject> registerOwner(@RequestBody UploadInfo data, Authentication authentication){
         return  userService.registerOwner(authentication,data);
     }
+    @GetMapping("/getuser/{userId}")
+    public ResponseEntity<ResponseObject> getUser(@PathVariable Long userId){
+        System.out.println("userId = " + userId);
+        return  userService.getUser(userId);
+    }
 }

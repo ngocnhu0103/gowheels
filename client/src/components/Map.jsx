@@ -23,9 +23,6 @@ function Map({ location = null, zoomLevel, bikes, currentLocation }) {
     const [showListBike, setShowListBike] = useState(false);
     const [selectIndex, setSelectIndex] = useState(0);
 
-    console.log(bikes);
-    console.log(currentLocation);
-
     if (location) {
         return (
             <MapContainer key={[location.lat, location.lng]} center={[location.lat, location.lng]} zoom={zoomLevel}>
