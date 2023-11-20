@@ -17,13 +17,13 @@ function MyOrder() {
         return state.auth;
     });
 
-    const [tab, setTab] = useState("1");
+    const [tab, setTab] = useState("");
     useEffect(() => {
         const fetchMyBooks = async () => {
-            await getMyBooksAPI(dispatch);
+            await getMyBooksAPI(dispatch, { status: tab });
         };
         fetchMyBooks();
-    }, []);
+    }, [tab]);
     const BookLoading = () => {
         return (
             <div className="flex flex-col gap-20 h-screen">
@@ -72,22 +72,24 @@ function MyOrder() {
                     <div>
                         <h1 className=" text-3xl font-banner text-primary pb-5">Đơn hàng của tôi</h1>
                         <Tab tab={tab} setTab={setTab} />
-                        <ul className="mt-5 flex flex-col gap-5 relative max-h-[70vh] overflow-auto snap-y snap-mandatory">
+                        <ul className="mt-5 flex flex-col gap-5 relative h-[70vh] overflow-auto snap-y snap-mandatory">
                             <Suspense fallback={<BookLoading />}>
-                                {myBooks && myBooks.length > 0
-                                    ? myBooks.map((book) => {
-                                          return (
-                                              <BookCard
-                                                  book={book}
-                                                  user={user}
-                                                  key={book.id}
-                                                  updateStatus={updateStatus}
-                                                  paymentDeposit={paymentDeposit}
-                                                  payment={payment}
-                                              />
-                                          );
-                                      })
-                                    : null}
+                                {myBooks && myBooks.length > 0 ? (
+                                    myBooks.map((book) => {
+                                        return (
+                                            <BookCard
+                                                book={book}
+                                                user={user}
+                                                key={book.id}
+                                                updateStatus={updateStatus}
+                                                paymentDeposit={paymentDeposit}
+                                                payment={payment}
+                                            />
+                                        );
+                                    })
+                                ) : (
+                                    <p className="text-3xl text-gray-400 text-center mt-10">Không có đơn nào!</p>
+                                )}
                             </Suspense>
                         </ul>
                     </div>

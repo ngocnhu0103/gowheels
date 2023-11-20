@@ -1,40 +1,52 @@
 import baseAPI from "./baseAPI";
 import { showToast } from "../store/toastSlice";
-export const getReportsByOwnerAPI = async (dispatch, ownerId) => {
+import { detailReport, saveReports } from "../store/reportSlice";
+export const getReportsByOwnerAPI = async (dispatch) => {
     try {
-        const response = await baseAPI.get(`/report/${ownerId}`);
+        const response = await baseAPI.get(`/report/author`);
         if (response.statusCode === 200) {
-            // dispatch(saveCategories(response.data));
+            dispatch(saveReports(response.data));
         }
     } catch (error) {
         dispatch(showToast({ message: error.message, type: "error" }));
     }
 };
-export const getReportsAPI = async (dispatch) => {
+export const getReportsAPI = async (dispatch, params = {}) => {
     try {
-        const response = await baseAPI.get(`/report/all`);
+        const response = await baseAPI.get(`/report`, params);
+        console.log(response);
         if (response.statusCode === 200) {
-            // dispatch(saveCategories(response.data));
+            dispatch(saveReports(response.data));
         }
     } catch (error) {
         dispatch(showToast({ message: error.message, type: "error" }));
     }
 };
-export const reportOwner = async (dispatch, ownerId, payload) => {
+export const reportOwnerAPI = async (dispatch, payload) => {
     try {
-        const response = await baseAPI.post(`/report/${ownerId}`, payload);
+        const response = await baseAPI.post(`/report`, payload);
         if (response.statusCode === 200) {
-            // dispatch(saveCategories(response.data));
+            dispatch(showToast({ message: response.message, type: "success" }));
         }
     } catch (error) {
         dispatch(showToast({ message: error.message, type: "error" }));
     }
 };
-export const evaluateReport = async (dispatch, reportId) => {
+export const evaluateReportAPI = async (dispatch, reportId, payload) => {
     try {
-        const response = await baseAPI.put(`/report/${reportId}`);
+        const response = await baseAPI.put(`/report/${reportId}`, payload);
         if (response.statusCode === 200) {
-            // dispatch(saveCategories(response.data));
+            dispatch(showToast({ message: response.message, type: "success" }));
+        }
+    } catch (error) {
+        dispatch(showToast({ message: error.message, type: "error" }));
+    }
+};
+export const detailReportAPI = async (dispatch, reportId) => {
+    try {
+        const response = await baseAPI.get(`/report/${reportId}`);
+        if (response.statusCode === 200) {
+            dispatch(detailReport(response.data))
         }
     } catch (error) {
         dispatch(showToast({ message: error.message, type: "error" }));

@@ -63,9 +63,13 @@ public class BookService {
         return ResponseEntity.ok(ResponseObject.builder().statusCode(200).message("Đặt xe thành công").data(createdBook).build());
     }
     //@gel all book for renter
-    public ResponseEntity<ResponseObject> getAllRenterBook(Authentication authentication){
+    public ResponseEntity<ResponseObject> getAllRenterBook(Authentication authentication, String status){
+        System.out.println("status = " + status);
+        if(status == null){
+            status = "";
+        }
         var renter = userRepository.findByEmail(authentication.getName());
-        var renterBooks = bookRepository.findByRenter(renter.get());
+        var renterBooks = bookRepository.findByRenterAndStatusContaining(renter.get(),status);
         return ResponseEntity.ok(ResponseObject.builder().statusCode(200).message("success").data(renterBooks).build());
     }
     //@gel all book detail
@@ -78,13 +82,18 @@ public class BookService {
         return ResponseEntity.ok(ResponseObject.builder().statusCode(200).message("success").data(book.get()).build());
     }
     //@gel all book for owner
-    public ResponseEntity<ResponseObject> getAllOwnerBook(Authentication authentication){
+    public ResponseEntity<ResponseObject> getAllOwnerBook(Authentication authentication, String status){
+        System.out.println("status = " + status);
+        if(status == null){
+            status = "";
+        }
+
         var owner = userRepository.findByEmail(authentication.getName());
         var bikes = bikeRepository.findAllByOwner(owner.get());
         List<Booking> bookings = new ArrayList<>();
         for (Bike bike: bikes
              ) {
-            var bookList = bookRepository.findByBike(bike);
+            var bookList = bookRepository.findByBikeAndStatusContaining(bike,status);
             if(!bookList.isEmpty()){
                 bookings.addAll(bookList);
             }

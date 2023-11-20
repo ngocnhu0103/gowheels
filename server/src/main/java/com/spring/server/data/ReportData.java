@@ -10,6 +10,7 @@ import java.util.List;
 @Data
 public class ReportData {
     private Long reportedPerson;
+    private Long bookId;
     private Date timeReport;
     private String content;
     private List<String> imageList;

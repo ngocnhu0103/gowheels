@@ -1,4 +1,3 @@
-import React from "react";
 import NavDashboard from "../../components/dashboard/NavDashboard";
 import { Outlet, useLocation } from "react-router-dom";
 import SearchIcon from "@mui/icons-material/Search";
@@ -38,19 +37,19 @@ function Dashboard() {
         datasets: [
             {
                 label: "Applications",
-                data: labels.map(() => [1231, 3123, 1, 312, 312, 31, 45]),
+                data: labels.map(() => [25]),
                 backgroundColor: "rgb(75, 192, 192)",
             },
-            {
-                label: "Shortlisted",
-                data: labels.map(() => [1231, 3123, 1, 312, 312, 31, 45]),
-                backgroundColor: " rgb(237,108,2)",
-            },
-            {
-                label: "Rejected",
-                data: labels.map(() => [1231, 3123, 1, 312, 312, 31, 45]),
-                backgroundColor: "rgb(211,47,47)",
-            },
+            // {
+            //     label: "Shortlisted",
+            //     data: labels.map(() => [1231, 3123, 1, 312, 312, 31, 45]),
+            //     backgroundColor: " rgb(237,108,2)",
+            // },
+            // {
+            //     label: "Rejected",
+            //     data: labels.map(() => [1231, 3123, 1, 312, 312, 31, 45]),
+            //     backgroundColor: "rgb(211,47,47)",
+            // },
         ],
     };
 

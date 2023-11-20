@@ -2,15 +2,15 @@ package com.spring.server.models;
 
 import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Table;
 import lombok.*;
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.*;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 
@@ -43,9 +43,16 @@ public class Booking implements Serializable {
     private String paymentMethod;
     private boolean isDeposit;
     private boolean reviewed;
+    @ColumnDefault(value = "false")
+    private boolean reported;
     private String status;
     @OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     @JsonIgnoreProperties({"hibernateLazyInitializer"})
     private List<Surcharge> surchargeList;
+
+    @CreationTimestamp
+    private Instant createdOn;
+    @UpdateTimestamp
+    private Instant lastUpdatedOn;
 
 }

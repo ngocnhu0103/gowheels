@@ -3,9 +3,12 @@ package com.spring.server.models;
 import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.validator.constraints.Length;
 
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.List;
 
 @Table(name="bikes")
@@ -50,4 +53,10 @@ public class Bike implements Serializable {
 
     private Double lat;
     private Double lng;
+
+    @CreationTimestamp
+    private Instant createdOn;
+    @UpdateTimestamp
+    private Instant lastUpdatedOn;
+
 }

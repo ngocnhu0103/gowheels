@@ -33,12 +33,12 @@ public class BookController {
         return bookService.createBook(bookData,authentication);
     }
     @GetMapping("/renter")
-    public  ResponseEntity<ResponseObject> getAllRenterBook(Authentication authentication){
-        return  bookService.getAllRenterBook(authentication);
+    public  ResponseEntity<ResponseObject> getAllRenterBook(Authentication authentication, @RequestParam(required = false) String status){
+        return  bookService.getAllRenterBook(authentication,status);
     }
     @GetMapping("/owner-bike")
-    public  ResponseEntity<ResponseObject> getAllOwnerBook(Authentication authentication){
-        return  bookService.getAllOwnerBook(authentication);
+    public  ResponseEntity<ResponseObject> getAllOwnerBook(Authentication authentication,@RequestParam(required = false) String status){
+        return  bookService.getAllOwnerBook(authentication,status);
     }
     @GetMapping("/{bookId}")
     public  ResponseEntity<ResponseObject> getBookById(@PathVariable Long bookId){

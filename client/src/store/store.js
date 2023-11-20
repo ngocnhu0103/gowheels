@@ -12,6 +12,7 @@ import tagSlice from './tagSlice';
 import categorySlice from './categorySlice';
 import bookSlice from './bookSlice';
 import commentSlice from './commentSlice';
+import reportSlice from './reportSlice';
 
 const persistConfig = {
     key: 'root',
@@ -25,6 +26,7 @@ const rootReducer = combineReducers({
     'category': categorySlice,
     'comment': commentSlice,
     'bike': bikeSlice,
+    'report': reportSlice,
     'book': bookSlice,
     'auth': authSlice,
     'toast': toastSlice,

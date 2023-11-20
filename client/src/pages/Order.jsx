@@ -38,7 +38,7 @@ const BookLoading = () => {
 };
 
 function Order() {
-    const [tab, setTab] = useState("1");
+    const [tab, setTab] = useState("");
     const location = useLocation();
     const dispatch = useDispatch();
     const activeName = location.pathname.split("/")[location.pathname.split("/").length - 1];
@@ -47,10 +47,10 @@ function Order() {
     });
     useEffect(() => {
         const fetchOrders = async () => {
-            await getBooksMyBikeAPI(dispatch);
+            await getBooksMyBikeAPI(dispatch, { status: tab });
         };
         fetchOrders();
-    }, []);
+    }, [tab]);
     const updateStatus = async (bookId, newStatus) => {
         await updateStatusBookAPI(dispatch, bookId, newStatus);
     };
@@ -61,24 +61,26 @@ function Order() {
 
             <section className="grid grid-cols-3 mt-12 gap-6">
                 <Navigation activeName={activeName}></Navigation>
-                <div className="col-span-2  rounded-xl p-4">
+                <div className="col-span-2 rounded-xl p-4">
                     <div>
                         <h1 className="text-3xl font-banner text-primary pb-5">Quản lý Đơn hàng</h1>
                         <Tab tab={tab} setTab={setTab} />
-                        <ul className="mt-5 flex flex-col gap-5 relative max-h-[70vh] overflow-auto snap-y snap-mandatory">
+                        <ul className="mt-5 flex flex-col gap-5 relative h-[70vh] overflow-y-auto ">
                             <Suspense fallback={<BookLoading />}>
-                                {bookMyBike && bookMyBike.length > 0
-                                    ? bookMyBike.map((book) => {
-                                          return (
-                                              <BookCard
-                                                  book={book}
-                                                  key={book.id}
-                                                  user={user}
-                                                  updateStatus={updateStatus}
-                                              />
-                                          );
-                                      })
-                                    : null}
+                                {bookMyBike && bookMyBike.length > 0 ? (
+                                    bookMyBike.map((book) => {
+                                        return (
+                                            <BookCard
+                                                book={book}
+                                                key={book.id}
+                                                user={user}
+                                                updateStatus={updateStatus}
+                                            />
+                                        );
+                                    })
+                                ) : (
+                                    <p className="text-3xl text-gray-400 text-center mt-10">Không có đơn nào!</p>
+                                )}
                             </Suspense>
                         </ul>
                     </div>

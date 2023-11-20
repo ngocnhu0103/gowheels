@@ -1,4 +1,4 @@
-import React from "react";
+/* eslint-disable react/prop-types */
 import srcBg from "../../assets/bg.png";
 import { Link } from "react-router-dom";
 import GridViewIcon from "@mui/icons-material/GridView";
@@ -38,13 +38,13 @@ function NavDashboard({ activeName }) {
                         </li>
                         <li>
                             <Link
-                                to={"/admin/policy"}
+                                to={"/admin/report"}
                                 className={`px-2 py-3 flex gap-2 items-center text-gray-500 rounded-xl duration-200
-                            ${activeName === "policy" ? "bg-primary text-white" : "hover:bg-primary hover:text-white"}
+                            ${activeName === "report" ? "bg-primary text-white" : "hover:bg-primary hover:text-white"}
                             `}
                             >
                                 <PolicyIcon />
-                                <span className="font-semibold">Policy</span>
+                                <span className="font-semibold">Report</span>
                             </Link>
                         </li>
                     </ul>

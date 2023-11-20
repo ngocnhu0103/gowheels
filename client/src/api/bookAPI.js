@@ -17,9 +17,9 @@ export const bookingAPI = async (dispatch, book) => {
     }
 }
 // @get my books
-export const getMyBooksAPI = async (dispatch) => {
+export const getMyBooksAPI = async (dispatch, params) => {
     try {
-        const response = await baseAPI.get('/book/renter');
+        const response = await baseAPI.get('/book/renter', { params });
         if (response.statusCode === 200) {
             dispatch(saveMyBooks(response.data));
         }
@@ -28,9 +28,10 @@ export const getMyBooksAPI = async (dispatch) => {
     }
 }
 // @get books my bike
-export const getBooksMyBikeAPI = async (dispatch) => {
+export const getBooksMyBikeAPI = async (dispatch, params) => {
+    console.log(params);
     try {
-        const response = await baseAPI.get('/book/owner-bike');
+        const response = await baseAPI.get('/book/owner-bike', { params });
         if (response.statusCode === 200) {
             dispatch(saveBooksMyBike(response.data));
         }

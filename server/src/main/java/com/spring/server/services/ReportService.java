@@ -4,9 +4,14 @@ import com.spring.server.data.ReportData;
 import com.spring.server.data.ResponseObject;
 import com.spring.server.models.Image;
 import com.spring.server.models.Report;
+import com.spring.server.repositories.BookRepository;
+import com.spring.server.repositories.ReportPagingRepository;
 import com.spring.server.repositories.ReportRepository;
 import com.spring.server.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -18,14 +23,31 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ReportService {
     private final ReportRepository reportRepository;
+    private final ReportPagingRepository reportPagingRepository;
     private final UserRepository userRepository;
+    private final BookRepository bookRepository;
 
     //@getAll
-    public ResponseEntity<ResponseObject> getAll(){
+    public ResponseEntity<ResponseObject> getAll(String sorted,int pageNo,int pageSize,String status){
+        System.out.println("sorted = " + sorted);
         try {
-            var reports = reportRepository.findAll();
-
-            return ResponseEntity.ok().body(ResponseObject.builder().message("get all success").statusCode(200).data(reports).build());
+            Sort sort = Sort.by("timeReport");
+            if(sorted == null ){
+                sort = Sort.by("timeReport").descending();
+            }else {
+                if(sorted == "DESC") {
+                    sort = Sort.by("timeReport").descending();
+                }
+                if(sorted == "ASC"){
+                    sort = Sort.by("timeReport").ascending();
+                }
+            }
+            if(status == null) status = "";
+            Pageable paging = PageRequest.of(pageNo, pageSize, sort);
+            System.out.println("paging = " + paging);
+            var reports = reportPagingRepository.findByStatusContaining(status,paging);
+            System.out.println("reports = " + reports);
+            return ResponseEntity.ok().body(ResponseObject.builder().message("get all success").statusCode(200).data(reports.getContent()).build());
         }
         catch (Exception e) {
             return ResponseEntity.badRequest().body(ResponseObject.builder().message(e.getMessage()).build());
@@ -35,6 +57,7 @@ public class ReportService {
     //@reporting
     public ResponseEntity<ResponseObject> reporting(ReportData reportData, Authentication authentication){
         try {
+            var book = bookRepository.findById(reportData.getBookId());
             var reporter = userRepository.findByEmail(authentication.getName());
             var reportedPerson = userRepository.findById(reportData.getReportedPerson());
             List<Image> images = new ArrayList<>();
@@ -50,8 +73,11 @@ public class ReportService {
                     .timeReport(reportData.getTimeReport())
                     .content(reportData.getContent())
                     .imageList(images)
-                    .status("Cho xet duyet").build();
+                    .status("Chờ xét duyệt").build();
 
+            reportRepository.save(report);
+            book.get().setReported(true);
+            bookRepository.save(book.get());
             return ResponseEntity.ok().body(ResponseObject.builder().message("post success").statusCode(200).data(report).build());
         }
         catch (Exception e) {
@@ -64,6 +90,12 @@ public class ReportService {
             var report = reportRepository.findById(id);
             if (!report.isEmpty()){
                 return  ResponseEntity.status(404).body(ResponseObject.builder().statusCode(404).message("Not found").build());
+            }
+            if(newStatus.compareTo("accept") == 0) {
+                var owner = userRepository.findById(report.get().getReporter().getId());
+                var currPoints = owner.get().getPoint();
+                owner.get().setPoint(currPoints - 5);
+                userRepository.save(owner.get());
             }
             report.get().setStatus(newStatus);
             reportRepository.save(report.get());

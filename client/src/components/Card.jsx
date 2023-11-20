@@ -148,7 +148,7 @@ function Card({ isRow = false, isManage = false, bike }) {
                     </div>
                     <div className="flex items-center justify-between">
                         <span className="text-3xl font-bold text-gray-900 dark:text-white">{bike.price + "K"}</span>
-                        {user && (
+                        {user && user.id !== bike.owner?.id && (
                             <span
                                 className="cursor-pointer"
                                 onClick={() => {
