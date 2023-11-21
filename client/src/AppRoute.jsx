@@ -20,6 +20,8 @@ import OrderDetail from "./pages/OrderDetail";
 import Profile from "./pages/Profile";
 import Dashboard from "./pages/dashboard/Dashboard";
 import ReportManagement from "./pages/dashboard/ReportManagement";
+import AdminRouter from "./router/AdminRouter";
+import Unauthorized from "./pages/Unauthorized";
 
 function AppRoute() {
     return (
@@ -40,13 +42,17 @@ function AppRoute() {
                 <Route path="/failure" element={<PaymentFailure />}></Route>
                 <Route path="/success/end" element={<PaymentSuccessEnd />}></Route>
                 <Route path="/failure/end" element={<PaymentFailureEnd />}></Route>
+
+                <Route element={<AdminRouter />}>
+                    <Route path="/admin" element={<Dashboard />}>
+                        <Route path="/admin/report" element={<ReportManagement />}></Route>
+                    </Route>
+                </Route>
             </Route>
             <Route path="/bikes" element={<BikePage />}></Route>
-            <Route path="/admin" element={<Dashboard />}>
-                <Route path="/admin/report" element={<ReportManagement />}></Route>
-            </Route>
 
             <Route path="/bike/:bikeId" element={<DetailBike />}></Route>
+            <Route path="/unauthorized" element={<Unauthorized />}></Route>
             <Route path="*" element={<NotFound />}></Route>
         </Routes>
     );

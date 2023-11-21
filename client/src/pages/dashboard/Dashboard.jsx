@@ -7,6 +7,7 @@ import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
 import { Bar } from "react-chartjs-2";
+import { useState } from "react";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 function Dashboard() {
@@ -52,7 +53,7 @@ function Dashboard() {
             // },
         ],
     };
-
+    const [isDropdown, setIsDropdown] = useState(false);
     return (
         <main className="max-w-full h-screen">
             <div className="grid grid-cols-12  bg-violet-100/50">
@@ -66,17 +67,31 @@ function Dashboard() {
                                 <h1 className="font-semibold">Dashboard</h1>
                                 <p className="text-sm">Hello,{"Tomas"}. Welcome to Gowheels</p>
                             </div>
-                            <div className="w-72 rounded-xl overflow-hidden flex text-gray-500">
+                            <div className="w-[400px] rounded-xl overflow-hidden flex text-gray-500">
                                 <input
                                     type="text"
                                     placeholder="Search by anything"
-                                    className="w-[85%] p-2 outline-none"
+                                    className="w-full p-2 outline-none"
                                 />
-                                <p className="text-white bg-primary w-[15%] p-2 cursor-pointer">
+                                <p className="text-white bg-primary w-[10%] p-2 cursor-pointer">
                                     <SearchIcon />
                                 </p>
                             </div>
-                            <Chip avatar={<Avatar alt="Natacha" src={srcBg} />} label="Ngoc Nhu" clickable />
+                            <div className="relative">
+                                <Chip
+                                    avatar={<Avatar alt="Natacha" src={srcBg} />}
+                                    label="Ngoc Nhu"
+                                    clickable
+                                    onClick={() => setIsDropdown(!isDropdown)}
+                                />
+                                {isDropdown && (
+                                    <ul className="absolute right-0 w-full min-w-[120px] rounded overflow-hidden flex flex-col gap-1 shadow-lg bg-gray-500 top-[calc(100%_+_10px)]">
+                                        <li className="py-2 px-2 text-white hover:text-primary hover:bg-white cursor-pointer">
+                                            Logout
+                                        </li>
+                                    </ul>
+                                )}
+                            </div>
                         </div>
 
                         {activeName !== "admin" ? (

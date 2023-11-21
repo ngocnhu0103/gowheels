@@ -73,12 +73,12 @@ public class ReportService {
                     .timeReport(reportData.getTimeReport())
                     .content(reportData.getContent())
                     .imageList(images)
-                    .status("Chờ xét duyệt").build();
+                    .status("waiting").build();
 
             reportRepository.save(report);
             book.get().setReported(true);
             bookRepository.save(book.get());
-            return ResponseEntity.ok().body(ResponseObject.builder().message("post success").statusCode(200).data(report).build());
+            return ResponseEntity.ok().body(ResponseObject.builder().message("Báo cáo thành công").statusCode(200).data(report).build());
         }
         catch (Exception e) {
             return ResponseEntity.badRequest().body(ResponseObject.builder().message(e.getMessage()).build());
@@ -88,7 +88,8 @@ public class ReportService {
     public ResponseEntity<ResponseObject> solveReport(Long id,String newStatus){
         try {
             var report = reportRepository.findById(id);
-            if (!report.isEmpty()){
+            System.out.println("report = " + report);
+            if (report.isEmpty()){
                 return  ResponseEntity.status(404).body(ResponseObject.builder().statusCode(404).message("Not found").build());
             }
             if(newStatus.compareTo("accept") == 0) {
@@ -99,7 +100,7 @@ public class ReportService {
             }
             report.get().setStatus(newStatus);
             reportRepository.save(report.get());
-            return ResponseEntity.ok().body(ResponseObject.builder().message("get success").statusCode(200).data(report).build());
+            return ResponseEntity.ok().body(ResponseObject.builder().message("Đã duyệt").statusCode(200).data(report).build());
         }
         catch (Exception e) {
             return ResponseEntity.badRequest().body(ResponseObject.builder().message(e.getMessage()).build());

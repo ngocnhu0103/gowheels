@@ -7,7 +7,7 @@ import PolicyIcon from "@mui/icons-material/Policy";
 function NavDashboard({ activeName }) {
     return (
         <div>
-            <Link to={"/admin"}>
+            <Link to={"/"}>
                 <img src={srcBg} alt="logo" className="object-fill mx-auto" />
             </Link>
             <div className="flex flex-col gap-4">

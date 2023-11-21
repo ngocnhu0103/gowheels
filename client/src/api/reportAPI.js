@@ -1,6 +1,6 @@
 import baseAPI from "./baseAPI";
 import { showToast } from "../store/toastSlice";
-import { detailReport, saveReports } from "../store/reportSlice";
+import { detailReport, saveReports, updateReport } from "../store/reportSlice";
 export const getReportsByOwnerAPI = async (dispatch) => {
     try {
         const response = await baseAPI.get(`/report/author`);
@@ -36,6 +36,7 @@ export const evaluateReportAPI = async (dispatch, reportId, payload) => {
     try {
         const response = await baseAPI.put(`/report/${reportId}`, payload);
         if (response.statusCode === 200) {
+            dispatch(updateReport({ reportId, ...payload }))
             dispatch(showToast({ message: response.message, type: "success" }));
         }
     } catch (error) {

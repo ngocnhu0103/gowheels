@@ -35,6 +35,8 @@ public class ReportCtrl {
             @PathVariable Long reportId,
             @RequestBody StatusData statusData
     ) {
+        System.out.println("reportId = " + reportId);
+        System.out.println("reportId = " + statusData.getNewStatus());
         return reportService.solveReport(reportId,statusData.getNewStatus());
     }
     @GetMapping("/{reportId}")
