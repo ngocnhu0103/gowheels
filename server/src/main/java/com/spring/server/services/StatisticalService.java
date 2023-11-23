@@ -28,4 +28,16 @@ public class StatisticalService {
             return ResponseEntity.status(500).body(ResponseObject.builder().statusCode(500).message("Server Internal Error").build());
         }
     }
+
+    public ResponseEntity<ResponseObject> getBooksForStatistical() {
+        try {
+            var books = bookRepository.findAll();
+
+            return  ResponseEntity.status(200).body(ResponseObject.builder().message("Get for statistical").data(books).statusCode(200).build());
+        }
+        catch (Exception e){
+            System.out.println("error = " + e.getMessage());
+            return ResponseEntity.status(500).body(ResponseObject.builder().statusCode(500).message("Server Internal Error").build());
+        }
+    }
 }

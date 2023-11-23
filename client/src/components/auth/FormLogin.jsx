@@ -2,9 +2,10 @@ import { FormControl, Input, InputLabel } from "@mui/material";
 import { loginAPI } from "../../api/authAPI";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 function FormLogin({ onClose }) {
     const dispatch = useDispatch();
-
+    const navigate = useNavigate();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
@@ -12,9 +13,12 @@ function FormLogin({ onClose }) {
     const handleLogin = async (e) => {
         e.preventDefault();
         setLoading(true);
-        await loginAPI(dispatch, { email, password });
+        const data = await loginAPI(dispatch, { email, password });
         setLoading(false);
         onClose();
+        if (data.user.role === "ADMIN") {
+            navigate("/admin");
+        }
     };
 
     return (

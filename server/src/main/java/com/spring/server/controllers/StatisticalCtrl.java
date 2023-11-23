@@ -18,4 +18,8 @@ public class StatisticalCtrl {
     public ResponseEntity<ResponseObject> getBikesForStatistical(){
         return service.getBikesForStatistical();
     }
+    @GetMapping("/books")
+    public ResponseEntity<ResponseObject> getBooksForStatistical(){
+        return service.getBooksForStatistical();
+    }
 }

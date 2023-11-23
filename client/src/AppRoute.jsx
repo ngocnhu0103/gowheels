@@ -5,7 +5,7 @@ import BikeFavs from "./pages/BikeFavs";
 import MyStranport from "./pages/MyStranport";
 import MyOrder from "./pages/MyOrder";
 import Order from "./pages/Order";
-import Rate from "./pages/Rate";
+import Analyst from "./pages/Analyst";
 import RequiredAuth from "./router/RequiredAuth";
 import BikeRegister from "./pages/BikeRegister";
 import DetailBike from "./pages/DetailBike";
@@ -36,7 +36,7 @@ function AppRoute() {
                 <Route path="/profile/myorder" element={<MyOrder />}></Route>
                 <Route path="/profile/myorder/:bookId" element={<MyOrderDetail />}></Route>
                 <Route path="/profile/order/:bookId" element={<OrderDetail />}></Route>
-                <Route path="/profile/rate" element={<Rate />}></Route>
+                <Route path="/profile/analyst" element={<Analyst />}></Route>
                 <Route path="/bikeregister" element={<BikeRegister />}></Route>
                 <Route path="/success" element={<PaymentSuccess />}></Route>
                 <Route path="/failure" element={<PaymentFailure />}></Route>

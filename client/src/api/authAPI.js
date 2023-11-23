@@ -23,6 +23,7 @@ export const loginAPI = async (dispatch, values) => {
         if (response.statusCode === 200) {
             dispatch(saveData(response.data))
             dispatch(showToast({ message: response.message, type: "success" }))
+            return response.data;
         }
 
     } catch (error) {
