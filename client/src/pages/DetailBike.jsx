@@ -1,37 +1,28 @@
 import { useEffect, useMemo, useState } from "react";
-import Header from "../components/Header";
 import Footer from "../components/Footer";
+import Header from "../components/Header";
 import Tag from "../components/Tag";
 
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import StarIcon from "@mui/icons-material/Star";
-import LocalShippingIcon from "@mui/icons-material/LocalShipping";
-import InfoIcon from "@mui/icons-material/Info";
 import ContactEmergencyIcon from "@mui/icons-material/ContactEmergency";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import InfoIcon from "@mui/icons-material/Info";
+import StarIcon from "@mui/icons-material/Star";
 import StyleIcon from "@mui/icons-material/Style";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import CancelIcon from "@mui/icons-material/Cancel";
-import EmojiFlagsIcon from "@mui/icons-material/EmojiFlags";
 import Map from "../components/Map";
 // import Card from "../components/Card";
-import { Link, useParams } from "react-router-dom";
-import Review from "../components/Review";
-import { Button } from "@mui/material";
-import BookForm from "../components/form/BookForm";
-import { getBikeAPI } from "../api/bikeAPI";
 import { useDispatch, useSelector } from "react-redux";
-import { userLiked } from "../utils/userLiked";
+import { Link, useParams } from "react-router-dom";
+import { getBikeAPI, similarBikeAPI } from "../api/bikeAPI";
 import { getCommentsAPI } from "../api/commentAPI";
+import Card from "../components/Card";
+import Review from "../components/Review";
+import BookForm from "../components/form/BookForm";
+import { userLiked } from "../utils/userLiked";
 function DetailBike() {
     const [showPolicy, setShowPolicy] = useState(false);
+    const [bikesSimilar, setBikesSimilar] = useState([]);
+
     const { bikeId } = useParams();
     const dispatch = useDispatch();
     const { comments } = useSelector((state) => state.comment);
@@ -39,40 +30,6 @@ function DetailBike() {
     const { user } = useSelector((state) => state.auth);
     const [location, setLocation] = useState(null);
 
-    const rows = [
-        {
-            stt: 1,
-            title: "Trong Vòng 1h Sau Đặt Cọc",
-            customer: "Khách Thuê Hủy Chuyến",
-            owner: (
-                <span className="text-center">
-                    Không đền cọc <br /> (Đánh giá hệ thống 3*)
-                </span>
-            ),
-        },
-        {
-            stt: 2,
-
-            title: "Trước Chuyến Đi >7 Ngày",
-            customer: "Hoàn tiền 70%",
-            owner: (
-                <span className="text-center">
-                    Đền cọc 30% <br /> (Đánh giá hệ thống 3*)
-                </span>
-            ),
-        },
-        {
-            stt: 3,
-
-            title: "Trong Vòng 7 Ngày Trước Chuyến Đi",
-            customer: "Không hoàn tiền",
-            owner: (
-                <span className="text-center">
-                    Đền cọc 100% <br /> (Đánh giá hệ thống 2*)
-                </span>
-            ),
-        },
-    ];
     useEffect(() => {
         const fetchBikeById = async (id) => {
             await getBikeAPI(dispatch, id);
@@ -85,6 +42,19 @@ function DetailBike() {
         const fetchComments = async (userId) => {
             await getCommentsAPI(dispatch, userId);
         };
+        const fetchSimilar = async (bike) => {
+            const tagList = [...bike.tagList].map((tag) => tag.tagId);
+            console.log(bike);
+            const data = await similarBikeAPI({
+                categoryName: bike.category.categoryName,
+                color: bike.color,
+                city: bike.city,
+                tagIds: tagList.length > 0 ? tagList.join(",") : tagList,
+                bikeId: bike.bikeId,
+            });
+            setBikesSimilar(data);
+            console.log(data);
+        };
         if (bike) {
             bike.place &&
                 setLocation({
@@ -94,12 +64,26 @@ function DetailBike() {
                 });
             bike.owner && fetchComments(bike.owner.id);
         }
+        console.log("------similar---------");
+        bike && fetchSimilar(bike);
     }, [bike]);
     const avgs = useMemo(() => {
         return comments.reduce((old, current) => {
             return (old += current?.startNumber);
         }, 0);
     }, [comments]);
+
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            window.scrollTo(
+                {
+                    top: 0,
+                    behavior: "smooth",
+                },
+                0
+            );
+        }
+    }, [bikeId]);
     return (
         <>
             <main className="container w-10/12 mx-auto">
@@ -133,12 +117,9 @@ function DetailBike() {
                         <div className="mt-4 flex items-center gap-2 ">
                             <span className="text-gray-500 flex items-center">
                                 <StarIcon className="text-yellow-300" />
-                                <span>5.0</span>
+                                <span>{comments && comments.length && avgs / comments.length}</span>
                             </span>
-                            <span className="text-gray-500 flex items-center">
-                                <LocalShippingIcon className="text-primary" />
-                                <span>188 chuyến</span>
-                            </span>
+
                             <span className="text-gray-500">{bike.place}</span>
                         </div>
                         <section className="mt-8 pb-8 border-b border-gray-300">
@@ -216,7 +197,7 @@ function DetailBike() {
                                 </p>
                             ) : null}
                         </section>
-                        <section className="mt-8 pb-8 border-b border-gray-300">
+                        {/* <section className="mt-8 pb-8 border-b border-gray-300">
                             <h3 className="text-xl font-semibold mb-4">Chính sách huỷ chuyến</h3>
                             <TableContainer component={Paper}>
                                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -272,7 +253,7 @@ function DetailBike() {
                                 <li>Chủ xe không giao xe sẽ đền 100% tiền cọc</li>
                                 <li>Tiền cọc sẽ được hoàn trả trong vòng 1-3 ngày làm việc</li>
                             </ul>
-                        </section>
+                        </section> */}
                         <section className="mt-8">
                             <h3 className="text-xl font-semibold mb-8">Vị trí xe</h3>
                             <div className="w-full h-[50vh]  ">
@@ -289,36 +270,16 @@ function DetailBike() {
                                         className="w-20 h-20 rounded-full border border-gray-300 object-cover"
                                     />
                                     <div className="flex flex-col gap-1">
-                                        <Link to={"/profile/id"} className="text-2xl font-semibold">
+                                        <Link to={`/profile/${bike.owner?.id}`} className="text-2xl font-semibold">
                                             {bike.owner?.fullName}
                                         </Link>
                                         <p className="flex gap-2">
                                             <span className="text-gray-500 flex items-center">
                                                 <StarIcon className="text-yellow-300" />
-                                                <span>5.0</span>
-                                            </span>
-                                            <span className="text-gray-500 flex items-center">
-                                                <LocalShippingIcon className="text-primary" />
-                                                <span>188 chuyến</span>
+                                                <span>{comments && comments.length && avgs / comments.length}</span>
                                             </span>
                                         </p>
-                                        <span className="text-sm text-gray-700">
-                                            Thông tin liên hệ với chủ xe sẽ được hiển thị sau khi đặt cọc
-                                        </span>
-                                    </div>
-                                </div>
-                                <div className="flex gap-5">
-                                    <div className="text-center font-bold">
-                                        <p className="text-gray-400">Tỉ lệ phản hồi</p>
-                                        <p>100%</p>
-                                    </div>
-                                    <div className="text-center font-bold">
-                                        <p className="text-gray-400">Trong vòng 5 phút</p>
-                                        <p>100%</p>
-                                    </div>
-                                    <div className="text-center font-bold">
-                                        <p className="text-gray-400">Tỉ lệ đồng ý</p>
-                                        <p>100%</p>
+                                        <span className="text-sm text-gray-700">{bike.owner?.email}</span>
                                     </div>
                                 </div>
                             </div>
@@ -340,63 +301,29 @@ function DetailBike() {
                                     <p className="text-xl font-semibold text-yellow-300">Chưa có đánh giá nào!</p>
                                 )}
                             </ul>
-                            <p className="text-right">
+                            {/* <p className="text-right">
                                 <Button size="large" variant="outlined">
                                     Xem thêm
                                 </Button>
-                            </p>
+                            </p> */}
                         </section>
                     </article>
                     <aside className="col-span-1">
-                        <BookForm price={bike.price} place={bike.place} bikeId={bikeId} />
+                        <BookForm price={bike.price} place={bike.place} bike={bike} />
                         <div className="mt-4 p-4 bg-white rounded-xl border border-gray-200">
                             <h1 className="text-primary font-bold">Phụ phí có thể phát sinh</h1>
                             <ul className="flex items-center flex-col gap-4 mt-4">
                                 <li className="text-xs">
                                     <div className="flex items-center gap-1 font-bold">
                                         <InfoIcon fontSize="small" className="text-gray-400" />
-                                        <p>Phí vượt giới hạn</p>
-                                        <span className="ml-auto">4 000đ/km</span>
+                                        <p>Phí phụ thu</p>
                                     </div>
                                     <p className="ml-6 text-left">
-                                        Phụ phí phát sinh nếu lộ trình di chuyển vượt quá 300km khi thuê xe 1 ngày
-                                    </p>
-                                </li>
-                                <li className="text-xs">
-                                    <div className="flex items-center gap-1 font-bold">
-                                        <InfoIcon fontSize="small" className="text-gray-400" />
-                                        <p>Phí vượt giới hạn</p>
-                                        <span className="ml-auto">4 000đ/km</span>
-                                    </div>
-                                    <p className="ml-6 text-left">
-                                        Phụ phí phát sinh nếu lộ trình di chuyển vượt quá 300km khi thuê xe 1 ngày
-                                    </p>
-                                </li>
-                                <li className="text-xs">
-                                    <div className="flex items-center gap-1 font-bold">
-                                        <InfoIcon fontSize="small" className="text-gray-400" />
-                                        <p>Phí vượt giới hạn</p>
-                                        <span className="ml-auto">4 000đ/km</span>
-                                    </div>
-                                    <p className="ml-6 text-left">
-                                        Phụ phí phát sinh nếu lộ trình di chuyển vượt quá 300km khi thuê xe 1 ngày
-                                    </p>
-                                </li>
-                                <li className="text-xs">
-                                    <div className="flex items-center gap-1 font-bold">
-                                        <InfoIcon fontSize="small" className="text-gray-400" />
-                                        <p>Phí vượt giới hạn</p>
-                                        <span className="ml-auto">4 000đ/km</span>
-                                    </div>
-                                    <p className="ml-6 text-left">
-                                        Phụ phí phát sinh nếu lộ trình di chuyển vượt quá 300km khi thuê xe 1 ngày
+                                        Phụ phí phát sinh nếu quý khách vượt quá ngày thuê xe, xe có hư hỏng... mọi vấn
+                                        đề sẽ được giải quyết bằng sự thỏa thuận giữa 2 bên cho thuê và người thuê.
                                     </p>
                                 </li>
                             </ul>
-                        </div>
-                        <div className="flex items-center justify-center gap-2 mt-4 cursor-pointer hover:text-primary ">
-                            <EmojiFlagsIcon />
-                            <span>Báo cáo xe này</span>
                         </div>
                     </aside>
                 </section>
@@ -405,10 +332,25 @@ function DetailBike() {
                 <main className="container w-4/5 mx-auto">
                     <h3 className="text-xl font-semibold mb-4">Xe tương tự</h3>
                     <ul className="grid grid-cols-4 gap-5">
-                        {/* <Card />
-                        <Card />
-                        <Card />
-                        <Card /> */}
+                        {bikesSimilar && bikesSimilar.similar1
+                            ? bikesSimilar.similar1.map((item) => {
+                                  return <Card bike={item} key={`similar${item.bikeId}`} />;
+                              })
+                            : null}
+                        {bikesSimilar && bikesSimilar.similar2
+                            ? bikesSimilar.similar2.map((item) => {
+                                  if (!bikesSimilar.similar1.some((item1) => item1.bikeId === item.bikeId)) {
+                                      return <Card bike={item} key={`similar2${item.bikeId}`} />;
+                                  }
+                              })
+                            : null}
+                        {bikesSimilar && bikesSimilar.similar3
+                            ? bikesSimilar.similar3.map((item) => {
+                                  if (!bikesSimilar.similar2.some((item2) => item2.bikeId === item.bikeId)) {
+                                      return <Card bike={item} key={`similar3${item.bikeId}`} />;
+                                  }
+                              })
+                            : null}
                     </ul>
                 </main>
             </section>

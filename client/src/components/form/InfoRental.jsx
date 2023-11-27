@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import "leaflet/dist/leaflet.css";
 import "leaflet-geosearch/dist/geosearch.css";
 import { OpenStreetMapProvider } from "leaflet-geosearch";
+import { getCityByLatLongAPI } from "../../api/placeAPI";
 
 function InfoRental({ formik }) {
     const bikeRegister = useSelector((state) => state.bikeRegister);
@@ -36,9 +37,12 @@ function InfoRental({ formik }) {
             searchPlaces(value);
         }, 1000);
     };
-    const selectedPlace = (place) => {
+    const selectedPlace = async (place) => {
         const [lat, lon] = place.bounds[0];
+        const res = await getCityByLatLongAPI({ lat, lon });
+        console.log(res.address, "place");
         formik.setFieldValue("place", place.label.split("/").join(""));
+        formik.setFieldValue("city", res.address.city || res.address.state);
         formik.setFieldValue("lat", lat);
         formik.setFieldValue("lng", lon);
         setLocation({ address: place.label.split("/").join(""), lat: lat, lng: lon });
@@ -67,7 +71,6 @@ function InfoRental({ formik }) {
                         variant="outlined"
                         margin="normal"
                     />
-                    <span className="text-2xl font-bold">K</span>
                 </div>
                 {formik.touched.price && formik.errors.price ? (
                     <p className="text-rose-400 text-xs font-semibold">{formik.errors.price}</p>

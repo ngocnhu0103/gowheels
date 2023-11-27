@@ -38,10 +38,11 @@ public class User {
     @OneToOne(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     private Image avatar;
     private String accountNumber;
-    @Column(columnDefinition = "double default 0.0")
+    private String cmnd;
+    @ColumnDefault(value = "0")
     private Double balance;
     private int point;
-    @OneToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER)
     private List<Bike> likes;
     private boolean isJobber;
     @JsonIgnore

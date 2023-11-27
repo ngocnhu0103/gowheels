@@ -93,9 +93,10 @@ public class ReportService {
                 return  ResponseEntity.status(404).body(ResponseObject.builder().statusCode(404).message("Not found").build());
             }
             if(newStatus.compareTo("accept") == 0) {
-                var owner = userRepository.findById(report.get().getReporter().getId());
-                var currPoints = owner.get().getPoint();
-                owner.get().setPoint(currPoints - 5);
+                var owner = userRepository.findById(report.get().getReportedPerson().getId());
+                var currPoints = owner.get().getPoint() - 5;
+                System.out.println("currPoints = " + currPoints);
+                owner.get().setPoint(currPoints);
                 userRepository.save(owner.get());
             }
             report.get().setStatus(newStatus);

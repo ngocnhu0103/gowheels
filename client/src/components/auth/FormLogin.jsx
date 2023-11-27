@@ -1,8 +1,8 @@
 import { FormControl, Input, InputLabel } from "@mui/material";
-import { loginAPI } from "../../api/authAPI";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { loginAPI } from "../../api/authAPI";
 function FormLogin({ onClose }) {
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -22,7 +22,7 @@ function FormLogin({ onClose }) {
     };
 
     return (
-        <div className="w-1/4 mx-auto mt-24 bg-white p-4 rounded-xl">
+        <div className="w-1/4 max-md:w-11/12 mx-auto mt-24 bg-white p-4 rounded-xl">
             <h1 className="text-3xl font-bold text-center text-primary py-4">Đăng nhập</h1>
             <form className="flex flex-col" onSubmit={handleLogin}>
                 <FormControl margin="dense">

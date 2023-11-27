@@ -5,10 +5,12 @@ const bikeSlice = createSlice({
     initialState: {
         bike: {},
         bikeList: [],
+        totals: null
     },
     reducers: {
         saveDataBike: (state, actions) => {
-            state.bikeList = actions.payload;
+            state.bikeList = actions.payload.bikeList;
+            state.totals = actions.payload.totals
         },
         saveNewBike: (state, actions) => {
             state.bikeList.push(actions.payload);

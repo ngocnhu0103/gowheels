@@ -76,11 +76,11 @@ export const unLikeBikeAPI = async (dispatch, bikeId) => {
         console.log("Bike not found", error);
     }
 };
-export const similarBikeAPI = async (dispatch, bikeId) => {
+export const similarBikeAPI = async (params) => {
     try {
-        const response = await baseAPI.get(`/bike/similar/${bikeId}`);
+        const response = await baseAPI.get(`/bike/similar`, { params });
         if (response.statusCode === 200) {
-            // dispatch()
+            return response.data
         }
     } catch (error) {
         console.log("Bike not found", error);
@@ -119,3 +119,15 @@ export const getBikesAPI = async (dispatch, userId) => {
         dispatch(showToast({ message: error.message, type: "error" }))
     }
 };
+export const getTopPlaceAPI = async (dispatch) => {
+    try {
+        const response = await baseAPI.get(`/bike/top-place`);
+        if (response.statusCode === 200) {
+            return response.data;
+        }
+    } catch (error) {
+        console.log("Bikes not found", error);
+        dispatch(showToast({ message: error.message, type: "error" }))
+    }
+};
+

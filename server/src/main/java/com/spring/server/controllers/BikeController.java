@@ -28,18 +28,11 @@ public class BikeController {
     }
     @GetMapping("/all")
     
-    public ResponseEntity<ResponseObject> getAllBike(@RequestParam(required = false) String bikeName,
+    public ResponseEntity<ResponseObject> getAllBike(
                                                      @RequestParam(defaultValue = "0") int page,
                                                      @RequestParam(defaultValue = "12" ) int size) {
-        return bikeService.getAllBike(bikeName,page,size);
+        return bikeService.getAllBike(page,size);
     }
-//    @GetMapping("/all/tag")
-//    public ResponseEntity<ResponseObject> getAllBikeByTags(@RequestParam(required = false) String bikeName,
-//                                                           @RequestParam(defaultValue = "0") int page,
-//                                                           @RequestParam(defaultValue = "12" ) int size,
-//                                                           @RequestParam(required = false) List<Tag> tags) {
-//        return bikeService.getAllBikeByTags(bikeName,page,size,tags);
-//    }
     @GetMapping("/{id}")
     public ResponseEntity<ResponseObject> getBikeById(@PathVariable Long id) {
         return bikeService.getBikeById(id);
@@ -85,5 +78,19 @@ public class BikeController {
         return bikeService.updateBikeStatus(id, statusData);
     }
 
+    @GetMapping("/top-place")
+    public ResponseEntity<ResponseObject> getTopPlace() {
+        return bikeService.getTopPlace();
+    }
+    @GetMapping("/similar")
+    public ResponseEntity<ResponseObject> findSimilar(
+            @RequestParam(required = false) String city,
+            @RequestParam(required = false) Long bikeId,
+            @RequestParam(required = false) String color,
+            @RequestParam(required = true) String categoryName,
+            @RequestParam(required = false) List<Long> tagIds
+    ){
+        return bikeService.findSimilar(color, categoryName, tagIds, city,bikeId);
+    }
 
 }

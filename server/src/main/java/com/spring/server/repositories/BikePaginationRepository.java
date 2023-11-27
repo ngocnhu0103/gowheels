@@ -29,5 +29,6 @@ public interface BikePaginationRepository extends PagingAndSortingRepository<Bik
     public Page<Bike> findByPlaceContainingAndStatus(String place, Pageable pageable, String status);
     public Page<Bike> findAllByStatus(Pageable pageable,String status);
 
-
+    @Query("SELECT b.city, COUNT(b.city) AS cityCount FROM Bike b GROUP BY b.city ORDER BY cityCount DESC")
+    public Page<Bike> findTop5CommonCities(Pageable pageable);
 }

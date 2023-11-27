@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 
 function Category() {
     return (
-        <div className="flex justify-around h-[350px] ">
+        <div className="flex justify-around h-[350px] max-md:h-40">
             <Link to={`/bikes/?categoryName=Xe oto`}>
                 <img src={car} alt="xe oto" className="w-full h-full" />
             </Link>

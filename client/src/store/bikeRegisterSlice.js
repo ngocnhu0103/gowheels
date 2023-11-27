@@ -11,6 +11,9 @@ const bikeRegisterSlice = createSlice({
         tagList: [],
         price: null,
         place: "",
+        lat: null,
+        lng: null,
+        city: "",
         images: [],
         weekDiscount: 0,
         monthDiscount: 0
@@ -28,6 +31,9 @@ const bikeRegisterSlice = createSlice({
         saveInfoRental: (state, actions) => {
             state.price = actions.payload.price;
             state.place = actions.payload.place;
+            state.lat = actions.payload.lat;
+            state.lng = actions.payload.lng;
+            state.city = actions.payload.city;
             state.weekDiscount = actions.payload.weekDiscount;
             state.monthDiscount = actions.payload.monthDiscount;
 
@@ -44,6 +50,7 @@ const bikeRegisterSlice = createSlice({
             state.tagList = []
             state.price = null
             state.place = null
+            state.city = null
             state.weekDiscount = null
             state.monthDiscount = null
             state.images = []

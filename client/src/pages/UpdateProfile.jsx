@@ -1,19 +1,18 @@
-import { useFormik } from "formik";
-import * as Yup from "yup";
 import CenterFocusWeakIcon from "@mui/icons-material/CenterFocusWeak";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import { Button, Modal } from "@mui/material";
+import { useFormik } from "formik";
+import moment from "moment";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import Header from "../components/Header";
-import Navigation from "../components/profile/Navigation";
 import { useLocation } from "react-router-dom";
-import Footer from "../components/Footer";
-import moment from "moment";
-import { Modal } from "@mui/material";
-import UploadImage from "../components/auth/UploadImage";
+import * as Yup from "yup";
 import { reSendOtpAPI, registerOwnerAPI, updateInfoAPI, uploadAvatarAPI } from "../api/authAPI";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import Footer from "../components/Footer";
+import Header from "../components/Header";
 import FormComfirm from "../components/auth/FormComfirm";
-import ComfirmModal from "../components/modal/ComfirmModal";
+import UploadImage from "../components/auth/UploadImage";
+import Navigation from "../components/profile/Navigation";
 function UpdateProfile() {
     const location = useLocation();
     const activeName = location.pathname.split("/")[location.pathname.split("/").length - 1];
@@ -27,12 +26,12 @@ function UpdateProfile() {
     const initialValues = {
         address: "",
         phone: "",
-        accountNumber: "",
+        cmnd: "",
     };
     const formikUpdate = useFormik({
         initialValues,
         validationSchema: Yup.object({
-            accountNumber: Yup.string().trim(),
+            cmnd: Yup.string().trim(),
             address: Yup.string().trim(),
             phone: Yup.string()
                 .trim()
@@ -49,7 +48,7 @@ function UpdateProfile() {
     const formikRegister = useFormik({
         initialValues,
         validationSchema: Yup.object({
-            accountNumber: Yup.string().trim().required("Vui lòng nhập số tài khoản"),
+            cmnd: Yup.string().trim().required("Vui lòng nhập CMND/CCCD"),
             address: Yup.string().trim().required("Vui lòng nhập địa chỉ"),
             phone: Yup.string()
                 .trim()
@@ -58,6 +57,7 @@ function UpdateProfile() {
         }),
         onSubmit: async (values) => {
             setLoading(true);
+            console.log(values);
             await registerOwnerAPI(dispatch, values);
             setLoading(false);
         },
@@ -90,12 +90,12 @@ function UpdateProfile() {
         if (user) {
             formikRegister.setValues({
                 address: user.address || "",
-                accountNumber: user.accountNumber || "",
+                cmnd: user.cmnd || "",
                 phone: user.phone || "",
             });
             formikUpdate.setValues({
                 address: user.address || "",
-                accountNumber: user.accountNumber || "",
+                cmnd: user.cmnd || "",
                 phone: user.phone || "",
             });
         }
@@ -163,6 +163,14 @@ function UpdateProfile() {
                                         Ngày tham gia: {moment(user.createdAt).fromNow()}
                                     </p>
                                 </div>
+
+                                {!user.enabled && (
+                                    <div>
+                                        <Button variant="contained" color="success" onClick={() => setIsComfirm(true)}>
+                                            Xác thực email
+                                        </Button>
+                                    </div>
+                                )}
                             </div>
 
                             <form className="flex flex-col col-span-3 gap-5">
@@ -174,7 +182,7 @@ function UpdateProfile() {
                                         name="email"
                                         disabled
                                         value={user.email}
-                                        className="flex-1 py-2 px-1 outline-none cursor-not-allowed disabled:text-gray-400"
+                                        className="flex-1 py-2 px-1 outline-none  cursor-not-allowed disabled:text-gray-400"
                                         type="text"
                                     />
                                 </div>
@@ -186,7 +194,7 @@ function UpdateProfile() {
                                         name="gender"
                                         disabled
                                         value={user.gender}
-                                        className="flex-1 py-2 px-1 outline-none cursor-not-allowed disabled:text-gray-400"
+                                        className="flex-1 py-2 px-1 outline-none  cursor-not-allowed disabled:text-gray-400"
                                         type="text"
                                     />
                                 </div>
@@ -204,7 +212,7 @@ function UpdateProfile() {
                                             formikRegister.handleChange(e);
                                         }}
                                         value={formikRegister.values.address}
-                                        className="flex-1 py-2 px-1 outline-none "
+                                        className="flex-1 py-2 px-1 outline-none border rounded-md border-gray-500"
                                         name="address"
                                         type="text"
                                     />
@@ -229,7 +237,7 @@ function UpdateProfile() {
                                         }}
                                         value={formikRegister.values.phone}
                                         name="phone"
-                                        className="flex-1 py-2 px-1 outline-none "
+                                        className="flex-1 py-2 px-1 outline-none border rounded-md border-gray-500 "
                                         type="text"
                                     />
                                 </div>
@@ -240,7 +248,7 @@ function UpdateProfile() {
                                 ) : null}
                                 <div className="flex items-center gap-4 ">
                                     <label className="w-2/6" htmlFor="">
-                                        Số tài khoản
+                                        Số CMND/CCCD
                                     </label>
                                     <input
                                         onBlur={(e) => {
@@ -251,15 +259,15 @@ function UpdateProfile() {
                                             formikUpdate.handleChange(e);
                                             formikRegister.handleChange(e);
                                         }}
-                                        value={formikRegister.values.accountNumber}
-                                        name="accountNumber"
-                                        className="flex-1 py-2 px-1 outline-none "
+                                        value={formikRegister.values.cmnd}
+                                        name="cmnd"
+                                        className="flex-1 py-2 px-1 outline-none border rounded-md border-gray-500 "
                                         type="text"
                                     />
                                 </div>
-                                {formikRegister.touched.accountNumber && formikRegister.errors.accountNumber ? (
+                                {formikRegister.touched.cmnd && formikRegister.errors.cmnd ? (
                                     <span className="text-rose-400 text-xs font-semibold">
-                                        {formikRegister.errors.accountNumber}
+                                        {formikRegister.errors.cmnd}
                                     </span>
                                 ) : null}
 
@@ -272,13 +280,16 @@ function UpdateProfile() {
                                     >
                                         {loading ? "loading..." : "Cập nhật thông tin"}
                                     </button>
-                                    <button
-                                        className={`mt-4 text-primary border-primary border  py-2 px-8 rounded-md disabled:text-gray-300 disabled:border-gray-300`}
-                                        onClick={handleRegisterOwner}
-                                        disabled={loading}
-                                    >
-                                        {loading ? "loading..." : "Đăng ký làm chủ xe"}
-                                    </button>
+                                    {!user.jobber && (
+                                        <button
+                                            type="submit"
+                                            className={`mt-4 text-primary border-primary border  py-2 px-8 rounded-md disabled:text-gray-300 disabled:border-gray-300`}
+                                            onClick={handleRegisterOwner}
+                                            disabled={loading}
+                                        >
+                                            {loading ? "loading..." : "Đăng ký làm chủ xe"}
+                                        </button>
+                                    )}
                                 </div>
                             </form>
                         </div>

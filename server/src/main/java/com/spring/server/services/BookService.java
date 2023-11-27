@@ -10,6 +10,9 @@ import com.spring.server.repositories.BookRepository;
 import com.spring.server.repositories.SurchargeRepository;
 import com.spring.server.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -68,8 +71,9 @@ public class BookService {
         if(status == null){
             status = "";
         }
+        Pageable pageable = PageRequest.of(0,100, Sort.by("createdOn").descending());
         var renter = userRepository.findByEmail(authentication.getName());
-        var renterBooks = bookRepository.findByRenterAndStatusContaining(renter.get(),status);
+        var renterBooks = bookRepository.findByRenterAndStatusContaining(renter.get(),status,pageable);
         return ResponseEntity.ok(ResponseObject.builder().statusCode(200).message("success").data(renterBooks).build());
     }
     //@gel all book detail
@@ -87,13 +91,13 @@ public class BookService {
         if(status == null){
             status = "";
         }
-
+        Pageable pageable = PageRequest.of(0,100, Sort.by("createdOn").descending());
         var owner = userRepository.findByEmail(authentication.getName());
         var bikes = bikeRepository.findAllByOwner(owner.get());
         List<Booking> bookings = new ArrayList<>();
         for (Bike bike: bikes
              ) {
-            var bookList = bookRepository.findByBikeAndStatusContaining(bike,status);
+            var bookList = bookRepository.findByBikeAndStatusContaining(bike,status,pageable);
             if(!bookList.isEmpty()){
                 bookings.addAll(bookList);
             }
@@ -105,6 +109,35 @@ public class BookService {
     public ResponseEntity<ResponseObject> updateStatus(String newStatus,Long bookId){
         var book = bookRepository.findById(bookId);
         if(!book.isEmpty()){
+            if(newStatus.compareTo("Đã thanh toán") == 0) {
+                var admin = userRepository.findByEmail("ngocnhu010301@gmail.com");
+//                var owner = userRepository.findById(
+//                        book.get().getBike().getOwner().getId()
+//                );
+//                Double currentBalance = owner.get().getBalance();
+                Double currentBalanceAdmin = admin.get().getBalance();
+                Double afterBalance = (double) book.get().getTotalPrice();
+
+                if(book.get().getSurchargePrice() != null && book.get().getSurchargePrice() > 0.0) {
+                    afterBalance = afterBalance - book.get().getSurchargePrice();
+                }
+//                owner.get().setBalance(
+//                        (double)
+//                                Math.round(
+//                                        (currentBalance + afterBalance) * 100
+//                                )/100
+//                );
+                admin.get().setBalance(
+                        (double)
+                                Math.round(
+                                        (currentBalanceAdmin + (afterBalance * 0.05)) * 100
+                                )/100
+                );
+
+                userRepository.save(admin.get());
+            }
+
+
             book.get().setStatus(newStatus);
             bookRepository.save(book.get());
             return ResponseEntity.ok(ResponseObject.builder().statusCode(200).message("success").data(book.get()).build());

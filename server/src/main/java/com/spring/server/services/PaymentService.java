@@ -54,9 +54,18 @@ public class PaymentService {
         } else {
             customer = result.getData().get(0);
         }
-
-
-        var unitAmount = Math.round(book.get().getTotalPrice() * 1000);
+        var unitAmount = Math.round(book.get().getTotalPrice());
+        var diposit = 0L;
+        System.out.println("getSurchargePrice = " + book.get().getSurchargePrice());
+        if(book.get().getSurchargePrice() != null && book.get().getSurchargePrice() > 0.0) {
+            diposit = Math.round((unitAmount - Math.round(book.get().getSurchargePrice())) * 0.1);
+            unitAmount = unitAmount - diposit;
+            System.out.println("unitAmount2 = " + unitAmount);
+        } else {
+            unitAmount = Math.round((unitAmount - (unitAmount * 0.1)));
+            System.out.println("unitAmount3 = " + unitAmount);
+        }
+        System.out.println("unitAmount = " + unitAmount);
         SessionCreateParams.Builder paramsBuilder = SessionCreateParams.builder()
                 .setMode(SessionCreateParams.Mode.PAYMENT)
                 .setCustomer(customer.getId())
@@ -108,7 +117,10 @@ public class PaymentService {
         } else {
             customer = result.getData().get(0);
         }
-        var unitAmount = Math.round(book.get().getTotalPrice() * 0.1 * 1000);
+        var unitAmount = Math.round(
+                (book.get().getTotalPrice() * 0.1)
+        );
+
         SessionCreateParams.Builder paramsBuilder = SessionCreateParams.builder()
                 .setMode(SessionCreateParams.Mode.PAYMENT)
                 .setCustomer(customer.getId())
@@ -152,18 +164,32 @@ public class PaymentService {
             var owner = userRepository.findById(
                     book.get().getBike().getOwner().getId()
             );
+            var admin = userRepository.findByEmail("ngocnhu010301@gmail.com");
             if(book.get().getStatus().compareTo("Đã thanh toán") != 0) {
                 Double currentBalance = owner.get().getBalance();
+                Double currentBalanceAdmin = admin.get().getBalance();
+                Double afterBalance = (double) session.getAmountTotal(); //total
+//                5% * total - surchagePrice
+                if(book.get().getSurchargePrice() != null && book.get().getSurchargePrice() > 0.0) {
+                    afterBalance = afterBalance - book.get().getSurchargePrice();
+                }
                 owner.get().setBalance(
                         (double)
                         Math.round(
-                                (currentBalance + session.getAmountTotal()) * 100
+                                (currentBalance + afterBalance) * 100
+                        )/100
+                );
+                admin.get().setBalance(
+                        (double)
+                        Math.round(
+                                (currentBalanceAdmin + (afterBalance * 0.05)) * 100
                         )/100
                 );
                 book.get().setStatus("Đã thanh toán");
 
                 bookRepository.save(book.get());
                 userRepository.save(owner.get());
+                userRepository.save(admin.get());
             }
 
 

@@ -1,8 +1,6 @@
 package com.spring.server.services;
 
-import com.spring.server.data.BikeData;
-import com.spring.server.data.ResponseObject;
-import com.spring.server.data.StatusData;
+import com.spring.server.data.*;
 import com.spring.server.models.Bike;
 import com.spring.server.models.Category;
 import com.spring.server.models.Image;
@@ -12,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -67,11 +66,13 @@ public class BikeService {
                 bike.setDescription(bikeData.getDescription());
                 bike.setStatus(bikeData.getStatus());
                 bike.setOwner(owner.get());
+                bike.setStatus("show");
                 bike.setWeekDiscount(bikeData.getWeekDiscount());
                 bike.setMonthDiscount(bikeData.getMonthDiscount());
                 bike.setCategory(category.get());
                 bike.setTagList(tags);
                 bike.setPlace(bikeData.getPlace());
+                bike.setCity(bikeData.getCity());
                 bike.setLat(bikeData.getLat());
                 bike.setLng(bikeData.getLng());
                 bike.setImages(images);
@@ -88,16 +89,12 @@ public class BikeService {
             return ResponseEntity.internalServerError().build();
         }
     }
-    public ResponseEntity<ResponseObject> getAllBike(String bikeName, int page, int size){
+    public ResponseEntity<ResponseObject> getAllBike(int page, int size){
         try{
             List<Bike> bikeList = new ArrayList<>();
             Page<Bike> pageBikes;
-            Pageable pageable = PageRequest.of(page, size);
-            if(bikeName == ""){
-                pageBikes = bikePaginationRepository.findAllByStatus(pageable,"show");
-            } else {
-                pageBikes = bikePaginationRepository.findByBikeNameContainingAndStatus(bikeName,pageable,"show");
-            }
+            Pageable pageable = PageRequest.of(page, size, Sort.by("createdOn").descending());
+            pageBikes = bikePaginationRepository.findAllByStatus(pageable,"show");
             bikeList = pageBikes.getContent();
             System.out.println(bikeList);
             return ResponseEntity.ok(ResponseObject.builder().statusCode(200).message("thành công").data(bikeList).build());
@@ -177,6 +174,7 @@ public class BikeService {
                 bike.get().setPlace(newBike.getPlace());
                 bike.get().setLat(newBike.getLat());
                 bike.get().setLng(newBike.getLng());
+                bike.get().setCity(newBike.getCity());
                 bike.get().setTagList(tags);
                 bike.get().setCategory(category.get());
                 bike.get().setDescription(newBike.getDescription());
@@ -194,6 +192,7 @@ public class BikeService {
 
     public ResponseEntity<ResponseObject> searchingBike(String place,String categoryName,List<Long> tagIds , Date startDate, Date endDate, int page, int size){
         List<Tag> tags = new ArrayList<>();
+        List<Bike> bikel = new ArrayList<>();
         Page<Bike> bikes;
         System.out.println("tagIds = " + tagIds);
         if(tagIds != null) {
@@ -210,33 +209,36 @@ public class BikeService {
         System.out.println("categoryName = " + categoryName);
         System.out.println("tagIds = " + tagIds);
         try {
-            List<Bike> bikeList = new ArrayList<>();
+            var searchData = SearchData.builder().build();
             Pageable pageable = PageRequest.of(page, size);
 
-//            Page<Bike> pageBikes;
-//            var bikes = bikePaginationRepository.findByPlaceContainingAndStatus(place,pageable,"show");
-//            var bikes = bikePaginationRepository
-//                    .findByPlaceContainingAndCategoryCategoryNameContainingAndStatusAndTagListIn(pageable,place,name,"show",tags);
+            Long totalBike;
+
             if(categoryName == null && tagIds == null ){
                 bikes = bikePaginationRepository.findByPlaceContainingAndStatus(place,pageable,"show");
+                totalBike = bikePaginationRepository.findByPlaceContainingAndStatus(place,PageRequest.of(page, 100),"show").getTotalElements();
             } else if (categoryName == null) {
                 bikes = bikePaginationRepository.findByPlaceContainingAndStatusAndTagListIn(pageable,place,"show",tags);
+                totalBike = bikePaginationRepository.findByPlaceContainingAndStatusAndTagListIn(PageRequest.of(page, 100),place,"show",tags).getTotalElements();
             } else if (tagIds == null) {
                 bikes = bikePaginationRepository.findByPlaceContainingAndCategoryCategoryNameContainingAndStatus(pageable,place,categoryName,"show");
+                totalBike  = bikePaginationRepository.findByPlaceContainingAndCategoryCategoryNameContainingAndStatus(PageRequest.of(page, 100),place,categoryName,"show").getTotalElements();
             }else {
                 bikes =
             bikePaginationRepository.findByPlaceContainingAndCategoryCategoryNameContainingAndStatusAndTagListIn(pageable,place,categoryName,"show",tags);
+                totalBike = bikePaginationRepository.findByPlaceContainingAndCategoryCategoryNameContainingAndStatusAndTagListIn(PageRequest.of(page, 100),place,categoryName,"show",tags).getTotalElements();
             }
 
-
+            searchData.setTotals(totalBike);
             for (Bike bike: bikes.getContent()
                  ) {
                 var books = bookRepository.findAllByBikeAndStartDateAndEndDate(bike,startDate,endDate);
                 if(books.isEmpty()){
-                    bikeList.add(bike);
+                    bikel.add(bike);
                 }
             }
-            return ResponseEntity.status(200).body(ResponseObject.builder().statusCode(200).data(bikeList).message("Successful").build());
+            searchData.setBikeList(bikel);
+            return ResponseEntity.status(200).body(ResponseObject.builder().statusCode(200).data(searchData).message("Successful").build());
         }catch (Exception e){
 //            throw new RuntimeException(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().message("Internal server error").build());
@@ -280,5 +282,43 @@ public class BikeService {
         var bikes = bikeRepository.findAllByOwner(user.get());
 
         return ResponseEntity.status(200).body(ResponseObject.builder().statusCode(200).data(bikes).message("Successful").build());
+    }
+
+    public ResponseEntity<ResponseObject> getTopPlace() {
+        try {
+            Pageable pageable = PageRequest.of(0, 5);
+            var pages = bikePaginationRepository.findTop5CommonCities(pageable);
+
+            return ResponseEntity.status(200).body(ResponseObject.builder().statusCode(200).data(pages.getContent()).message("Successful").build());
+        }
+        catch (Exception e) {
+            return ResponseEntity.status(500).body(ResponseObject.builder().statusCode(500).message("Failed" + e.getMessage()).build());
+        }
+    }
+
+    public ResponseEntity<ResponseObject> findSimilar(String color,String categoryName, List<Long> tagIds, String city,Long bikeId) {
+        List<Tag> tags = new ArrayList<>();
+        if(color == null) color = "";
+        if(categoryName == null) categoryName = "";
+        if(city == null) city = "";
+        if(tagIds != null) {
+            for (Long id: tagIds
+            ) {
+                var tag = tagRepository.findById(id);
+                tags.add(tag.get());
+            }
+        }
+        try {
+            List<Bike> bikes1 = bikeRepository.findByCategoryCategoryNameAndStatusAndTagListInAndColorAndCityAndBikeIdIsNot(categoryName,"show",tags,color,city,bikeId);
+            List<Bike> bikes2 = bikeRepository.findByCategoryCategoryNameAndStatusAndColorAndCityAndBikeIdIsNot(categoryName,"show",color,city,bikeId);
+            List<Bike> bikes3 = bikeRepository.findByCategoryCategoryNameAndStatusAndCityAndBikeIdIsNot(categoryName,"show",city,bikeId);
+
+            var similarBike = SlimilarData.builder().similar1(bikes1).similar2(bikes2).similar3(bikes3).build();
+
+            return ResponseEntity.status(200).body(ResponseObject.builder().message("success").data(similarBike).statusCode(200).build());
+        }
+        catch (Exception e){
+            return ResponseEntity.status(400).body(ResponseObject.builder().message("failed" + e.getMessage()).statusCode(400).build());
+        }
     }
 }

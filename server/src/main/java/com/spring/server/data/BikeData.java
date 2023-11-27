@@ -20,6 +20,7 @@ public class BikeData {
     private String bikeCode;
     private Long categoryId;
     private String place;
+    private String city;
 
     private Double lat;
     private Double lng;

@@ -30,7 +30,7 @@ const PaymentSuccess = () => {
                     <h3 className="md:text-2xl text-base text-gray-900 font-semibold text-center">Payment Done!</h3>
                     <p className="text-gray-600 my-2">Thank you for completing your secure online payment.</p>
                     <p> Have a great day! </p>
-                    <button className="py-10 text-center disabled:bg-indigo-600/50" disabled={loading}>
+                    <button className="py-10 text-center" disabled={loading}>
                         <Link
                             to={"/profile/myorder"}
                             className="px-12 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-3"

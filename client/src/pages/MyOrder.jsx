@@ -7,6 +7,8 @@ import Navigation from "../components/profile/Navigation";
 import Footer from "../components/Footer";
 import { getMyBooksAPI, paymentAPI, paymentDepositAPI, updateStatusBookAPI } from "../api/bookAPI";
 import { Skeleton } from "@mui/material";
+import { showToast } from "../store/toastSlice";
+
 const BookCard = lazy(() => import("../components/BookCard"));
 
 function MyOrder() {
@@ -56,12 +58,22 @@ function MyOrder() {
     };
     const paymentDeposit = async (bookId) => {
         const data = await paymentDepositAPI(dispatch, bookId);
-        await window.location.replace(data);
+        if (data) {
+            await window.location.replace(data);
+        } else {
+            dispatch(showToast({ message: "Lỗi thanh toán", error: "error" }));
+        }
     };
     const payment = async (bookId) => {
         const data = await paymentAPI(dispatch, bookId);
-        await window.location.replace(data);
+        console.log(data);
+        if (data) {
+            await window.location.replace(data);
+        } else {
+            dispatch(showToast({ message: "Lỗi thanh toán", error: "error" }));
+        }
     };
+
     return (
         <main className="container w-4/5 mx-auto ">
             <Header />

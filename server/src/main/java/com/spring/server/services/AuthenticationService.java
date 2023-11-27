@@ -192,11 +192,19 @@ public class AuthenticationService {
         var otp = verifyOTPRepository.findByOtp(verifyOtp);
 
         if(otp == null) {
-            throw new RuntimeException("invalidToken");
+            return ResponseEntity.status(404).body(ResponseObject
+                    .builder()
+                    .statusCode(404)
+                    .message("Otp không chính xác.")
+                    .build());
         }
         Calendar cal = Calendar.getInstance();
         if((otp.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0 ){
-            throw new RuntimeException("expired");
+            return ResponseEntity.status(401).body(ResponseObject
+                    .builder()
+                    .statusCode(401)
+                    .message("Otp hết hạn.")
+                    .build());
         }
         var user = userRepository.findByEmail(userEmail);
         user.get().setEnabled(true);

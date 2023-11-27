@@ -124,13 +124,25 @@ function Tab({ tab, setTab }) {
             <SwiperSlide>
                 <p
                     onClick={() => {
-                        setTab("Chờ bàn giao");
+                        setTab("Đã duyệt");
                     }}
                     className={` w-full text-center cursor-pointer font-semibold hover:text-primary py-2 
-                ${tab === "Chờ bàn giao" ? "bg-gray-400/50 text-gray-800" : " text-gray-500"}
+                ${tab === "Đã duyệt" ? "bg-gray-400/50 text-gray-800" : " text-gray-500"}
                 `}
                 >
                     Đã duyệt
+                </p>
+            </SwiperSlide>
+            <SwiperSlide>
+                <p
+                    onClick={() => {
+                        setTab("Đã cọc");
+                    }}
+                    className={` w-full text-center cursor-pointer font-semibold hover:text-primary py-2 
+                ${tab === "Đã cọc" ? "bg-gray-400/50 text-gray-800" : " text-gray-500"}
+                `}
+                >
+                    Đã cọc
                 </p>
             </SwiperSlide>
 
@@ -149,19 +161,6 @@ function Tab({ tab, setTab }) {
             <SwiperSlide>
                 <p
                     onClick={() => {
-                        setTab("Đã xác nhận");
-                    }}
-                    className={` w-full text-center cursor-pointer font-semibold hover:text-primary py-2 
-                ${tab === "Đã xác nhận" ? "bg-gray-400/50 text-gray-800" : " text-gray-500"}
-                `}
-                >
-                    Đã xác nhận
-                </p>
-            </SwiperSlide>
-
-            <SwiperSlide>
-                <p
-                    onClick={() => {
                         setTab("Đang kiểm kê");
                     }}
                     className={` w-full text-center py-2 cursor-pointer font-semibold hover:text-primary text-gray-500
@@ -169,6 +168,18 @@ function Tab({ tab, setTab }) {
                 `}
                 >
                     Đang kiểm kê
+                </p>
+            </SwiperSlide>
+            <SwiperSlide>
+                <p
+                    onClick={() => {
+                        setTab("Đã xác nhận");
+                    }}
+                    className={` w-full text-center cursor-pointer font-semibold hover:text-primary py-2 
+                ${tab === "Đã xác nhận" ? "bg-gray-400/50 text-gray-800" : " text-gray-500"}
+                `}
+                >
+                    Đã xác nhận
                 </p>
             </SwiperSlide>
 

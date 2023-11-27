@@ -3,6 +3,7 @@ package com.spring.server.models;
 import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.validator.constraints.Length;
@@ -32,6 +33,7 @@ public class Bike implements Serializable {
     private Double price;
     private Double weekDiscount;
     private Double monthDiscount;
+    @ColumnDefault(value = "show")
     private String status;
     private String color;
     @Column(unique = true)
@@ -40,6 +42,7 @@ public class Bike implements Serializable {
     @ManyToOne
     private Category category;
     private String place;
+    private String city;
     @JsonIgnoreProperties
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(

@@ -51,16 +51,18 @@ function Navigation({ activeName }) {
                         </Link>
                     </li>
                 )}
-                <li
-                    className={`hover:bg-white p-4 border-b font-medium text-lg ${
-                        activeName === "order" ? "text-primary" : ""
-                    }`}
-                >
-                    <Link className="flex items-center gap-4" to={"/profile/order"}>
-                        <ListAltIcon />
-                        <span>Quản lý đơn hàng</span>
-                    </Link>
-                </li>
+                {user.jobber && (
+                    <li
+                        className={`hover:bg-white p-4 border-b font-medium text-lg ${
+                            activeName === "order" ? "text-primary" : ""
+                        }`}
+                    >
+                        <Link className="flex items-center gap-4" to={"/profile/order"}>
+                            <ListAltIcon />
+                            <span>Quản lý đơn hàng</span>
+                        </Link>
+                    </li>
+                )}
                 <li
                     className={`hover:bg-white p-4 border-b font-medium text-lg ${
                         activeName === "myorder" ? "text-primary" : ""

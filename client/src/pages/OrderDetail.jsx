@@ -1,8 +1,10 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useMemo, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+
 import Header from "../components/Header";
 import Navigation from "../components/profile/Navigation";
 import Footer from "../components/Footer";
@@ -101,32 +103,37 @@ function OrderDetail() {
                 <Navigation activeName={activeName}></Navigation>
                 <div className="col-span-2 rounded-xl p-4">
                     <div>
-                        <h1 className=" text-3xl font-banner text-primary pb-5">Chi tiết đơn hàng</h1>
+                        <div className="flex items-center justify-between">
+                            <h1 className=" text-3xl font-banner text-primary pb-5">Chi tiết đơn hàng</h1>
+                            <Link to={-1}>
+                                <ArrowBackIosIcon />
+                                <span className="">Quay lại</span>
+                            </Link>
+                        </div>
                         {loading !== "fetch" && loading !== "start" ? (
                             <section className="flex flex-col gap-5">
                                 <div className="flex gap-2 items-center">
                                     <img
-                                        src={book.bike?.owner.avatar.url}
+                                        src={book?.renter.avatar.url}
                                         alt=""
                                         height={64}
                                         width={64}
                                         className="rounded-full"
                                     />
                                     <div>
-                                        <h3 className="text-lg font-semibold">{book.bike?.owner.fullName}</h3>
+                                        <h3 className="text-lg font-semibold">{book?.renter.fullName}</h3>
                                         <p className="font-semibold">
-                                            Điểm : <span>{book.bike?.owner.point}</span>{" "}
+                                            Địa chỉ : <span>{book?.renter.address}</span>{" "}
                                         </p>
                                     </div>
                                 </div>
                                 <div>
                                     <div>
                                         <p className="font-semibold">
-                                            Email : <span className="text-gray-400">{book.bike?.owner.email}</span>{" "}
+                                            Email : <span className="text-gray-400">{book?.renter.email}</span>{" "}
                                         </p>
                                         <p className="font-semibold">
-                                            Số điện thoại :{" "}
-                                            <span className="text-gray-400">{book.bike?.owner.phone}</span>{" "}
+                                            Số điện thoại : <span className="text-gray-400">{book?.renter.phone}</span>{" "}
                                         </p>
                                     </div>
                                 </div>

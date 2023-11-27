@@ -68,14 +68,14 @@ public class UserService {
             }
 
             curUser.get().setAddress(data.getAddress());
-            curUser.get().setAccountNumber(data.getAccountNumber());
+            curUser.get().setCmnd(data.getCmnd());
             curUser.get().setPhone(data.getPhone());
             userRepository.save(curUser.get());
             System.out.println(curUser);
             return ResponseEntity.status(200).body(
                     ResponseObject.builder()
                             .statusCode(200)
-                            .message("upload info successful")
+                            .message("Cập nhật thành công")
                             .data(curUser)
                             .build()
             );
@@ -102,17 +102,17 @@ public class UserService {
                                 .build()
                 );
             }
-            if(data.getAccountNumber().isEmpty() || data.getAddress().isEmpty() || data.getPhone().isEmpty()) {
+            if(data.getCmnd().isEmpty() || data.getAddress().isEmpty() || data.getPhone().isEmpty()) {
                 return ResponseEntity.status(401).body(
                         ResponseObject.builder()
                                 .statusCode(401)
-                                .message("User not permisstion")
+                                .message("Vui lòng điền hết thông tin")
                                 .data("")
                                 .build()
                 );
             }
             curUser.get().setAddress(data.getAddress());
-            curUser.get().setAccountNumber(data.getAccountNumber());
+            curUser.get().setCmnd(data.getCmnd());
             curUser.get().setPhone(data.getPhone());
             curUser.get().setJobber(true);
             curUser.get().setPoint(100);
@@ -121,7 +121,7 @@ public class UserService {
             return ResponseEntity.status(200).body(
                     ResponseObject.builder()
                             .statusCode(200)
-                            .message("register become owner successful")
+                            .message("Bạn đã trở thành chủ xe")
                             .data(curUser)
                             .build()
             );

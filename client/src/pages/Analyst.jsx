@@ -69,7 +69,7 @@ function Analyst() {
                             <span className="text-3xl font-bold text-primary">{myBikes && myBikes.length}</span>
                         </div>
                         <div className="flex flex-col gap-1 p-4 bg-gray-100 shadow-lg rounded-lg">
-                            <h2 className="text-lg font-semibold">Số lượng chiến xe</h2>
+                            <h2 className="text-lg font-semibold">Số lượng chuyến xe</h2>
                             <span className="text-3xl font-bold text-primary">{bookMyBike && bookMyBike.length}</span>
                         </div>
                         <div className="flex flex-col gap-1 p-4 bg-gray-100 shadow-lg rounded-lg">

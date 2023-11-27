@@ -35,7 +35,7 @@ function BikeRegister() {
         validationSchema: Yup.object({
             bikeCode: Yup.string().required("Biển số xe bắt buộc"),
             bikeName: Yup.string().required("Tên xe là bặt buộc"),
-            description: Yup.string().max(255, "Mô tả không quá 255 kí tự"),
+            description: Yup.string().max(500, "Mô tả không quá 500 kí tự"),
             categoryId: Yup.number()
                 .required()
                 .oneOf([1, 2, 3], "Danh mục phải là một trong các giá trị sau: [Xe máy,Xe ô tô,Xe đạp]"),
@@ -48,8 +48,9 @@ function BikeRegister() {
 
     const formikInfoRental = useFormik({
         initialValues: {
-            price: 120,
+            price: 120000,
             place: "",
+            city: "",
             lat: 0,
             lng: 0,
             weekDiscount: 0,

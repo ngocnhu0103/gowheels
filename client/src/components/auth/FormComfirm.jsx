@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable react/no-unescaped-entities */
 import { useDispatch } from "react-redux";
 import { reSendOtpAPI, verifyOtpAPI } from "../../api/authAPI";
 import { useEffect, useState } from "react";

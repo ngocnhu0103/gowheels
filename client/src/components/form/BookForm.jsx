@@ -1,22 +1,27 @@
-import React, { useEffect, useState } from "react";
-import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
-import { Button } from "@mui/material";
+/* eslint-disable react/prop-types */
 import BoltIcon from "@mui/icons-material/Bolt";
-import Calendar from "../Calendar";
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
+import { Button, Dialog, DialogActions, DialogTitle } from "@mui/material";
 import moment from "moment";
-import { formartVnd } from "../../utils/format";
-import { bookingAPI } from "../../api/bookAPI";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { bookingAPI } from "../../api/bookAPI";
 import { showToast } from "../../store/toastSlice";
-function BookForm({ price, place, bikeId }) {
+import { formartDiscountMoney, formartVnd } from "../../utils/format";
+import Calendar from "../Calendar";
+import { Link } from "react-router-dom";
+function BookForm({ price, place, bike }) {
+    const [open, setOpen] = useState(false);
     const user = useSelector((state) => state.auth.user);
     const [startDate, setStartDate] = useState(new Date());
     const [endDate, setEndDate] = useState(new Date());
     const [showCalendar, setShowCalendar] = useState(false);
     const [totalAmount, setTotalAmount] = useState();
+    const [subTotal, setSubTotal] = useState();
     const [space, setSpace] = useState(1);
     const dispatch = useDispatch();
     const saveBookData = () => {
+        booking();
         setShowCalendar(false);
     };
     const [timeSelected, setTimeSelected] = useState({
@@ -32,7 +37,7 @@ function BookForm({ price, place, bikeId }) {
     };
     const booking = async () => {
         const book = {
-            bikeId: bikeId,
+            bikeId: bike.bikeId,
             paymentMethod: "Thanh toán thẻ",
             startDate: startDate,
             endDate: endDate,
@@ -41,11 +46,27 @@ function BookForm({ price, place, bikeId }) {
         if (!user) {
             return dispatch(showToast({ message: "Bạn chưa đăng nhập", type: "error" }));
         }
+        if (user.id === bike?.owner.id) {
+            return dispatch(showToast({ message: "Không thể tự đặt xe của mình", type: "error" }));
+        }
+        if (!user.enabled) {
+            dispatch(showToast({ message: "Bạn chưa xác thực email", type: "error" }));
+            setOpen(true);
+            return;
+        }
         await bookingAPI(dispatch, book);
     };
     useEffect(() => {
         let total = space * price;
-        total = total + total * 0.05;
+        if (space >= 7) {
+            if (space >= 30) {
+                total = total - total * (bike.monthDiscount / 100);
+            } else {
+                total = total - total * (bike.weekDiscount / 100);
+            }
+        }
+        setSubTotal(total * 0.05);
+        total = total + subTotal;
         setTotalAmount(total);
     }, [space, price]);
 
@@ -78,7 +99,36 @@ function BookForm({ price, place, bikeId }) {
                         </div>
                     </div>
                 </div>
-                <div className={`${showCalendar ? "block" : "hidden"} absolute top-full right-full w-[530px]`}>
+                <div
+                    className={`${
+                        showCalendar ? "block" : "hidden"
+                    } absolute top-full right-full min-w-[560px] bg-gray-200/60 p-4 rounded-lg z-[999]`}
+                >
+                    <div className="my-4 flex justify-between bg-white p-5 rounded-xl drop-shadow-xl">
+                        <div className="flex flex-col gap-2">
+                            <span>Đơn giá thuê: {formartVnd(price)}</span>
+                            <span>Số ngày thuê: {space} ngày</span>
+                            <span>Phí dịch vụ: {formartVnd(subTotal)}</span>
+                            <span>
+                                Số tiền giảm:{" "}
+                                {formartVnd(formartDiscountMoney(space, price, bike.weekDiscount, bike.monthDiscount))}
+                            </span>
+                            <div className="w-full h-0.5 bg-gray-500"></div>
+                            <span>Thành tiền: {formartVnd(totalAmount)}</span>
+                        </div>
+                        <div className="flex flex-col gap-2 items-end">
+                            <span className="text-xs text-green-600">
+                                Thuê từ 7 ngày để nhận giảm: {bike.weekDiscount}%
+                            </span>
+                            <span className="text-xs text-green-600">
+                                Thuê từ 30 ngày để nhận giảm: {bike.monthDiscount}%
+                            </span>
+                        </div>
+                    </div>
+                    <div className="my-4 bg-white p-5 rounded-xl drop-shadow-xl">
+                        <p className="text-lg font-semibold">Địa điểm giao xe</p>
+                        <p>{place}</p>
+                    </div>
                     <Calendar
                         startDate={startDate}
                         endDate={endDate}
@@ -87,6 +137,9 @@ function BookForm({ price, place, bikeId }) {
                         setTimeSelected={setTimeSelected}
                         saveCalendar={saveBookData}
                         setShowCalendar={setShowCalendar}
+                        name="Đặt xe"
+                        show
+                        closeCalendar={() => setShowCalendar(false)}
                     />
                 </div>
             </div>
@@ -112,7 +165,7 @@ function BookForm({ price, place, bikeId }) {
                         <p>Phí dịch vụ</p>
                         <HelpOutlineIcon fontSize="small" />
                     </div>
-                    <span className="font-bold">{formartVnd(price * 0.05 * space)}/ ngày</span>
+                    <span className="font-bold">{formartVnd(subTotal)}</span>
                 </div>
             </div>
             <div className="flex items-center justify-between py-2 border-b border-gray-200">
@@ -120,7 +173,7 @@ function BookForm({ price, place, bikeId }) {
                     <p>Tổng phí thuê xe</p>
                 </div>
                 <span className="font-bold">
-                    {formartVnd(totalAmount)} x {space} ngày
+                    {formartVnd(totalAmount)} / {space} ngày
                 </span>
             </div>
             <div className="flex items-center justify-between py-2">
@@ -129,9 +182,32 @@ function BookForm({ price, place, bikeId }) {
                 </div>
                 <span className="font-bold">{formartVnd(totalAmount)}</span>
             </div>
-            <Button onClick={booking} startIcon={<BoltIcon />} variant="contained" size="large" fullWidth>
+
+            <Button
+                onClick={() => setShowCalendar(true)}
+                startIcon={<BoltIcon />}
+                variant="contained"
+                size="large"
+                fullWidth
+            >
                 Chọn Thuê
             </Button>
+
+            <Dialog
+                open={open}
+                onClose={() => setOpen(false)}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">{"Bạn có muốn xác thực email không?"}</DialogTitle>
+
+                <DialogActions>
+                    <Button onClick={() => setOpen(false)}>Ở lại</Button>
+                    <Link to={"/profile/update"}>
+                        <Button autoFocus>Xác thực</Button>
+                    </Link>
+                </DialogActions>
+            </Dialog>
         </form>
     );
 }

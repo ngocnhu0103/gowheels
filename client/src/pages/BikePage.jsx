@@ -1,34 +1,33 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useSearchParams } from "react-router-dom";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
-import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
-import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import ArrowCircleRightOutlinedIcon from "@mui/icons-material/ArrowCircleRightOutlined";
-import RestartAltOutlinedIcon from "@mui/icons-material/RestartAltOutlined";
-import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import MapIcon from "@mui/icons-material/Map";
+import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
+import RestartAltOutlinedIcon from "@mui/icons-material/RestartAltOutlined";
 import { useEffect, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import Card from "../components/Card";
+import Footer from "../components/Footer";
+import Header from "../components/Header";
 // import TravelExploreIcon from "@mui/icons-material/TravelExplore";
-import { Button, FormControl, InputLabel, MenuItem, Modal, Select } from "@mui/material";
+import { Button, FormControl, InputLabel, MenuItem, Modal, Pagination, Select } from "@mui/material";
 
-import "swiper/css";
-import Map from "../components/Map";
-import { useDispatch, useSelector } from "react-redux";
-import { getAllBikeAPI, searchBikesAPI } from "../api/bikeAPI";
-import { Suspense } from "react";
-import LoadingCard from "../components/loading/LoadingCard";
-import Calendar from "../components/Calendar";
 import moment from "moment";
+import { Suspense } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import "swiper/css";
+import { searchBikesAPI } from "../api/bikeAPI";
 import { getTagsAPI } from "../api/tagAPI";
+import Calendar from "../components/Calendar";
+import Map from "../components/Map";
+import LoadingCard from "../components/loading/LoadingCard";
 import { checkActived } from "../utils/checkSelectedTag";
 
 function BikePage() {
     let [searchParams, setSearchParams] = useSearchParams();
     const timer = useRef(null);
-    const bikes = useSelector((state) => state.bike.bikeList);
+    const { bikeList, totals } = useSelector((state) => state.bike);
     const tags = useSelector((state) => state.tag.tags);
     const dispatch = useDispatch();
     const [place, setPlace] = useState(() => {
@@ -87,9 +86,9 @@ function BikePage() {
         page: 0,
         size: 12,
     });
-    const getAllBike = async (dispatch, filter) => {
-        await getAllBikeAPI(dispatch, filter);
-    };
+    // const getAllBike = async (dispatch, filter) => {
+    //     await getAllBikeAPI(dispatch, filter);
+    // };
     const searchBike = async (params) => {
         await searchBikesAPI(dispatch, params);
     };
@@ -114,17 +113,18 @@ function BikePage() {
             minutes: Number(new Date().getMinutes() >= 30 ? 0 : 30),
         });
     };
+    // useEffect(() => {
+    //     getAllBike(dispatch, filter);
+
+    // }, []);
     useEffect(() => {
-        getAllBike(dispatch, filter);
         if (tags) {
             fetchTags();
         }
-    }, []);
-    useEffect(() => {
         if (timer.current) clearTimeout(timer.current);
         timer.current = setTimeout(() => {
-            console.log(selectedTags);
             searchBike({
+                ...filter,
                 place,
                 categoryName,
                 startDate: Date(startDate),
@@ -132,10 +132,10 @@ function BikePage() {
                 tagIds: selectedTags.length > 0 ? selectedTags.join(",") : selectedTags,
             });
         }, 1000);
-    }, [place, startDate, endDate, categoryName, selectedTags]);
+    }, [place, startDate, endDate, categoryName, selectedTags, filter]);
 
     return (
-        <main className="container w-4/5 mx-auto relative" onClick={() => setShowCalendar(false)}>
+        <main className="container w-4/5 max-md:w-11/12 mx-auto relative" onClick={() => setShowCalendar(false)}>
             <div className="fixed left-0 right-0 top-0 bg-white shadow-xl">
                 <div
                     className={`container w-4/5 mx-auto duration-300    ${
@@ -145,12 +145,12 @@ function BikePage() {
                     <Header />
                 </div>
 
-                <div className="h-36 flex flex-col justify-center">
-                    <div className="flex items-center justify-center gap-20">
-                        <div>
+                <div className="h-36 flex flex-col justify-center max-md:h-auto max-md:py-4">
+                    <div className="flex items-center justify-center gap-20 max-md:flex-col max-md:gap-5 max-md:items-start">
+                        <div className="max-md:w-full max-md:flex max-md:items-center max-md:px-4">
                             <PlaceOutlinedIcon />
                             <input
-                                className="ml-4 p-2 outline-none bg-gray-100 rounded-xl text-gray-600"
+                                className="flex-1 ml-4 p-2 outline-none bg-gray-100 rounded-xl text-gray-600"
                                 value={place}
                                 onChange={(e) => {
                                     setPlace(e.target.value);
@@ -158,13 +158,13 @@ function BikePage() {
                             />
                         </div>
                         <div
-                            className="cursor-pointer"
+                            className="cursor-pointer max-md:w-full max-md:px-4"
                             onClick={(e) => {
                                 e.stopPropagation();
                                 setShowCalendar(true);
                             }}
                         >
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-2 ">
                                 <CalendarMonthIcon />
                                 <div className="flex items-center gap-5">
                                     <div className="flex items-center gap-2">
@@ -186,7 +186,7 @@ function BikePage() {
                                     </div>
                                 </div>
                             </div>
-                            <div className={`${showCalendar ? "block" : "hidden"} absolute top-full   w-[530px]`}>
+                            <div className={`${showCalendar ? "block" : "hidden"} absolute top-full w-[530px]`}>
                                 <Calendar
                                     startDate={startDate}
                                     endDate={endDate}
@@ -216,16 +216,26 @@ function BikePage() {
                             </Select>
                         </FormControl>
                     </div>
-                    <div className="flex items-center justify-center gap-5 mt-5">
+                    <div className="w-3/4  mx-auto flex items-center justify-center gap-5 mt-5">
                         <div className="w-1/10" onClick={resetFiltter}>
                             <p className="w-8 h-8 flex items-center justify-center border border-gray-600 text-gray-600 rounded-full cursor-pointer">
                                 <RestartAltOutlinedIcon />
                             </p>
                         </div>
-                        <div className="w-4/5">
+                        <div className="w-4/5 max-md:w-full">
                             <Swiper
                                 spaceBetween={10}
-                                slidesPerView={5}
+                                slidesPerView={2}
+                                breakpoints={{
+                                    // 576: {
+                                    //     // width: 576,
+                                    //     slidesPerView: 3,
+                                    // },
+                                    768: {
+                                        // width: 768,
+                                        slidesPerView: 5,
+                                    },
+                                }}
                                 navigation
                                 onSwiper={(swiper) => console.log(swiper)}
                                 onSlideChange={() => console.log("slide change")}
@@ -247,7 +257,7 @@ function BikePage() {
                                                   `}
                                                   >
                                                       <RestartAltOutlinedIcon />
-                                                      <span>{item.tagName}</span>
+                                                      <span className="whitespace-nowrap">{item.tagName}</span>
                                                   </div>
                                               </SwiperSlide>
                                           );
@@ -255,24 +265,30 @@ function BikePage() {
                                     : null}
                             </Swiper>
                         </div>
-
-                        <div className="w-1/10 cursor-pointer">
-                            <FilterAltOutlinedIcon />
-                            <span>Bo loc</span>
-                        </div>
                     </div>
                 </div>
             </div>
 
-            <ul className="grid grid-cols-4 gap-5 mt-60">
+            <ul className="grid grid-cols-4 gap-5 mt-60 max-md:grid-cols-1">
                 <Suspense fallback={<LoadingCard />}>
-                    {bikes && bikes.length > 0
-                        ? bikes.map((bike) => {
+                    {bikeList && bikeList.length > 0
+                        ? bikeList.map((bike) => {
                               return <Card bike={bike} key={bike.bikeId} />;
                           })
                         : null}
                 </Suspense>
             </ul>
+            <div className="w-full mt-5 flex justify-center">
+                <Pagination
+                    count={Math.ceil(totals / 12)}
+                    variant="outlined"
+                    shape="rounded"
+                    page={filter.page + 1}
+                    onChange={(event, value) => {
+                        setFilter({ ...filter, page: value - 1 });
+                    }}
+                />
+            </div>
             <Footer />
             <Modal
                 open={isMap}
@@ -283,12 +299,12 @@ function BikePage() {
                 aria-describedby="parent-modal-description"
             >
                 <div className="mx-auto mt-10 w-10/12 h-[85vh] rounded-xl overflow-hidden">
-                    {bikes && bikes.length > 0 && (
-                        <Map zoomLevel={20} bikes={bikes} currentLocation={currentLocation} />
+                    {bikeList && bikeList.length > 0 && (
+                        <Map zoomLevel={20} bikes={bikeList} currentLocation={currentLocation} />
                     )}
                 </div>
             </Modal>
-            <div className="fixed bottom-5 left-1/2 -translate-x-1/2">
+            <div className="fixed bottom-5 max-md:bottom-10 left-1/2 -translate-x-1/2">
                 <Button
                     variant="contained"
                     endIcon={<MapIcon />}

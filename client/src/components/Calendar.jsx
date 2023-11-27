@@ -1,7 +1,18 @@
+/* eslint-disable react/prop-types */
 import { Button } from "@mui/material";
 import DatePicker from "react-datepicker";
 
-function Calendar({ saveCalendar, startDate, endDate, handleChange, timeSelected, setTimeSelected }) {
+function Calendar({
+    show = false,
+    closeCalendar,
+    saveCalendar,
+    startDate,
+    endDate,
+    handleChange,
+    timeSelected,
+    setTimeSelected,
+    name = "Áp dụng",
+}) {
     const hours = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
 
     return (
@@ -48,9 +59,15 @@ function Calendar({ saveCalendar, startDate, endDate, handleChange, timeSelected
                     <option value="30">30</option>
                 </select>
             </div>
-            <div className="mt-4 flex justify-end">
+            <div className="mt-4 flex justify-end gap-4">
+                {show && (
+                    <Button variant="outlined" size="medium" onClick={closeCalendar}>
+                        Đóng
+                    </Button>
+                )}
+
                 <Button variant="contained" size="medium" onClick={saveCalendar}>
-                    Áp dụng
+                    {name}
                 </Button>
             </div>
         </div>
