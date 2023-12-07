@@ -68,7 +68,7 @@ function BookForm({ price, place, bike }) {
         setSubTotal(total * 0.05);
         total = total + subTotal;
         setTotalAmount(total);
-    }, [space, price]);
+    }, [space, price, subTotal, bike.monthDiscount, bike.weekDiscount]);
 
     return (
         <form className="p-4 bg-primary/5 rounded-xl border border-gray-200">
@@ -102,7 +102,7 @@ function BookForm({ price, place, bike }) {
                 <div
                     className={`${
                         showCalendar ? "block" : "hidden"
-                    } absolute top-full right-full min-w-[560px] bg-gray-200/60 p-4 rounded-lg z-[999]`}
+                    } absolute top-full right-full min-w-[560px] max-md:min-w-full max-md:right-0 bg-gray-200/60 p-4 rounded-lg z-[999]`}
                 >
                     <div className="my-4 flex justify-between bg-white p-5 rounded-xl drop-shadow-xl">
                         <div className="flex flex-col gap-2">

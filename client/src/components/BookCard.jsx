@@ -206,7 +206,7 @@ function BookCard({ book, user, updateStatus, paymentDeposit, payment }) {
         <li className="p-4 bg-white shadow-xl rounded-xl">
             <div className="flex justify-between h-12 border-b border-gray-300 items-center">
                 <div className="flex gap-2 items-center">
-                    <Link to={"/profile/${id nguoi dung}"}>
+                    <Link to={`/profile/${book.bike?.owner.id}`}>
                         <span className="font-semibold hover:text-black/50 ">{book.bike?.owner?.email}</span>
                     </Link>
                     <span className="bg-blue-100 text-blue-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-800">

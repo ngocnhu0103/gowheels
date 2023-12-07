@@ -36,21 +36,21 @@ const Row = ({ row }) => {
             </TableCell>
             <TableCell align="right">{row.reporter.email}</TableCell>
             <TableCell align="right">{row.reportedPerson.email}</TableCell>
-            <TableCell align="right">{row.content}</TableCell>
+            <TableCell align="right">
+                <span className="w-[200px] line-clamp-1 ">{row.content}</span>
+            </TableCell>
             <TableCell align="right">{RenderStatusReport(row.status)}</TableCell>
             <TableCell align="right">{moment(row.timeReport).fromNow()}</TableCell>
             <TableCell align="center">
-                {row.status === "waiting" && (
-                    <span
-                        className="cursor-pointer"
-                        title="Chi tiết"
-                        onClick={() => {
-                            setIsModal(true);
-                        }}
-                    >
-                        <OpenWithIcon color="primary" />
-                    </span>
-                )}
+                <span
+                    className="cursor-pointer"
+                    title="Chi tiết"
+                    onClick={() => {
+                        setIsModal(true);
+                    }}
+                >
+                    <OpenWithIcon color="primary" />
+                </span>
             </TableCell>
             <Modal
                 open={isModal}
@@ -102,22 +102,26 @@ const Row = ({ row }) => {
                             </section>
                         )}
                         <div className="flex items-center gap-5">
-                            <Button
-                                variant="contained"
-                                onClick={() => resolveReport("accept", row.id)}
-                                disabled={loading === "resolve"}
-                            >
-                                {loading === "resolve" ? <CircularProgress color="inherit" /> : "Đồng ý"}
-                            </Button>
-                            <Button
-                                variant="outlined"
-                                onClick={() => resolveReport("reject", row.id)}
-                                disabled={loading === "resolve"}
-                            >
-                                {loading === "resolve" ? <CircularProgress color="inherit" /> : "Từ chối"}
-                            </Button>
+                            {row.status === "waiting" && (
+                                <>
+                                    <Button
+                                        variant="contained"
+                                        onClick={() => resolveReport("accept", row.id)}
+                                        disabled={loading === "resolve"}
+                                    >
+                                        {loading === "resolve" ? <CircularProgress color="inherit" /> : "Đồng ý"}
+                                    </Button>
+                                    <Button
+                                        variant="outlined"
+                                        onClick={() => resolveReport("reject", row.id)}
+                                        disabled={loading === "resolve"}
+                                    >
+                                        {loading === "resolve" ? <CircularProgress color="inherit" /> : "Từ chối"}
+                                    </Button>
+                                </>
+                            )}
                             <Button variant="text" onClick={() => setIsModal(false)}>
-                                Hủy
+                                Đóng
                             </Button>
                         </div>
                     </div>
@@ -130,52 +134,95 @@ const Row = ({ row }) => {
 const ReportManagement = () => {
     const { reports } = useSelector((state) => state.report);
     const dispatch = useDispatch();
+    const [fillter, setFillter] = useState({
+        status: "",
+        sorted: "DESC",
+    });
     useEffect(() => {
-        const fetchAllReport = async () => {
-            await getReportsAPI(dispatch);
+        const fetchAllReport = async (params) => {
+            await getReportsAPI(dispatch, params);
         };
-        fetchAllReport();
-    }, []);
-
+        fetchAllReport(fillter);
+        console.log(reports);
+    }, [fillter]);
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFillter({
+            ...fillter,
+            [name]: value,
+        });
+    };
     return (
-        <TableContainer component={Paper} className="mt-20">
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                <TableHead>
-                    <TableRow>
-                        <TableCell>ID</TableCell>
-                        <TableCell align="right">Tác giả</TableCell>
-                        <TableCell align="right">Người bị báo cáo</TableCell>
-                        <TableCell align="right">Nội dung</TableCell>
-                        <TableCell align="right">Trạng thái</TableCell>
-                        <TableCell align="right">Thời gian</TableCell>
-                        <TableCell align="right">Hành động</TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {reports && reports.length > 0 ? (
-                        reports.map((row) => <Row key={row.id} row={row} />)
-                    ) : (
-                        <>
-                            <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
-                                <TableCell colSpan={7}>
-                                    <Skeleton animation="wave" />
-                                </TableCell>
-                            </TableRow>
-                            <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
-                                <TableCell colSpan={7}>
-                                    <Skeleton animation="wave" />
-                                </TableCell>
-                            </TableRow>
-                            <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
-                                <TableCell colSpan={7}>
-                                    <Skeleton animation="wave" />
-                                </TableCell>
-                            </TableRow>
-                        </>
-                    )}
-                </TableBody>
-            </Table>
-        </TableContainer>
+        <section className="flex flex-col mt-10">
+            <div className="flex justify-end">
+                <div className="flex gap-4">
+                    <select
+                        value={fillter.status}
+                        name="status"
+                        onChange={handleChange}
+                        className="px-2 rounded-md py-1 bg-gray-300 "
+                    >
+                        <option value="" disabled>
+                            Lọc theo (trạng thái)
+                        </option>
+                        <option value="">Tất cả</option>
+                        <option value="waiting">Đang chờ</option>
+                        <option value="accept">Chấp nhận</option>
+                        <option value="reject">Từ chối</option>
+                    </select>
+                    <select
+                        value={fillter.sorted}
+                        name="sorted"
+                        onChange={handleChange}
+                        className="px-2 rounded-md py-1 bg-gray-300 "
+                    >
+                        <option value="" disabled>
+                            Sắp xếp (Thời gian đăng)
+                        </option>
+                        <option value="DESC">Mới nhất</option>
+                        <option value="ASC">Củ nhất</option>
+                    </select>
+                </div>
+            </div>
+            <TableContainer component={Paper} className="mt-5">
+                <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>ID</TableCell>
+                            <TableCell align="right">Tác giả</TableCell>
+                            <TableCell align="right">Người bị báo cáo</TableCell>
+                            <TableCell align="right">Nội dung</TableCell>
+                            <TableCell align="right">Trạng thái</TableCell>
+                            <TableCell align="right">Thời gian</TableCell>
+                            <TableCell align="right">Hành động</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {reports && reports.length > 0 ? (
+                            reports.map((row) => <Row key={row.id} row={row} />)
+                        ) : (
+                            <>
+                                <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
+                                    <TableCell colSpan={7}>
+                                        <Skeleton animation="wave" />
+                                    </TableCell>
+                                </TableRow>
+                                <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
+                                    <TableCell colSpan={7}>
+                                        <Skeleton animation="wave" />
+                                    </TableCell>
+                                </TableRow>
+                                <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
+                                    <TableCell colSpan={7}>
+                                        <Skeleton animation="wave" />
+                                    </TableCell>
+                                </TableRow>
+                            </>
+                        )}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+        </section>
     );
 };
 

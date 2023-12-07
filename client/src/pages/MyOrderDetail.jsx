@@ -53,7 +53,7 @@ function MyOrderDetail() {
         }
     };
 
-    const [subTotal, setSubtotal] = useState(0);
+    // const [subTotal, setSubtotal] = useState(0);
     const [diposit, setDiposit] = useState(0);
     useEffect(() => {
         console.log(bookId, "uff");
@@ -92,6 +92,7 @@ function MyOrderDetail() {
         setContent("");
         setStartNumber(0);
         setOpenReview(false);
+        navigate("/");
     };
     // comment end
 

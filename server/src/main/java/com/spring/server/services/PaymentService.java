@@ -1,8 +1,6 @@
 package com.spring.server.services;
 
-import com.spring.server.data.PaymentData;
 import com.spring.server.data.ResponseObject;
-import com.spring.server.models.Surcharge;
 import com.spring.server.repositories.BookRepository;
 import com.spring.server.repositories.UserRepository;
 import com.stripe.Stripe;
@@ -10,10 +8,8 @@ import com.stripe.exception.StripeException;
 import com.stripe.model.Customer;
 import com.stripe.model.CustomerSearchResult;
 import com.stripe.model.checkout.Session;
-import com.stripe.net.RequestOptions;
 import com.stripe.param.CustomerCreateParams;
 import com.stripe.param.CustomerSearchParams;
-import com.stripe.param.SubscriptionItemCreateParams;
 import com.stripe.param.checkout.SessionCreateParams;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
@@ -80,15 +76,7 @@ public class PaymentService {
                                 .build()
                 ).setCurrency("vnd").setUnitAmountDecimal(BigDecimal.valueOf(unitAmount)).build()).build()
         );
-        for(Surcharge surcharge : book.get().getSurchargeList()){
-            paramsBuilder.addLineItem(SessionCreateParams.LineItem.builder()
-                    .setQuantity(1L).setPriceData(SessionCreateParams.LineItem.PriceData.builder().setProductData(
-                            SessionCreateParams.LineItem.PriceData.ProductData.builder()
-                                    .putMetadata("surcharge", surcharge.getId().toString()).setName(surcharge.getName())
-                                    .build()
-                    ).setCurrency("vnd").setUnitAmountDecimal(BigDecimal.valueOf(Math.round(surcharge.getPrice()))).build()).build()
-            );
-        }
+
 
         Session session = Session.create(paramsBuilder.build());
         System.out.println(session);
@@ -120,7 +108,7 @@ public class PaymentService {
         var unitAmount = Math.round(
                 (book.get().getTotalPrice() * 0.1)
         );
-
+        System.out.println("unitAmount = " + unitAmount);
         SessionCreateParams.Builder paramsBuilder = SessionCreateParams.builder()
                 .setMode(SessionCreateParams.Mode.PAYMENT)
                 .setCustomer(customer.getId())

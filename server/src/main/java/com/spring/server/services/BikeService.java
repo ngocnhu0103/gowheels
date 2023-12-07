@@ -149,41 +149,41 @@ public class BikeService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().message("Internal server error").build());
         }
     }
-    public ResponseEntity<ResponseObject> editBikeById(Long Id, BikeData newBike) {
+    public ResponseEntity<ResponseObject> editBikeById(Long Id, BikeEditData bikeEditData) {
+        System.out.println("Id = " + Id);
+        System.out.println("bikeEditData = " + bikeEditData);
         try {
             var bike = bikeRepository.findById(Id);
 
             if (bike.isPresent()) {
-                var category = categoryRepository.findById(newBike.getCategoryId());
                 List<Tag> tags = new ArrayList<>();
-                for(Long t : newBike.getTagList()){
+                for(Long t : bikeEditData.getTagList()){
                     var tag = tagRepository.findById(t).get();
                     tags.add(tag);
                 }
                 List<Image> images = new ArrayList<>();
-                for(String t : newBike.getImages()){
+                for(String t : bikeEditData.getNewImages()){
                     Image img = new Image();
                     img.setUrl(t);
 
                     images.add(img);
 
                 }
-                bike.get().setBikeName(newBike.getBikeName());
-                bike.get().setBikeCode(newBike.getBikeCode());
-                bike.get().setStatus(newBike.getStatus());
-                bike.get().setPlace(newBike.getPlace());
-                bike.get().setLat(newBike.getLat());
-                bike.get().setLng(newBike.getLng());
-                bike.get().setCity(newBike.getCity());
+
+                bikeEditData.getImageList().addAll(images);
+                bike.get().setPlace(bikeEditData.getPlace());
+                bike.get().setPrice(bikeEditData.getPrice());
+                bike.get().setLat(bikeEditData.getLat());
+                bike.get().setLng(bikeEditData.getLng());
+                bike.get().setCity(bikeEditData.getCity());
                 bike.get().setTagList(tags);
-                bike.get().setCategory(category.get());
-                bike.get().setDescription(newBike.getDescription());
-                bike.get().setColor(newBike.getColor());
-                bike.get().setImages(images);
+                bike.get().setDescription(bikeEditData.getDescription());
+                bike.get().setColor(bikeEditData.getColor());
+                bike.get().setImages(bikeEditData.getImageList());
                 bikeRepository.save(bike.get());
-                return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().statusCode(200).message("Update bike thành công").data(bike.get()).build());
+                return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().statusCode(200).message("Cập nhật thành công").data(bike.get()).build());
             }
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResponseObject.builder().message("Not found").build());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResponseObject.builder().message("Xe không tồn tài").build());
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().message("Internal server error").build());

@@ -40,14 +40,14 @@ function Header() {
     };
 
     return (
-        <header className="h-20 flex items-center justify-between ">
+        <header className="h-20 flex items-center justify-between">
             <Link to={"/"} className="">
                 <img src={srcBg} alt="logo" />
             </Link>
 
-            <div className="relative">
+            <div className="relative max-md:w-full max-md:flex max-md:justify-end">
                 <div
-                    className="hidden cursor-pointer max-md:block"
+                    className="hidden cursor-pointer max-md:block max-md:ml-auto "
                     onClick={() => {
                         setShowMenu(!showMenu);
                     }}
@@ -55,11 +55,11 @@ function Header() {
                     <MenuIcon />
                 </div>
                 <div
-                    className={`h-full flex items-center duration-300 gap-8 max-md:absolute max-md:w-screen max-md:h-screen max-md:z-[999] max-md:flex-col
+                    className={`h-full flex items-center duration-300 gap-8 max-md:absolute max-md:z-[999] max-md:flex-col
                 ${
                     showMenu
-                        ? " max-md:top-[calc(100%+8px)] max-md:p-4 max-md:right-[calc(100%-52px)] max-md:bg-white max-md:shadow-lg"
-                        : " max-md:-right-[10000%] max-md:top-[calc(100%+8px)]"
+                        ? " max-md:top-[calc(100%+8px)] max-md:p-4 max-md:right-0 max-md:w-[calc(100vw-64px)] max-md:flex visible  max-md:h-screen max-md:max-w-screen max-md:bg-white max-md:shadow-lg"
+                        : " max-md:-right-[1000%] max-md:top-[calc(100%+8px)] max-md:w-0 max-md:h-0 max-md:hidden"
                 }
                 `}
                 >

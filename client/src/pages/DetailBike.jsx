@@ -19,6 +19,7 @@ import Card from "../components/Card";
 import Review from "../components/Review";
 import BookForm from "../components/form/BookForm";
 import { userLiked } from "../utils/userLiked";
+import RenderByPoint from "../utils/renderByPoint";
 function DetailBike() {
     const [showPolicy, setShowPolicy] = useState(false);
     const [bikesSimilar, setBikesSimilar] = useState([]);
@@ -86,7 +87,7 @@ function DetailBike() {
     }, [bikeId]);
     return (
         <>
-            <main className="container w-10/12 mx-auto">
+            <main className="container w-10/12 mx-auto max-md:w-full max-md:px-4">
                 <Header />
                 <section className="grid grid-rows-3 grid-flow-col gap-4 items-stretch my-4 h-full max-h-[678px]">
                     {bike.images && bike.images.length > 0
@@ -104,8 +105,8 @@ function DetailBike() {
                           })
                         : null}
                 </section>
-                <section className="grid grid-cols-4 gap-4">
-                    <article className="col-span-3">
+                <section className="grid grid-cols-4 gap-4 max-md:grid-cols-1">
+                    <article className="col-span-3 max-md:col-auto">
                         <div className="flex justify-between items-center ">
                             <h1 className="text-4xl font-bold">{bike.bikeName}</h1>
                             {user && (
@@ -114,12 +115,12 @@ function DetailBike() {
                                 </p>
                             )}
                         </div>
-                        <div className="mt-4 flex items-center gap-2 ">
-                            <span className="text-gray-500 flex items-center">
+                        <div className="mt-4 flex gap-4 flex-col">
+                            {/* <span className="text-gray-500 flex items-center">
                                 <StarIcon className="text-yellow-300" />
                                 <span>{comments && comments.length && avgs / comments.length}</span>
-                            </span>
-
+                            </span> */}
+                            <h3 className="text-xl font-semibold ">Địa điểm nhận xe:</h3>
                             <span className="text-gray-500">{bike.place}</span>
                         </div>
                         <section className="mt-8 pb-8 border-b border-gray-300">
@@ -128,7 +129,7 @@ function DetailBike() {
                         </section>
                         <section className="mt-8 pb-8 border-b border-gray-300">
                             <h3 className="text-xl font-semibold mb-4">Các tiện nghi khác</h3>
-                            <ul className="grid grid-cols-4 gap-4">
+                            <ul className="grid grid-cols-4 gap-4 max-md:grid-cols-2">
                                 {bike.tagList && bike.tagList.length > 0
                                     ? bike.tagList.map((tag) => {
                                           return <Tag key={tag.tagId} tag={tag} />;
@@ -273,12 +274,13 @@ function DetailBike() {
                                         <Link to={`/profile/${bike.owner?.id}`} className="text-2xl font-semibold">
                                             {bike.owner?.fullName}
                                         </Link>
-                                        <p className="flex gap-2">
-                                            <span className="text-gray-500 flex items-center">
+                                        <div className="flex gap-2 items-center">
+                                            <p className="text-gray-500 flex items-center">
                                                 <StarIcon className="text-yellow-300" />
                                                 <span>{comments && comments.length && avgs / comments.length}</span>
-                                            </span>
-                                        </p>
+                                            </p>
+                                            {RenderByPoint(bike.owner?.point)}
+                                        </div>
                                         <span className="text-sm text-gray-700">{bike.owner?.email}</span>
                                     </div>
                                 </div>
@@ -308,7 +310,7 @@ function DetailBike() {
                             </p> */}
                         </section>
                     </article>
-                    <aside className="col-span-1">
+                    <aside className="col-span-1 max-md:col-auto">
                         <BookForm price={bike.price} place={bike.place} bike={bike} />
                         <div className="mt-4 p-4 bg-white rounded-xl border border-gray-200">
                             <h1 className="text-primary font-bold">Phụ phí có thể phát sinh</h1>
@@ -329,9 +331,9 @@ function DetailBike() {
                 </section>
             </main>
             <section className="mt-8 py-12 bg-gray-100">
-                <main className="container w-4/5 mx-auto">
+                <main className="container w-4/5 mx-auto max-md:w-full max-md:px-4">
                     <h3 className="text-xl font-semibold mb-4">Xe tương tự</h3>
-                    <ul className="grid grid-cols-4 gap-5">
+                    <ul className="grid grid-cols-4 gap-5 max-md:grid-cols-1">
                         {bikesSimilar && bikesSimilar.similar1
                             ? bikesSimilar.similar1.map((item) => {
                                   return <Card bike={item} key={`similar${item.bikeId}`} />;

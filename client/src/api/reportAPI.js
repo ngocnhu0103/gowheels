@@ -1,6 +1,6 @@
 import baseAPI from "./baseAPI";
 import { showToast } from "../store/toastSlice";
-import { detailReport, saveReports, updateReport } from "../store/reportSlice";
+import { detailReport, saveReports, updateReport, saveReportsForAdmin } from "../store/reportSlice";
 export const getReportsByOwnerAPI = async (dispatch) => {
     try {
         const response = await baseAPI.get(`/report/author`);
@@ -13,10 +13,9 @@ export const getReportsByOwnerAPI = async (dispatch) => {
 };
 export const getReportsAPI = async (dispatch, params = {}) => {
     try {
-        const response = await baseAPI.get(`/report`, params);
-        console.log(response);
+        const response = await baseAPI.get(`/report`, { params });
         if (response.statusCode === 200) {
-            dispatch(saveReports(response.data));
+            dispatch(saveReportsForAdmin(response.data));
         }
     } catch (error) {
         dispatch(showToast({ message: error.message, type: "error" }));

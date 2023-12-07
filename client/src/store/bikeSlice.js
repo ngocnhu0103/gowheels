@@ -8,6 +8,9 @@ const bikeSlice = createSlice({
         totals: null
     },
     reducers: {
+        saveDataBikeHome: (state, actions) => {
+            state.bikeList = actions.payload
+        },
         saveDataBike: (state, actions) => {
             state.bikeList = actions.payload.bikeList;
             state.totals = actions.payload.totals
@@ -23,6 +26,6 @@ const bikeSlice = createSlice({
 })
 
 
-export const { saveDataBike, saveNewBike, setBike } = bikeSlice.actions
+export const { saveDataBike, saveNewBike, setBike, saveDataBikeHome } = bikeSlice.actions
 
 export default bikeSlice.reducer;

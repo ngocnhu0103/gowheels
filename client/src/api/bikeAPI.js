@@ -1,13 +1,14 @@
 import baseAPI from './baseAPI'
 import { showToast } from "../store/toastSlice";
-import { saveDataBike, saveNewBike, setBike } from '../store/bikeSlice';
+import { saveDataBike, saveDataBikeHome, saveNewBike, setBike } from '../store/bikeSlice';
 import { updateBikes, updateMyBike, updateUser } from '../store/authSlice';
 
 export const getAllBikeAPI = async (dispatch, params) => {
     try {
         var response = await baseAPI.get("/bike/all", { params })
         if (response.statusCode === 200) {
-            dispatch(saveDataBike(response.data))
+            console.log(response);
+            dispatch(saveDataBikeHome(response.data))
         }
     } catch (error) {
         dispatch(showToast({ message: error.message, type: "error" }))
@@ -19,6 +20,19 @@ export const bikeRegisterAPI = async (dispatch, values) => {
         var response = await baseAPI.post("/bike", values)
         if (response.statusCode === 200) {
             dispatch(saveNewBike(response.data))
+            dispatch(showToast({ message: response.message, type: "success" }))
+        }
+
+    } catch (error) {
+        console.log(error);
+        dispatch(showToast({ message: error.message, type: "error" }))
+    }
+}
+export const editBikeAPI = async (dispatch, values, id) => {
+    try {
+        var response = await baseAPI.put(`/bike/${id}`, values)
+        if (response.statusCode === 200) {
+            dispatch(updateMyBike(response.data))
             dispatch(showToast({ message: response.message, type: "success" }))
         }
 

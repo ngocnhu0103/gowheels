@@ -22,6 +22,7 @@ import Dashboard from "./pages/dashboard/Dashboard";
 import ReportManagement from "./pages/dashboard/ReportManagement";
 import AdminRouter from "./router/AdminRouter";
 import Unauthorized from "./pages/Unauthorized";
+import EditBike from "./pages/EditBike";
 
 function AppRoute() {
     return (
@@ -38,6 +39,7 @@ function AppRoute() {
                 <Route path="/profile/order/:bookId" element={<OrderDetail />}></Route>
                 <Route path="/profile/analyst" element={<Analyst />}></Route>
                 <Route path="/bikeregister" element={<BikeRegister />}></Route>
+                <Route path="/edit/:bikeId/bike" element={<EditBike />}></Route>
                 <Route path="/success" element={<PaymentSuccess />}></Route>
                 <Route path="/failure" element={<PaymentFailure />}></Route>
                 <Route path="/success/end" element={<PaymentSuccessEnd />}></Route>

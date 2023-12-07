@@ -1,19 +1,18 @@
-import NavDashboard from "../../components/dashboard/NavDashboard";
-import { Outlet, useLocation } from "react-router-dom";
-import SearchIcon from "@mui/icons-material/Search";
-import { Avatar, Chip, CircularProgress } from "@mui/material";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
+import { Avatar, Chip } from "@mui/material";
+import { Outlet, useLocation } from "react-router-dom";
+import NavDashboard from "../../components/dashboard/NavDashboard";
 
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
-import { Bar } from "react-chartjs-2";
+import { BarElement, CategoryScale, Chart as ChartJS, ArcElement, Legend, LinearScale, Title, Tooltip } from "chart.js";
 import { useEffect, useState } from "react";
+import { Bar, Doughnut } from "react-chartjs-2";
 import { useDispatch, useSelector } from "react-redux";
 import { getBikesForStatisticalAPI, getBooksForStatisticalAPI } from "../../api/statisticalAPI";
 import { clearDataUser } from "../../store/authSlice";
-import { formatDateVN } from "../../utils/formatDate";
 import { formartVnd } from "../../utils/format";
+import { formatDateVN } from "../../utils/formatDate";
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+ChartJS.register(CategoryScale, ArcElement, LinearScale, BarElement, Title, Tooltip, Legend);
 function Dashboard() {
     const { user } = useSelector((state) => state.auth);
     const location = useLocation();
@@ -27,12 +26,12 @@ function Dashboard() {
         totals: [],
     });
     const [data, setData] = useState();
+    const [dataDoughnut, setDataDoughnut] = useState();
     const countBookByMonth = (month, bookList) => {
         const arr = bookList.filter((book) => {
             const m = formatDateVN(new Date(book.createdOn).getMonth());
             return m === month;
         });
-        console.log(arr, "ar", month);
         return arr;
     };
     const countbikeByMonth = (month, transports) => {
@@ -42,11 +41,11 @@ function Dashboard() {
             return m === month;
         });
     };
-    const options = {
+    const optionsCol = {
         plugins: {
             title: {
                 display: true,
-                text: "Thống kê đơn hàng",
+                text: "Biểu đồ thể hiện số lượng đơn hàng theo tháng",
             },
         },
         responsive: true,
@@ -61,6 +60,15 @@ function Dashboard() {
         ticks: {
             precision: 0,
         },
+    };
+    const optionsCircle = {
+        plugins: {
+            title: {
+                display: true,
+                text: "Biểu đồ thể hiện đơn hàng theo trạng thái",
+            },
+        },
+        responsive: true,
     };
     const labels = [
         "Tháng 1",
@@ -88,6 +96,21 @@ function Dashboard() {
                 },
             ],
         });
+        setDataDoughnut({
+            labels: ["Đơn hủy", "Đơn hoàn thành", "Đơn đang xử lý"],
+            datasets: [
+                {
+                    label: "Biểu đồ thể hiện số lương đơn hàng theo trạng thái",
+                    data: [
+                        books.failed.length,
+                        books.success.length,
+                        books.totals.length - books.failed.length - books.success.length,
+                    ],
+                    backgroundColor: ["rgb(255, 99, 132)", "#16a34a", "rgb(255, 205, 86)"],
+                    hoverOffset: 4,
+                },
+            ],
+        });
     }, [books.totals]);
     const [isDropdown, setIsDropdown] = useState(false);
     useEffect(() => {
@@ -106,6 +129,7 @@ function Dashboard() {
         fetchAllTransport();
         fetchAllBook();
     }, []);
+
     return (
         <main className="max-w-full h-screen">
             <div className="grid grid-cols-12  bg-violet-100/50">
@@ -306,7 +330,14 @@ function Dashboard() {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="mt-5 w-8/12">{data && <Bar options={options} data={data} />}</div>
+                                <div className="flex gap-4">
+                                    <div className="mt-5 w-7/12">
+                                        {data && <Bar options={optionsCol} data={data} />}
+                                    </div>
+                                    <div className="mt-5 w-4/12">
+                                        {dataDoughnut && <Doughnut options={optionsCircle} data={dataDoughnut} />}
+                                    </div>
+                                </div>
                             </div>
                         )}
                     </div>

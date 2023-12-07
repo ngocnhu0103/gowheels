@@ -261,6 +261,16 @@ function OrderDetail() {
                                             {loading === "update" ? <CircularProgress /> : "Xác nhân"}
                                         </Button>
                                     )}
+                                    {book.status === "Đã xác nhận" && (
+                                        <Button
+                                            disabled={loading === "update"}
+                                            variant="contained"
+                                            color="success"
+                                            onClick={() => updateStatus({ newStatus: "Đã thanh toán" })}
+                                        >
+                                            {loading === "update" ? <CircularProgress /> : "Thanh toán tiền mặc"}
+                                        </Button>
+                                    )}
                                 </div>
                                 {/* {book.status === "Đã duyệt" ? (
                                     <Button variant="contained">Thanh toán tiền cọc</Button>

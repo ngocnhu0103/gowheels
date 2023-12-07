@@ -7,7 +7,6 @@ import com.spring.server.models.Bike;
 import com.spring.server.models.Booking;
 import com.spring.server.repositories.BikeRepository;
 import com.spring.server.repositories.BookRepository;
-import com.spring.server.repositories.SurchargeRepository;
 import com.spring.server.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -17,7 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -32,7 +30,7 @@ public class BookService {
     private final BookRepository bookRepository;
     private final BikeRepository bikeRepository;
     private final UserRepository userRepository;
-    private final SurchargeRepository surchargeRepository;
+
     public ResponseEntity<ResponseObject> createBook(BookData bookData, Authentication authentication) throws ParseException{
         if(CompareToDate(bookData.getStartDate(),bookData.getEndDate()) == 0){
             return  ResponseEntity.status(400).body(
@@ -40,7 +38,7 @@ public class BookService {
             );
         }
         var bike = bikeRepository.findById(bookData.getBikeId());
-        var bookList = bookRepository.findByBike(bike.get());
+        var bookList = bookRepository.findByBikeAndStatusNotIn(bike.get(),List.of("Đã thanh toán","Đã hủy"));
         if(bookList.size() > 0) {
           boolean checkDate = false;
           for(Booking booking : bookList) {
@@ -181,4 +179,6 @@ public class BookService {
 
 
     }
+
+
 }

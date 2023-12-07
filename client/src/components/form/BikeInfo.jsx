@@ -1,10 +1,11 @@
+/* eslint-disable react/prop-types */
 import { MenuItem, TextField } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import { useEffect } from "react";
 
-import Tag from "../Tag";
 import { useDispatch, useSelector } from "react-redux";
-import { getTagsAPI } from "../../api/tagAPI";
 import { getCategoriesAPI } from "../../api/categoryAPI";
+import { getTagsAPI } from "../../api/tagAPI";
+import Tag from "../Tag";
 function BikeInfo({ formik, selectedTags, setSelectedTags }) {
     const { tags } = useSelector((state) => state.tag);
     const { categories } = useSelector((state) => state.category);

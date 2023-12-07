@@ -46,9 +46,7 @@ public class Booking implements Serializable {
     @ColumnDefault(value = "false")
     private boolean reported;
     private String status;
-    @OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
-    @JsonIgnoreProperties({"hibernateLazyInitializer"})
-    private List<Surcharge> surchargeList;
+
 
     @CreationTimestamp
     private Instant createdOn;

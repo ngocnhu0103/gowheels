@@ -36,13 +36,13 @@ function Card({ isRow = false, isManage = false, bike }) {
         if (timer.current) clearTimeout(timer.current);
         timer.current = setTimeout(() => {
             likeBike(bikeId);
-        }, 500);
+        }, 300);
     };
     const handleDisLike = (bikeId) => {
         if (timer.current) clearTimeout(timer.current);
         timer.current = setTimeout(() => {
             disLikeBike(bikeId);
-        }, 500);
+        }, 300);
     };
     const changeStatusBike = async (bikeId, newStatus) => {
         await updateStatusBikeAPI(dispatch, bikeId, { newStatus });
@@ -62,7 +62,7 @@ function Card({ isRow = false, isManage = false, bike }) {
             >
                 <Link to={`/bike/${bike.bikeId}`}>
                     <img
-                        className={`rounded-lg  ${isRow ? "w-60" : "w-full max-h-[180px]"}`}
+                        className={`rounded-lg  ${isRow ? "w-60" : "w-full h-[180px] object-cover"}`}
                         src={bike.images[0].url}
                         alt="product image"
                     />
@@ -71,14 +71,12 @@ function Card({ isRow = false, isManage = false, bike }) {
                 <div className={` ${isRow ? "pt-0" : "pt-5"}`}>
                     <ul className="flex gap-2 ">
                         {bike.tagList && bike.tagList.length > 0 ? (
-                            bike.tagList.map((tag, index) => {
-                                if (index % 2 == 0) {
-                                    return (
-                                        <li key={tag.tagId} className="text-[12px] bg-gray-100 p-1 rounded-xl">
-                                            <span>{tag.tagName}</span>
-                                        </li>
-                                    );
-                                }
+                            bike.tagList.slice(0, 2).map((tag) => {
+                                return (
+                                    <li key={tag.tagId} className="text-[12px] bg-gray-100 p-1 rounded-xl">
+                                        <span>{tag.tagName}</span>
+                                    </li>
+                                );
                             })
                         ) : (
                             <div className="h-6"></div>
@@ -125,7 +123,9 @@ function Card({ isRow = false, isManage = false, bike }) {
                 {isManage ? (
                     <ul className="ml-auto ">
                         <li className="mb-3 cursor-pointer">
-                            <EditIcon />
+                            <Link to={`/edit/${bike.bikeId}/bike`}>
+                                <EditIcon />
+                            </Link>
                         </li>
 
                         <li

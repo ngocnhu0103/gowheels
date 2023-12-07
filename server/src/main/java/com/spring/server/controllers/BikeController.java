@@ -1,6 +1,7 @@
 package com.spring.server.controllers;
 
 import com.spring.server.data.BikeData;
+import com.spring.server.data.BikeEditData;
 import com.spring.server.data.ResponseObject;
 import com.spring.server.data.StatusData;
 import com.spring.server.models.Bike;
@@ -42,8 +43,8 @@ public class BikeController {
         return bikeService.deleteBikeById(id);
     }
     @PutMapping("/{id}")
-    public ResponseEntity<ResponseObject> editBikeById(@PathVariable Long id, @RequestBody BikeData newBike) {
-        return bikeService.editBikeById(id, newBike);
+    public ResponseEntity<ResponseObject> editBikeById(@PathVariable Long id, @RequestBody BikeEditData bikeEditData) {
+        return bikeService.editBikeById(id, bikeEditData);
     }
     @GetMapping("/search")
     public ResponseEntity<ResponseObject> searchBike(@RequestParam(required = false) String place,

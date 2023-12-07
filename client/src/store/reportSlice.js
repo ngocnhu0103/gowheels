@@ -7,7 +7,8 @@ const reportSlice = createSlice({
         reports: [],
         report: {
 
-        }
+        },
+        totals: null
     },
     reducers: {
         saveReports: (state, actions) => {
@@ -27,8 +28,12 @@ const reportSlice = createSlice({
         leaveReport: (state, actions) => {
             state.reports = state.reports.filter((report) => report.id !== actions.payload.reportId)
         },
+        saveReportsForAdmin: (state, actions) => {
+            state.reports = actions.payload.content;
+            state.totals = actions.payload.numberOfElements;
+        },
     }
 })
 
-export const { saveReports, leaveReport, detailReport, updateReport } = reportSlice.actions;
+export const { saveReports, leaveReport, detailReport, updateReport, saveReportsForAdmin } = reportSlice.actions;
 export default reportSlice.reducer;

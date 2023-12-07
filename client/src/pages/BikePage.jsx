@@ -225,17 +225,19 @@ function BikePage() {
                         <div className="w-4/5 max-md:w-full">
                             <Swiper
                                 spaceBetween={10}
-                                slidesPerView={2}
-                                breakpoints={{
-                                    // 576: {
-                                    //     // width: 576,
-                                    //     slidesPerView: 3,
-                                    // },
-                                    768: {
-                                        // width: 768,
-                                        slidesPerView: 5,
-                                    },
-                                }}
+                                slidesPerView={3}
+                                breakpoints={
+                                    {
+                                        // 576: {
+                                        //     // width: 576,
+                                        //     slidesPerView: 3,
+                                        // },
+                                        // 768: {
+                                        //     width: 768,
+                                        //     slidesPerView: 5,
+                                        // },
+                                    }
+                                }
                                 navigation
                                 onSwiper={(swiper) => console.log(swiper)}
                                 onSlideChange={() => console.log("slide change")}

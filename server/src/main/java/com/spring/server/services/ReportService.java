@@ -29,25 +29,22 @@ public class ReportService {
 
     //@getAll
     public ResponseEntity<ResponseObject> getAll(String sorted,int pageNo,int pageSize,String status){
-        System.out.println("sorted = " + sorted);
         try {
             Sort sort = Sort.by("timeReport");
             if(sorted == null ){
                 sort = Sort.by("timeReport").descending();
             }else {
-                if(sorted == "DESC") {
+                if(sorted.compareTo("DESC") == 0) {
                     sort = Sort.by("timeReport").descending();
                 }
-                if(sorted == "ASC"){
+                if(sorted.compareTo("ASC") == 0){
                     sort = Sort.by("timeReport").ascending();
                 }
             }
             if(status == null) status = "";
             Pageable paging = PageRequest.of(pageNo, pageSize, sort);
-            System.out.println("paging = " + paging);
             var reports = reportPagingRepository.findByStatusContaining(status,paging);
-            System.out.println("reports = " + reports);
-            return ResponseEntity.ok().body(ResponseObject.builder().message("get all success").statusCode(200).data(reports.getContent()).build());
+            return ResponseEntity.ok().body(ResponseObject.builder().message("get all success").statusCode(200).data(reports).build());
         }
         catch (Exception e) {
             return ResponseEntity.badRequest().body(ResponseObject.builder().message(e.getMessage()).build());

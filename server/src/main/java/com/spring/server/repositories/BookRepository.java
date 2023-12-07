@@ -16,6 +16,8 @@ import java.util.List;
 @Repository
 public interface BookRepository extends CrudRepository<Booking, Long> {
     public List<Booking> findByBike(Bike bike);
+
+    public List<Booking> findByBikeAndStatusNotIn(Bike bike,List<String> statusList);
     public List<Booking> findByBikeAndStatusContaining(Bike bike,String status,Pageable pageable);
     public List<Booking> findByRenterAndStatusContaining(User renter, String status, Pageable pageable);
     public List<Booking> findAllByBikeAndStartDateAndEndDate(Bike bike, Date startDate, Date endDate);
