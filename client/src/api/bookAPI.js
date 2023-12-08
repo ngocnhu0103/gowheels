@@ -29,7 +29,7 @@ export const getMyBooksAPI = async (dispatch, params) => {
 }
 // @get books my bike
 export const getBooksMyBikeAPI = async (dispatch, params) => {
-    console.log(params);
+
     try {
         const response = await baseAPI.get('/book/owner-bike', { params });
         if (response.statusCode === 200) {

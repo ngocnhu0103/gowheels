@@ -203,7 +203,7 @@ function BookCard({ book, user, updateStatus, paymentDeposit, payment }) {
     };
 
     return (
-        <li className="p-4 bg-white shadow-xl rounded-xl">
+        <li className="p-4 bg-white shadow-xl rounded-xl animate-fade-up">
             <div className="flex justify-between h-12 border-b border-gray-300 items-center">
                 <div className="flex gap-2 items-center">
                     <Link to={`/profile/${book.bike?.owner.id}`}>

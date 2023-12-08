@@ -43,7 +43,7 @@ function FormRegister({ onClose, openComfirm }) {
         },
     });
     return (
-        <div className="w-1/4 max-md:w-11/12 mx-auto mt-24 bg-white p-4 rounded-xl">
+        <div className="w-1/4 max-md:w-11/12 mx-auto mt-24 bg-white p-4 rounded-xl animate-jump-in">
             <h1 className="text-3xl font-bold text-center text-primary py-4">Đăng ký</h1>
             <form className="flex flex-col" onSubmit={formik.handleSubmit}>
                 <FormControl margin="dense">

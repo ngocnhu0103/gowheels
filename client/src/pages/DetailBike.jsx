@@ -18,8 +18,8 @@ import { getCommentsAPI } from "../api/commentAPI";
 import Card from "../components/Card";
 import Review from "../components/Review";
 import BookForm from "../components/form/BookForm";
-import { userLiked } from "../utils/userLiked";
 import RenderByPoint from "../utils/renderByPoint";
+import { userLiked } from "../utils/userLiked";
 function DetailBike() {
     const [showPolicy, setShowPolicy] = useState(false);
     const [bikesSimilar, setBikesSimilar] = useState([]);
@@ -97,7 +97,7 @@ function DetailBike() {
                                       key={img.imgId}
                                       className={`${
                                           index == 0 && "row-span-3 col-span-3"
-                                      } rounded-lg object-cover w-full h-full `}
+                                      } rounded-lg object-cover w-full h-full animate-fade`}
                                       src={img.url}
                                       alt="anhto"
                                   />

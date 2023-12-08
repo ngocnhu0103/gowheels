@@ -96,7 +96,7 @@ function Header() {
                                     }
                                 />
                                 {isDropdown && (
-                                    <ul className="absolute left-0 w-full min-w-[160px] rounded overflow-hidden flex flex-col gap-1 shadow-lg bg-white top-[calc(100%_+_10px)]">
+                                    <ul className="absolute left-0 w-full min-w-[160px] rounded overflow-hidden flex flex-col gap-1 shadow-lg z-[30] bg-white top-[calc(100%_+_10px)]">
                                         <li className="py-2 px-2 text-gray-700 hover:text-primary hover:bg-white cursor-pointer">
                                             <Link to={"/profile/update"}>Thông tin cá nhân</Link>
                                         </li>

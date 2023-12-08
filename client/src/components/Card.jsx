@@ -54,7 +54,7 @@ function Card({ isRow = false, isManage = false, bike }) {
         }, 500);
     };
     return (
-        <li>
+        <li className="animate-fade-up">
             <div
                 className={`p-5 w-full border border-primary/20  rounded-lg shadow ${
                     isRow ? "flex gap-5" : "min-h-[400px]"
@@ -62,7 +62,9 @@ function Card({ isRow = false, isManage = false, bike }) {
             >
                 <Link to={`/bike/${bike.bikeId}`}>
                     <img
-                        className={`rounded-lg  ${isRow ? "w-60" : "w-full h-[180px] object-cover"}`}
+                        className={`rounded-lg  ${
+                            isRow ? "w-60 max-h-[180px] object-cover" : "w-full h-[180px] object-cover"
+                        }`}
                         src={bike.images[0].url}
                         alt="product image"
                     />
@@ -89,7 +91,7 @@ function Card({ isRow = false, isManage = false, bike }) {
                     </Link>
                     <div className="text-gray-400 flex items-center">
                         <PlaceIcon fontSize="15px" />
-                        <p className="text-sm truncate ">{bike.place}</p>
+                        <p className="text-sm line-clamp-1 max-w-[375px]">{bike.place}</p>
                     </div>
                     <div className="flex items-center mt-2.5 mb-5">
                         <span className="bg-blue-100 text-blue-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-800">

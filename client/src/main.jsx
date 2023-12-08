@@ -9,7 +9,6 @@ import { PersistGate } from "redux-persist/integration/react";
 import { BrowserRouter } from "react-router-dom";
 import Toast from "./components/Toast";
 import AppRoute from "./AppRoute";
-
 const theme = createTheme({
     palette: {
         primary: {
@@ -26,9 +25,11 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
             <ThemeProvider theme={theme}>
+                {/* <ParallaxProvider> */}
                 <BrowserRouter>
                     <AppRoute />
                 </BrowserRouter>
+                {/* </ParallaxProvider> */}
             </ThemeProvider>
             <Toast />
         </PersistGate>

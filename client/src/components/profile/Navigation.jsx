@@ -1,14 +1,13 @@
+/* eslint-disable react/prop-types */
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import CommuteIcon from "@mui/icons-material/Commute";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import ListAltIcon from "@mui/icons-material/ListAlt";
-import StarBorderIcon from "@mui/icons-material/StarBorder";
-import TimeToLeaveIcon from "@mui/icons-material/TimeToLeave";
-import { Link } from "react-router-dom";
 import LeaderboardIcon from "@mui/icons-material/Leaderboard";
+import ListAltIcon from "@mui/icons-material/ListAlt";
+import TimeToLeaveIcon from "@mui/icons-material/TimeToLeave";
 import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 import { clearDataUser } from "../../store/authSlice";
 function Navigation({ activeName }) {
     const dispatch = useDispatch();
@@ -74,7 +73,11 @@ function Navigation({ activeName }) {
                     </Link>
                 </li>
                 {user.jobber && (
-                    <li className="hover:bg-white p-4 font-medium text-lg">
+                    <li
+                        className={`hover:bg-white p-4 font-medium text-lg ${
+                            activeName === "analyst" ? "text-primary" : ""
+                        }`}
+                    >
                         <Link className="flex items-center gap-4" to={"/profile/analyst"}>
                             <LeaderboardIcon />
                             <span>Thống kê</span>
